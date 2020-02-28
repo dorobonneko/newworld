@@ -55,6 +55,9 @@ final class Loader implements Runnable
 		{
 			if (!calls.contains(target))
 				calls.add(target);
+			File file=new File(mPussy.cachePath, key);
+			if(file.exists())
+				file.setLastModified(System.currentTimeMillis());
 			Bitmap image=target.getRequest().getPussy().mMemoryCache.get(target.getRequest().getKey());
 			if(image!=null){
 				target.onLoadSuccess(Pussy.TinyBitmapDrawable.create(target,image));
@@ -110,7 +113,6 @@ final class Loader implements Runnable
 		InputStream input=null;
 		//int error=0;
 		File file=new File(mPussy.cachePath, key.concat(".tmp"));
-
 		try
 		{
 			if (isCanceled())
@@ -231,6 +233,7 @@ final class Loader implements Runnable
 			File cacheFile=new File(mPussy.cachePath, key);
 			if (cacheFile.exists())
 			{
+				cacheFile.setLastModified(System.currentTimeMillis());
 				try
 				{
 					brd = new BitmapDecoder(cacheFile.getAbsolutePath());

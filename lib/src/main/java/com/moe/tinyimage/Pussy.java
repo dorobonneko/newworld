@@ -54,7 +54,10 @@ public class Pussy
 					//if (oldValue instanceof BitmapDrawable)
 					//	((BitmapDrawable)oldValue).getBitmap().recycle();
 					//oldValue.setCallback(null);
+					if(!oldValue.isRecycled())
+						synchronized(oldValue){
 					oldValue.recycle();
+					}
 				}
 			}
 		}
@@ -296,7 +299,10 @@ public class Pussy
 				}
 			}
 			else
-				super.draw(canvas);
+				synchronized(bitmap){
+					if(!bitmap.isRecycled())
+				try{super.draw(canvas);}catch(Exception e){}
+				}
 		}
 
 	}

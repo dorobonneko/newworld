@@ -70,6 +70,9 @@ public abstract class Index
 			case "nieta":
 				models.put(web,index=new IndexNieta());
 				break;
+			case "tm":
+				models.put(web,index=new Indextmdm());
+				break;
 			default:
 			models.put(web,index=new None());
 			break;
