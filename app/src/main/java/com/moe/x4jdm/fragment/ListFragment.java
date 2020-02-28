@@ -1,0 +1,142 @@
+package com.moe.x4jdm.fragment;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.ViewGroup;
+import android.os.Bundle;
+import android.view.View;
+import com.moe.x4jdm.R;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.RecyclerView;
+import com.moe.x4jdm.model.Indexx4jdm;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.JSONArray;
+import com.moe.x4jdm.util.Space;
+import android.util.TypedValue;
+import com.moe.x4jdm.adapter.PostAdapter;
+import android.support.v7.widget.SimpleItemAnimator;
+import com.moe.x4jdm.model.Index;
+import com.moe.x4jdm.widget.GridLayoutManager;
+
+public class ListFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener
+{
+	private SwipeRefreshLayout mSwipeRefreshLayout;
+	private RecyclerView mRecyclerView;
+	private String url;
+	private int page;
+	private int count;
+	private JSONArray post_data;
+	private boolean loadMore,canloadmore=true;
+	private PostAdapter pa;
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+	{
+		return inflater.inflate(R.layout.list_view,container,false);
+	}
+
+	@Override
+	public void onViewCreated(View view, Bundle savedInstanceState)
+	{
+		super.onViewCreated(view, savedInstanceState);
+		mSwipeRefreshLayout=view.findViewById(R.id.swiperefreshlayout);
+		mSwipeRefreshLayout.setOnRefreshListener(this);
+		mRecyclerView=view.findViewById(R.id.recyclerview);
+		
+		pa=new PostAdapter(post_data=new JSONArray(),true);
+		mRecyclerView.setLayoutManager(new GridLayoutManager(getContext(),pa));
+		//((SimpleItemAnimator)mRecyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
+		mRecyclerView.addItemDecoration(new Space((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,8,getResources().getDisplayMetrics())));
+		mRecyclerView.setAdapter(pa);
+		mRecyclerView.addOnScrollListener(new Scroll());
+	}
+
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState)
+	{
+		// TODO: Implement this method
+		super.onActivityCreated(savedInstanceState);
+		Bundle b=getArguments();
+		if(b!=null){
+			url=b.getString("url");
+			page=b.getInt("page",1);
+		}
+		mSwipeRefreshLayout.setRefreshing(true);
+		onRefresh();
+	}
+
+	@Override
+	public void onRefresh()
+	{
+		page=1;
+		canloadmore=true;
+		loadMore();
+	}
+	private void loadMore(){
+		loadMore=true;
+		new Thread(){
+			public void run(){
+				try{
+				final JSONObject jo=JSONObject.parseObject(Index.getModel(getContext()).getList(String.format(url,page)));
+				getView().post(new Runnable(){
+
+						@Override
+						public void run()
+						{
+							loadMore=false;
+							mSwipeRefreshLayout.setRefreshing(false);
+							if(jo==null)return;
+							if(jo.size()==0){
+								pa.setFoot(R.drawable.check,"加载失败",false);
+								return;
+							}else{
+								page=jo.getIntValue("page")+1;
+								count=jo.getIntValue("count");
+								canloadmore=page<=count;
+								pa.setFoot(R.drawable.check,canloadmore?"加载完成":"已到底",false);
+								
+							}
+							JSONArray items=jo.getJSONArray("item");
+							int count=post_data.size();
+							if(page==2){
+								post_data.clear();
+								mRecyclerView.getAdapter().notifyItemRangeRemoved(0,count);
+								count=0;
+							}
+							if(items!=null)
+							post_data.addAll(items);
+							//pa.notifyDataSetChanged();
+							pa.notifyItemRangeInserted(count+1,post_data.size()-count);
+							
+							
+						}
+					});
+					}catch(Exception e){
+						mSwipeRefreshLayout.post(new Runnable(){
+
+								@Override
+								public void run()
+								{
+									loadMore=false;
+									mSwipeRefreshLayout.setRefreshing(false);
+									
+								}
+							});
+					}
+			}
+		}.start();
+	}
+	class Scroll extends RecyclerView.OnScrollListener
+	{
+
+		@Override
+		public void onScrolled(RecyclerView recyclerView, int dx, int dy)
+		{
+			GridLayoutManager glm=(GridLayoutManager) recyclerView.getLayoutManager();
+			if(canloadmore&&!mSwipeRefreshLayout.isRefreshing()&&!loadMore&&dy>=0&&glm.findLastVisibleItemPosition()>glm.getItemCount()-glm.getSpanCount()){
+				loadMore();
+				pa.setFoot(R.drawable.loading,"正在加载",true);
+			}
+		}
+	
+}
+	
+}

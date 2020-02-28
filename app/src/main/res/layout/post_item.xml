@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:foreground="?attr/selectableItemBackgroundBorderless">
+
+	<LinearLayout
+		android:orientation="vertical"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content">
+
+		<android.support.v7.widget.CardView
+			xmlns:app="http://schemas.android.com/apk/res-auto"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			app:cardCornerRadius="5dp">
+
+			<com.moe.tinyimage.widget.PercentImageView
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:id="@+id/icon"
+				app:percent="161.8%"
+				android:scaleType="centerCrop"/>
+
+			<TextView
+				android:id="@+id/summary"
+				android:layout_gravity="bottom|center_horizontal"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:gravity="center"
+				android:singleLine="true"
+				android:shadowRadius="10"
+				android:shadowColor="?android:attr/colorAccent"
+				android:textSize="12sp"
+				android:textColor="#ffffffff"/>
+
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:id="@+id/score"
+				android:layout_gravity="top|start"
+				android:textColor="?attr/colorAccent"
+				android:shadowColor="#ffffffff"
+				android:shadowRadius="20"/>
+
+		</android.support.v7.widget.CardView>
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:gravity="start"
+			android:id="@+id/title"
+			android:minLines="2"
+			android:maxLines="2"/>
+
+	</LinearLayout>
+
+</FrameLayout>
+

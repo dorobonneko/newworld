@@ -1,24 +1,38 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion "21.1.0"
+    compileSdkVersion 27
+    buildToolsVersion "27.1.1"
 
     defaultConfig {
         applicationId "com.moe.x4jdm"
-        minSdkVersion 14
-        targetSdkVersion 21
+        minSdkVersion 20
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    dexOptions {
+
+        preDexLibraries false
+
+    }
+
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+	compile project(':lib')
+	compile 'com.android.support:cardview-v7:27.1.1'
+	compile 'com.alibaba:fastjson:+'
+	compile 'org.jsoup:jsoup:+'
+    compile 'com.android.support:appcompat-v7:27.1.1'
+	compile 'com.android.support:design:27.1.1'
+    compile 'com.eclipsesource.j2v8:j2v8:5.0.103@aar'
+	compile fileTree(dir: 'libs', include: ['*.jar'])
 }

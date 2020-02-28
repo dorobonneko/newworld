@@ -1,0 +1,41 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:orientation="horizontal"
+	android:gravity="top">
+
+	<com.moe.tinyimage.widget.PercentImageView
+		android:id="@+id/icon"
+		android:layout_width="wrap_content"
+		android:layout_height="160dp"
+		app:percent="61.8%"
+		android:layout_marginStart="16dp"
+		android:layout_marginEnd="8dp"
+		android:layout_marginTop="8dp"/>
+
+	<LinearLayout
+		android:orientation="vertical"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+	>
+
+		<TextView
+			android:textSize="15sp"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:id="@+id/title"
+			android:layout_marginBottom="8dp"/>
+
+		<TextView
+			app:autoSizeMaxTextSize="12sp"
+			app:autoSizeMinTextSize="4sp"
+			app:autoSizeTextType="uniform"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:id="@+id/summary"/>
+
+	</LinearLayout>
+
+</LinearLayout>

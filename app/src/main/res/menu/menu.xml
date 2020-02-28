@@ -1,0 +1,22 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group
+        android:id="@+id/group1"
+        android:checkableBehavior="single">
+    <item
+        android:id="@+id/index"
+        android:title="首页"
+        android:checked="true"/>
+    <item
+        android:id="@+id/time"
+        android:title="时间表"/>
+    <item
+        android:id="@+id/order"
+        android:title="推荐"/>
+	<item
+			android:id="@+id/favorite"
+			android:title="收藏"/>
+    </group>
+	<item
+		android:id="@+id/redpacket"
+		android:title="支付宝红包"/>
+</menu>

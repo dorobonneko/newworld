@@ -1,5 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">MyApp</string>
+    <string name="more">更多</string>
 
+    <string name="app_name">新世界</string>
+    
 </resources>
