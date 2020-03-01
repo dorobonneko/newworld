@@ -86,6 +86,13 @@ public class Indexxyg extends Index
 	}
 
 	@Override
+	public boolean hasTime()
+	{
+		return false;
+	}
+
+
+	@Override
 	public String getList(String url)
 	{
 		if(url.endsWith("-1.html")){

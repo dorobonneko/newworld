@@ -4,6 +4,13 @@ import android.content.res.AssetManager;
 
 public class IndexJs extends Index
 {
+
+	@Override
+	public boolean hasTime()
+	{
+		return false;
+	}
+
 	
 	public IndexJs(String path){
 		

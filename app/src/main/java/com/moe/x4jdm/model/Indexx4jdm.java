@@ -164,6 +164,14 @@ class Indexx4jdm extends Index
 			refresh();
 		return time;
 	}
+
+	@Override
+	public boolean hasTime()
+	{
+		return true;
+	}
+
+	
 	public String getIndex()
 	{
 		if(index==null)

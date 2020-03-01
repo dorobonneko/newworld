@@ -73,6 +73,9 @@ public abstract class Index
 			case "tm":
 				models.put(web,index=new Indextmdm());
 				break;
+			case "jyk":
+				models.put(web,index=new Indexjyk());
+				break;
 			default:
 			models.put(web,index=new None());
 			break;
@@ -94,4 +97,5 @@ public abstract class Index
 	public abstract String makeUrl(String url);
 	public abstract String getHost();
 	public abstract String getGold();
+	public abstract boolean hasTime();
 }

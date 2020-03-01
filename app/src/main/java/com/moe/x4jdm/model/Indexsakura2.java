@@ -115,6 +115,13 @@ public class Indexsakura2 extends Index
 	}
 
 	@Override
+	public boolean hasTime()
+	{
+		return true;
+	}
+
+
+	@Override
 	public String getList(String url)
 	{
 		JSONObject list=new JSONObject();

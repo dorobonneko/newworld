@@ -66,6 +66,13 @@ public class Indexhh extends Index
 	}
 
 	@Override
+	public boolean hasTime()
+	{
+		return false;
+	}
+
+
+	@Override
 	public String getList(String url)
 	{
 		Uri uri=Uri.parse(url);

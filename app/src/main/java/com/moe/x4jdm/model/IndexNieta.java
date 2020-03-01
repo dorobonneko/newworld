@@ -112,6 +112,13 @@ public class IndexNieta extends Index
 	}
 
 	@Override
+	public boolean hasTime()
+	{
+		return true;
+	}
+
+
+	@Override
 	public String getTime()
 	{
 		JSONArray time=new JSONArray();

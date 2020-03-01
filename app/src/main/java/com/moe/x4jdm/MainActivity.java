@@ -21,8 +21,10 @@ import com.moe.x4jdm.model.Index;
 import java.net.URLEncoder;
 import com.moe.x4jdm.fragment.FavoriteFragment;
 import com.moe.x4jdm.video.VideoParse;
+import android.content.SharedPreferences;
+import android.view.Menu;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,SharedPreferences.OnSharedPreferenceChangeListener{
 
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle abdt;
@@ -31,6 +33,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+		getSharedPreferences("web",0).registerOnSharedPreferenceChangeListener(this);
         if(savedInstanceState!=null){
             cursor=savedInstanceState.getString("cursor");
         }
@@ -46,7 +49,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if(cursor==null){
             show("index");
         }
-		
+		onSharedPreferenceChanged(getSharedPreferences("web",0),"web");
 		//throw new NullPointerException();
     }
 
@@ -138,5 +141,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 			}else
 		moveTaskToBack(true);
 	}
+
+	@Override
+	public void onSharedPreferenceChanged(SharedPreferences p1, String p2)
+	{
+		switch(p2){
+			case "web":
+				String web=p1.getString(p2,"x4j");
+				Index index=Index.getModel(web);
+				Menu menu=mNavigationView.getMenu();
+				menu.findItem(R.id.order).setVisible(index.getGold()!=null);
+				menu.findItem(R.id.time).setVisible(index.hasTime());
+				break;
+		}
+	}
+
 	
 }

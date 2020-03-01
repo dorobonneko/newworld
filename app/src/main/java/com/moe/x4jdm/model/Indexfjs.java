@@ -20,13 +20,17 @@ import com.moe.x4jdm.video.VideoParse;
 
 public class Indexfjs extends Index
 {
+
+	@Override
+	public boolean hasTime()
+	{
+		return true;
+	}
+
 	private static final String host="http://m.feijisu7.com/";/*"http://xunjuba.com/";*/
 	private static final String PLAY_MATCH="^playarr(|_1|_2)\\[([0-9]*)\\]=\"(.*),.*?,.*?\"$";
 	private static final Pattern PLAY=Pattern.compile(PLAY_MATCH);
-	private Pattern mUriMatcher;
-	public Indexfjs(){
-		mUriMatcher=Pattern.compile("http(|s)://(v.youku.com|v.qq.com|www.iqiyi.com|tv.cctv.com)/.*");
-	}
+	
 	@Override
 	public void clearCache()
 	{
@@ -336,7 +340,7 @@ public class Indexfjs extends Index
 						
 					}else{
 						//判断地址是否是合法
-						if(mUriMatcher.matcher(href).find()){
+						if(VideoParse.match(href)){
 							return VideoParse.parse(href,"");
 							
 						}

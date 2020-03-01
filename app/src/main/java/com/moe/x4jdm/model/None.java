@@ -22,6 +22,13 @@ public class None extends Index
 	}
 
 	@Override
+	public boolean hasTime()
+	{
+		return false;
+	}
+
+
+	@Override
 	public String getList(String url)
 	{
 		return null;

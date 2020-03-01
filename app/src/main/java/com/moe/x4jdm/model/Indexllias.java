@@ -54,6 +54,13 @@ public class Indexllias extends Index
 	}
 
 	@Override
+	public boolean hasTime()
+	{
+		return false;
+	}
+
+
+	@Override
 	public String getList(String url)
 	{
 		JSONObject list=new JSONObject();

@@ -96,6 +96,13 @@ public class Indextldm extends Index
 	}
 
 	@Override
+	public boolean hasTime()
+	{
+		return false;
+	}
+
+
+	@Override
 	public String getList(String url)
 	{
 		if(url.endsWith("index1.html"))
