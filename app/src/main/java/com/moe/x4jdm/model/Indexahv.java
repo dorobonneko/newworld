@@ -51,8 +51,8 @@ public class Indexahv extends Index
 					JSONObject main=new JSONObject();
 					try{main.put("title", main_item.selectFirst(".thumbs-header-title").text());}catch(NullPointerException e){}
 					try{main.put("href", makeUrl(main_item.selectFirst(".thumbs-footer > a").absUrl("href")));}catch(NullPointerException e){}
-					JSONArray item_json=new JSONArray();
-
+					//JSONArray item_json=new JSONArray();
+					index.add(main);
 					for (Element e:main_item.select(".thumbs-list-item"))
 					{
 						JSONObject post=new JSONObject();
@@ -61,10 +61,10 @@ public class Indexahv extends Index
 						try{post.put("src", e.selectFirst("img").absUrl("src"));}catch(Exception ee){}
 						try{post.put("desc",e.selectFirst(".thumbs-list-item-time").text());}catch(Exception ee){}
 						try{post.put("score",e.selectFirst(".thumbs-list-item-info-elem_view").text());}catch(Exception ee){}
-						item_json.add(post);
+						index.add(post);
 					}
-					main.put("item", item_json);
-					index.add(main);
+					//main.put("item", item_json);
+					
 				}
 
 			}

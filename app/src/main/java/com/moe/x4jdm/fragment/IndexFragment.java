@@ -42,6 +42,7 @@ import com.moe.x4jdm.widget.GridLayoutManager;
 import com.moe.x4jdm.adapter.IndexAdapter;
 import com.moe.tinyimage.Pussy;
 import com.moe.x4jdm.model.Database;
+import com.moe.x4jdm.widget.IndexGridLayoutManager;
 
 public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener,View.OnClickListener,PostAdapter.OnItemClickListener
 {
@@ -67,8 +68,12 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 		mSwipeRefreshLayout.setOnRefreshListener(this);
 		recyclerview.setItemViewCacheSize(5);
 		recyclerview.setHasFixedSize(true);
-		recyclerview.setLayoutManager(new LinearLayoutManager(getContext()));
+		recyclerview.addItemDecoration(new Space((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,8,getResources().getDisplayMetrics())));
 		recyclerview.setAdapter(mIndexAdapter=new IndexAdapter(data=new JSONArray()));
+		
+		recyclerview.setLayoutManager(new IndexGridLayoutManager(view.getContext(),mIndexAdapter));
+		//recyclerview.setLayoutManager(new LinearLayoutManager(getContext()));
+		//recyclerview.setAdapter(mIndexAdapter=new IndexAdapter(data=new JSONArray()));
 	}
 
 	@Override

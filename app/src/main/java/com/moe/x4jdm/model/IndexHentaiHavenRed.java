@@ -51,7 +51,8 @@ public class IndexHentaiHavenRed extends Index
 					JSONObject main=new JSONObject();
 					main.put("title", main_item.selectFirst("h2").text());
 					main.put("href", main_item.selectFirst(".see-all").absUrl("href") + "page/%d/");
-					JSONArray item_json=new JSONArray();
+					index.add(main);
+					//JSONArray item_json=new JSONArray();
 					main_item=main_item.nextElementSibling().nextElementSibling();
 					for (Element e:main_item.select("article"))
 					{
@@ -59,10 +60,10 @@ public class IndexHentaiHavenRed extends Index
 						post.put("title", e.selectFirst("h3").text());
 						post.put("href", e.selectFirst("h3 > a").absUrl("href"));
 						post.put("src", e.selectFirst("div.poster > img").absUrl("src"));
-						item_json.add(post);
+						index.add(post);
 					}
-					main.put("item", item_json);
-					index.add(main);
+					//main.put("item", item_json);
+					//index.add(main);
 				}
 
 			}

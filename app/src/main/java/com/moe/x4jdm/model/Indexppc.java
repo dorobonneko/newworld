@@ -50,8 +50,8 @@ public class Indexppc extends Index
 					JSONObject main=new JSONObject();
 					try{main.put("title", main_item.selectFirst(".headline > h2").text());}catch(NullPointerException e){}
 					//main.put("href", main_item.selectFirst(".see-all").absUrl("href") + "page/%d/");
-					JSONArray item_json=new JSONArray();
-					
+					//JSONArray item_json=new JSONArray();
+					index.add(main);
 					for (Element e:main_item.select(".item"))
 					{
 						JSONObject post=new JSONObject();
@@ -60,10 +60,10 @@ public class Indexppc extends Index
 						try{post.put("src", e.selectFirst("img.thumb").absUrl("data-original"));}catch(Exception ee){}
 						try{post.put("desc",e.selectFirst(".duration").text());}catch(Exception ee){}
 						try{post.put("score",e.selectFirst(".views").text());}catch(Exception ee){}
-						item_json.add(post);
+						index.add(post);
 					}
-					main.put("item", item_json);
-					index.add(main);
+					//main.put("item", item_json);
+					//index.add(main);
 				}
 
 			}

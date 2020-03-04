@@ -40,17 +40,18 @@ public class Indexadh extends Index
 					JSONObject main=new JSONObject();
 					main.put("title", header.selectFirst("h3").text());
 					main.put("href", header.selectFirst("a.btn").absUrl("href") + "page/%d/");
-					JSONArray item_json=new JSONArray();
+					index.add(main);
+					//JSONArray item_json=new JSONArray();
 					for (Element e:items)
 					{
 						JSONObject post=new JSONObject();
 						post.put("title", e.selectFirst("h2").text());
 						post.put("href", e.selectFirst("a.lnk-blk").absUrl("href"));
 						post.put("src", e.selectFirst("img.lazy").absUrl("data-src"));
-						item_json.add(post);
+						index.add(post);
 					}
-					main.put("item", item_json);
-					index.add(main);
+					//main.put("item", item_json);
+					
 				}
 				
 			}

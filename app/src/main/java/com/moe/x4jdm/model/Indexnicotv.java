@@ -83,17 +83,18 @@ public class Indexnicotv extends Index
 						main_item.put("title", list.selectFirst(".page-header a").text());
 					}
 					main_item.put("href", makeUrl(list.selectFirst(".page-header a").absUrl("href")));
+					//index.add(main_item);
 					Elements items=list.select("ul > li");
 					if (items != null)
 					{
-						JSONArray item=new JSONArray();
-						main_item.put("item", item);
+						//JSONArray item=new JSONArray();
+						//main_item.put("item", item);
 						Iterator<Element> items_i=items.iterator();
 						while (items_i.hasNext())
 						{
 							Element post_item=items_i.next();
 							JSONObject post=new JSONObject();
-							item.add(post);
+							index.add(post);
 							post.put("title", post_item.selectFirst("img").attr("alt"));
 							post.put("href", post_item.selectFirst("a").absUrl("href"));
 							post.put("desc", post_item.selectFirst(".continu").text());

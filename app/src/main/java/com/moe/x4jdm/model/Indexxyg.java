@@ -56,13 +56,13 @@ public class Indexxyg extends Index
 					try{main_item.put("href",makeUrl(list.selectFirst("div.title a").absUrl("href")));}catch(Exception e){}
 					Elements items=list.select("div.vodlist");
 					if(items!=null){
-						JSONArray item=new JSONArray();
-						main_item.put("item",item);
+						//JSONArray item=new JSONArray();
+						//main_item.put("item",item);
 						Iterator<Element> items_i=items.iterator();
 						while(items_i.hasNext()){
 							Element post_item=items_i.next();
 							JSONObject post=new JSONObject();
-							item.add(post);
+							index.add(post);
 							post.put("title",post_item.selectFirst("h3").text());
 							post.put("href",post_item.selectFirst("a").absUrl("href"));
 							//post.put("desc",post_item.selectFirst("div.itemimgtext").text());

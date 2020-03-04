@@ -88,6 +88,7 @@ public class Loader implements Runnable
 									content.getTarget().onSucccess(pd);
 								}
 							});
+						return;
 					}
 					break;
 			}

@@ -68,14 +68,14 @@ public class Indexhb extends Index
 					Elements items=list.select("li,dd");
 					if (items != null)
 					{
-						JSONArray item=new JSONArray();
-						main_item.put("item", item);
+						//JSONArray item=new JSONArray();
+						//main_item.put("item", item);
 						Iterator<Element> items_i=items.iterator();
 						while (items_i.hasNext())
 						{
 							Element post_item=items_i.next();
 							JSONObject post=new JSONObject();
-							item.add(post);
+							index.add(post);
 							post.put("title", post_item.selectFirst("a").attr("title"));
 							post.put("href", post_item.selectFirst("a").absUrl("href"));
 							post.put("desc", post_item.selectFirst("span").text());

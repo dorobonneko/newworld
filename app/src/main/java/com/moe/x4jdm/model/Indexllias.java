@@ -29,13 +29,13 @@ public class Indexllias extends Index
 			for(Element e:doc.select("div.categary").get(2).select("p.title")){
 				JSONObject main=new JSONObject();
 				index.add(main);
-				JSONArray item=new JSONArray();
-				main.put("item",item);
+				//JSONArray item=new JSONArray();
+				//main.put("item",item);
 				main.put("title",e.text());
 				
 				for(Element i:e.nextElementSibling().select("a")){
 					JSONObject i_j=new JSONObject();
-					item.add(i_j);
+					index.add(i_j);
 					i_j.put("list",true);//点击是列表
 					i_j.put("title",i.text());
 					i_j.put("href",i.absUrl("href")+"/%d");

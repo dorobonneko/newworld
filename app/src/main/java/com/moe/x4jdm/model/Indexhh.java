@@ -39,15 +39,15 @@ public class Indexhh extends Index
 			if(a!=null&&!a.isEmpty()){
 				//JSONArray mains=new JSONArray();
 				//index.put("main",mains);
-				JSONObject main=new JSONObject();
-				index.add(main);
-				JSONArray items=new JSONArray();
-				main.put("item",items);
+				//JSONObject main=new JSONObject();
+				//index.add(main);
+				//JSONArray items=new JSONArray();
+				//main.put("item",items);
 				Iterator<Element> a_i=a.iterator();
 				while(a_i.hasNext()){
 					Element a_item=a_i.next();
 					JSONObject item=new JSONObject();
-					items.add(item);
+					index.add(item);
 					item.put("href",a_item.absUrl("href"));
 					item.put("title",a_item.parent().selectFirst(".like_title").text());
 					item.put("src",a_item.child(0).absUrl("src"));

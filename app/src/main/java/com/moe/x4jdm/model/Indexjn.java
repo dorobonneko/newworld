@@ -53,16 +53,19 @@ public class Indexjn extends Index
 				//index.put("main",arr);
 				for(int i=0;i<arr.size();i++){
 					JSONObject item=arr.getJSONObject(i);
-					index.add(item);
-					item.put("title",item.remove("video_class_name"));
+					JSONObject title=new JSONObject();
+					title.put("title",item.remove("video_class_name"));
+					index.add(title);
+					
 					//item.put("href",item.remove("id")+",%d");
-					item.put("item",item.remove("video"));
-					JSONArray video=item.getJSONArray("item");
+					//item.put("item",item.remove("video"));
+					JSONArray video=item.getJSONArray("video");
 					for(int n=0;n<video.size();n++){
 						JSONObject video_item=video.getJSONObject(n);
 						video_item.put("title",video_item.remove("video_subject"));
 						video_item.put("src",video_item.remove("video_image"));
 						video_item.put("href",video_item.remove("vid"));
+						index.add(video_item);
 					}
 				}
 			}

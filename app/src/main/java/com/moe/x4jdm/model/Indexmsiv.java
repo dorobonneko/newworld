@@ -40,7 +40,9 @@ public class Indexmsiv extends Index
 			}
 			//JSONArray main=new JSONArray();
 			//index.put("main",main);
-			index.add(JSONObject.parseObject(getList(getHost()+"wp-content/themes/LightSNS_1.6.40/mobile/module/post/data.php?page=1&type=all&load_type=more")));
+			JSONObject jo=JSONObject.parseObject(getList(getHost()+"wp-content/themes/LightSNS_1.6.40/mobile/module/post/data.php?page=1&type=all&load_type=more"));
+			
+			index.addAll(jo.getJSONArray("item"));
 		}
 		catch (IOException e)
 		{}

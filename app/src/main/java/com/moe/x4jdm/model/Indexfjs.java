@@ -73,10 +73,11 @@ public class Indexfjs extends Index
 					Element more=main_item.selectFirst(".aMore");
 					if (more != null)
 						main_json.put("href", href(more.absUrl("href")));
+					index.add(main_json);
 					Elements li=main_item.select("ul > ul > li > a");
 					if (li != null)
 					{
-						JSONArray items=new JSONArray();
+						//JSONArray items=new JSONArray();
 						Iterator<Element> li_iterator=li.iterator();
 						while (li_iterator.hasNext())
 						{
@@ -86,12 +87,12 @@ public class Indexfjs extends Index
 							item.put("desc", a.selectFirst(".sDes").text());
 							item.put("src", a.selectFirst("img").absUrl("src"));
 							item.put("href", a.absUrl("href"));
-							items.add(item);
+							index.add(item);
 						}
-						main_json.put("item", items);
+						//main_json.put("item", items);
 					}
 
-					index.add(main_json);
+					
 				}
 				//index.put("main", mains);
 			}

@@ -70,8 +70,8 @@ public class Indexdm530 extends Index
 					JSONObject main=new JSONObject();
 					try{main.put("title", main_item.selectFirst(".am-titlebar-title").text());}catch(NullPointerException e){}
 					main.put("href", makeUrl(main_item.selectFirst("a").attr("href")));
-					JSONArray item_json=new JSONArray();
-
+					//JSONArray item_json=new JSONArray();
+					index.add(main);
 					for (Element e:main_item.nextElementSibling().select("li"))
 					{
 						JSONObject post=new JSONObject();
@@ -80,10 +80,10 @@ public class Indexdm530 extends Index
 						try{post.put("src", e.selectFirst("img.lazy").absUrl("data-original"));}catch(Exception ee){}
 						try{post.put("desc",e.selectFirst(".am-gallery-desc").text());}catch(Exception ee){}
 						//try{post.put("score",e.selectFirst(".views").text());}catch(Exception ee){}
-						item_json.add(post);
+						index.add(post);
 					}
-					main.put("item", item_json);
-					index.add(main);
+					//main.put("item", item_json);
+					//index.add(main);
 				}
 
 			}

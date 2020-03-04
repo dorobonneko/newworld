@@ -72,9 +72,9 @@ public class PussyDrawable extends Drawable implements Animatable
 					else
 						p1.drawBitmap(bitmap, 0, 0, null);
 				}
-				else
+				else if(refresh!=null)
 					refresh.refresh();
-			}else{
+			}else if(refresh!=null){
 				refresh.refresh();
 			}
 	}

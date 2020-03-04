@@ -95,7 +95,8 @@ class Indexx4jdm extends Index
 					Element a=main.selectFirst("a");
 					main_item.put("title", a.attr("title"));
 					main_item.put("href", getHref(a.attr("abs:href")));
-					JSONArray items=new JSONArray();
+					index.add(main_item);
+					//JSONArray items=new JSONArray();
 					Elements childs=main.nextElementSibling().selectFirst("ul").children();
 					Iterator<Element> child_iterator=childs.iterator();
 					while (child_iterator.hasNext())
@@ -106,10 +107,10 @@ class Indexx4jdm extends Index
 						item.put("title", child.attr("title"));
 						item.put("desc", child.selectFirst(".title").text());
 						item.put("src", child.selectFirst("img").attr("abs:data-original"));
-						items.add(item);
+						index.add(item);
 					}
-					main_item.put("item", items);
-					index.add(main_item);
+					//main_item.put("item", items);
+					
 				}
 
 				//index.put("main", ja);

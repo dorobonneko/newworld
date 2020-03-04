@@ -74,13 +74,13 @@ public class Indexxbdm extends Index
 					try{main_item.put("href",makeUrl(list.selectFirst("a.more").absUrl("href")));}catch(Exception e){}
 					Elements items=list.select("ul.myui-vodlist > li");
 					if(items!=null){
-						JSONArray item=new JSONArray();
-						main_item.put("item",item);
+						//JSONArray item=new JSONArray();
+						//main_item.put("item",item);
 						Iterator<Element> items_i=items.iterator();
 						while(items_i.hasNext()){
 							Element post_item=items_i.next();
 							JSONObject post=new JSONObject();
-							item.add(post);
+							index.add(post);
 							post.put("title",post_item.selectFirst("a").attr("title"));
 							post.put("src",post_item.selectFirst("a").absUrl("data-original"));
 							try{post.put("desc",post_item.selectFirst("span.pic-text").text());}catch(NullPointerException e){}

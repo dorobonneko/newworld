@@ -56,8 +56,8 @@ public class Indextldm extends Index
 					JSONObject jo=new JSONObject();
 					index.add(jo);
 					try{jo.put("title",e.selectFirst("em.dhp,em.topdhp").text());}catch(Exception ee){}
-					JSONArray items=new JSONArray();
-					jo.put("item",items);
+					//JSONArray items=new JSONArray();
+					//jo.put("item",items);
 					Iterator<Element> main_i=e.select("ul > li > a,dl.fix > dd > a,dl.nobg > dd > a").iterator();
 					while(main_i.hasNext()){
 						Element a=main_i.next();
@@ -75,7 +75,7 @@ public class Indextldm extends Index
 							item.put("src",a.selectFirst("img").absUrl("src"));
 							item.put("title",a.selectFirst("img").attr("alt"));
 							}catch(Exception ee){}
-						items.add(item);
+						index.add(item);
 					}
 				}
 				

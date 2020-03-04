@@ -20,6 +20,7 @@ public abstract class Target
 	public abstract void onSucccess(PussyDrawable pd);
 	public abstract void onFailed(Throwable e);
 	public void putCache(PussyDrawable pd){
+		if(pd.getBitmap()==null)return;
 		content.getMemory().put(content.getKey(),pd.getBitmap());
 		if(content.getCache()==DiskCache.Cache.MASK){
 			//持久化
