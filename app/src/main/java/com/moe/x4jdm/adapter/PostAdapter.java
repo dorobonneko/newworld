@@ -9,18 +9,18 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.moe.tinyimage.CropTransForm;
-import com.moe.tinyimage.Pussy;
 import com.moe.x4jdm.PostViewActivity;
 import com.moe.x4jdm.R;
 import android.text.TextUtils;
 import com.moe.x4jdm.model.Index;
 import android.text.Html;
-import com.moe.tinyimage.Anim;
+import com.moe.pussy.Anim;
 import com.moe.x4jdm.ListActivity;
 import android.view.animation.RotateAnimation;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
+import com.moe.pussy.Pussy;
+import com.moe.pussy.transformer.CropTransformer;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ItemViewHolder>
 {
@@ -90,7 +90,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ItemViewHolder
 				if(holder.score!=null)
 				holder.score.setText(jo.getString("score"));
 				if(holder.icon!=null)
-				Pussy.$(holder.icon.getContext()).load(jo.getString("src")).transForm(new CropTransForm(Gravity.CENTER)).Anim(Anim.fade(500)).into(holder.icon);
+				//Pussy.$(holder.icon.getContext()).load(jo.getString("src")).transForm(new CropTransForm(Gravity.CENTER)).Anim(Anim.fade(500)).into(holder.icon);
+				Pussy.$(holder.icon.getContext()).load(jo.getString("src")).execute().transformer(new CropTransformer(Gravity.CENTER)).anime(Anim.fade(500)).into(holder.icon);
+				
 			}
 		}
 		else

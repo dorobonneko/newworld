@@ -10,12 +10,12 @@ import java.util.ArrayList;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.alibaba.fastjson.JSONObject;
-import com.moe.tinyimage.Pussy;
-import com.moe.tinyimage.CropTransForm;
 import android.view.Gravity;
 import android.content.Intent;
 import com.moe.x4jdm.PostViewActivity;
 import com.moe.x4jdm.model.Index;
+import com.moe.pussy.Pussy;
+import com.moe.pussy.transformer.CropTransformer;
 
 public class HeaderAdapter extends PagerAdapter
 {
@@ -50,7 +50,7 @@ public class HeaderAdapter extends PagerAdapter
 		JSONObject jo=ja.getJSONObject(position);
 		vh.title.setText(jo.getString("title"));
 		vh.summary.setText(jo.getString("desc"));
-		Pussy.$(container.getContext()).load(jo.getString("src")).transForm(new CropTransForm(Gravity.CENTER)).into(vh.icon);
+		Pussy.$(container.getContext()).load(jo.getString("src")).execute().transformer(new CropTransformer(Gravity.CENTER)).into(vh.icon);
 		container.addView(v);
 		vh.position=position;
 		return v;

@@ -1,45 +1,40 @@
 package com.moe.x4jdm;
-import android.support.v7.app.AppCompatActivity;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.res.TypedArray;
+import android.net.Uri;
 import android.os.Bundle;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.support.v7.widget.Toolbar;
-import com.alibaba.fastjson.JSONObject;
-import com.moe.x4jdm.model.Indexx4jdm;
-import android.text.Html;
-import com.moe.tinyimage.Pussy;
-import com.moe.tinyimage.CropTransForm;
-import android.view.Gravity;
-import com.moe.tinyimage.RoundTransForm;
-import android.util.TypedValue;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.view.View;
-import android.view.WindowInsets;
-import android.support.design.widget.AppBarLayout;
-import com.moe.tinyimage.BlurTransForm;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
-import com.alibaba.fastjson.JSONArray;
-import com.moe.x4jdm.adapter.PlayViewPagerAdapter;
-import android.app.ProgressDialog;
-import android.content.Intent;
-import android.net.Uri;
-import android.text.style.ClickableSpan;
-import android.text.method.LinkMovementMethod;
-import com.moe.x4jdm.model.Index;
 import android.support.v7.app.AlertDialog;
-import android.content.DialogInterface;
-import android.widget.Toast;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.text.method.ScrollingMovementMethod;
-import java.util.Map;
-import android.widget.Button;
-import java.io.IOException;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.Menu;
-import android.view.ViewGroup;
-import android.content.res.TypedArray;
-import com.moe.x4jdm.model.Database;
 import android.view.MenuItem;
-import com.moe.tinyimage.Anim;
+import android.view.View;
+import android.view.WindowInsets;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.moe.pussy.Pussy;
+import com.moe.pussy.transformer.CropTransformer;
+import com.moe.pussy.transformer.RoundTransformer;
+import com.moe.x4jdm.PostViewActivity;
+import com.moe.x4jdm.adapter.PlayViewPagerAdapter;
+import com.moe.x4jdm.model.Database;
+import com.moe.x4jdm.model.Index;
+import java.util.Map;
+import com.moe.pussy.Anim;
+import com.moe.pussy.transformer.BlurTransformer;
 
 public class PostViewActivity extends AppCompatActivity implements View.OnApplyWindowInsetsListener,PlayViewPagerAdapter.OnClickListener,View.OnClickListener
 {
@@ -82,6 +77,7 @@ public class PostViewActivity extends AppCompatActivity implements View.OnApplyW
 		mTabLayout.setupWithViewPager(mViewPager, true);
 		mViewPager.setAdapter(new PlayViewPagerAdapter(play_data = new JSONArray()));
 		((PlayViewPagerAdapter)mViewPager.getAdapter()).setOnClickListener(this);
+		icon.setLayerType(View.LAYER_TYPE_SOFTWARE,null);
 		load();
 	}
 
@@ -164,8 +160,8 @@ public class PostViewActivity extends AppCompatActivity implements View.OnApplyW
 								if(profile!=null)
 								PostViewActivity.this.profile.setText(Html.fromHtml(profile));
 								if(jo.getString("src")!=null){
-								Pussy.$(PostViewActivity.this).load(jo.getString("src")).transForm(new CropTransForm(Gravity.CENTER), new RoundTransForm((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5, getResources().getDisplayMetrics()))).Anim(Anim.cicle(300)).into(icon);
-								Pussy.$(PostViewActivity.this).load(jo.getString("src")).transForm(new CropTransForm(Gravity.CENTER), new BlurTransForm(getApplicationContext(), 15)).into(backicon);
+								Pussy.$(PostViewActivity.this).load(jo.getString("src")).execute().transformer(new CropTransformer(Gravity.CENTER), new RoundTransformer((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5, getResources().getDisplayMetrics()))).anime(Anim.cicle(300)).into(icon);
+								Pussy.$(PostViewActivity.this).load(jo.getString("src")).execute().transformer(new CropTransformer(Gravity.CENTER), new BlurTransformer(getApplicationContext(), 15)).into(backicon);
 								}play_data.clear();
 								JSONArray data=jo.getJSONArray("video");
 								if (data != null)
