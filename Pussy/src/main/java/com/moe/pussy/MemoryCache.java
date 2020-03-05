@@ -5,7 +5,7 @@ import android.graphics.Bitmap;
 public class MemoryCache extends LruCache<String,Bitmap>
 {
 	public MemoryCache(){
-		super((int)Runtime.getRuntime().maxMemory()/2);
+		super((int)Runtime.getRuntime().maxMemory()/4);
 	}
 
 	@Override
@@ -13,7 +13,7 @@ public class MemoryCache extends LruCache<String,Bitmap>
 	{
 		if(evicted&&oldValue!=null){
 			synchronized(oldValue){
-				oldValue.recycle();
+				BitmapPool.recycle(oldValue);
 			}
 		}
 	}

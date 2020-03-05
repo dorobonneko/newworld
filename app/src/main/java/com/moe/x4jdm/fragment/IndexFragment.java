@@ -40,9 +40,9 @@ import android.support.v7.app.AlertDialog;
 import android.content.DialogInterface;
 import com.moe.x4jdm.widget.GridLayoutManager;
 import com.moe.x4jdm.adapter.IndexAdapter;
-import com.moe.tinyimage.Pussy;
 import com.moe.x4jdm.model.Database;
 import com.moe.x4jdm.widget.IndexGridLayoutManager;
+import com.moe.pussy.Pussy;
 
 public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener,View.OnClickListener,PostAdapter.OnItemClickListener
 {
@@ -120,7 +120,7 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 										Pussy.$(getContext()).clearMemory();
 										break;
 									case "cache":
-										Pussy.$(getContext()).clearDisk();
+										Pussy.$(getContext()).clearCache();
 										break;
 									case "favorite":
 										Database.getInstance(getContext()).delete(null);

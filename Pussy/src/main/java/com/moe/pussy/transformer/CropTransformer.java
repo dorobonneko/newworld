@@ -3,6 +3,7 @@ import android.graphics.*;
 
 import android.view.Gravity;
 import com.moe.pussy.Transformer;
+import com.moe.pussy.BitmapPool;
 
 public class CropTransformer implements Transformer
 {
@@ -78,9 +79,13 @@ public class CropTransformer implements Transformer
 			}
 		}
 		try{
-			Bitmap buff=source.createBitmap(source,rect.left,rect.top,rect.width(),rect.height());
-			if(buff!=source)
-				source.recycle();
+			Bitmap buff=BitmapPool.getBitmap(rect.width(),rect.height(),Bitmap.Config.RGB_565);
+			Canvas canvas=new Canvas(buff);
+			canvas.translate(-rect.left,-rect.top);
+			canvas.drawBitmap(source,0,0,null);
+			//Bitmap buff=source.createBitmap(source,rect.left,rect.top,rect.width(),rect.height());
+			//if(buff!=source)
+			BitmapPool.recycle(source);
 		return buff;
 		}catch(Exception e){}
 	return null;

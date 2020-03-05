@@ -75,13 +75,13 @@ public class Indextmdm extends Index
 					main_item.put("href",makeUrl(list.selectFirst("a.listtitle").absUrl("href")));
 					Elements items=new Elements(list.nextElementSiblings().subList(0,2)).select("li.item");
 					if(items!=null){
-						JSONArray item=new JSONArray();
-						main_item.put("item",item);
+						//JSONArray item=new JSONArray();
+						//main_item.put("item",item);
 						Iterator<Element> items_i=items.iterator();
 						while(items_i.hasNext()){
 							Element post_item=items_i.next();
 							JSONObject post=new JSONObject();
-							item.add(post);
+							index.add(post);
 							post.put("title",post_item.selectFirst("a.itemtext").text());
 							post.put("href",post_item.selectFirst("a.itemtext").absUrl("href"));
 							post.put("desc",post_item.selectFirst("div.itemimgtext").text());

@@ -4,5 +4,5 @@ import java.io.File;
 
 public interface Decoder
 {
-	public PussyDrawable decode(InputStream input);
+	public PussyDrawable decode(File input);
 }

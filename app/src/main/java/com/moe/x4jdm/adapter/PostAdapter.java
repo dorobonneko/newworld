@@ -117,14 +117,17 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ItemViewHolder
 
 	public int getItemType(int position)
 	{
-		if(TextUtils.isEmpty(ja.getJSONObject(position).getString("key"))){
-			if(!TextUtils.isEmpty(ja.getJSONObject(position).getString("src"))){
+		JSONObject object=ja.getJSONObject(position);
+		if(TextUtils.isEmpty(object.getString("key"))){
+			if(!TextUtils.isEmpty(object.getString("src"))){
 				//带图片
 				return 2;
 			}else{
 				if(TextUtils.isEmpty(ja.getJSONObject(position).getString("desc"))){
 					//不带描述
-					return 5;
+					if(object.containsKey("list"))
+						return 5;
+					return 3;
 				}else{
 					//纯文字带描述
 					return 3;

@@ -9,7 +9,6 @@ public class Request
 	private String url,key,location;
 	private Map<String,String> header=new HashMap<>();
 	private String body;
-	private boolean cancel;
 	public Request(Pussy p,String url){
 		this.p=p;
 		this.url=url;
@@ -24,14 +23,7 @@ public class Request
 	{
 		this.location=location;
 	}
-/*
-	public void cancel()
-	{
-		cancel=true;
-	}*/
-	public boolean isCancel(){
-		return cancel;
-	}
+
 	public Request header(String... header){
 		for(int i=0;i<header.length;i+=2){
 			this.header.put(header[i],header[i+1]);

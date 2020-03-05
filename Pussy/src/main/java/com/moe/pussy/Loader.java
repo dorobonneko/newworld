@@ -59,7 +59,7 @@ public class Loader implements Runnable
 					if (cache_file.exists())
 					{
 						//解码
-						final PussyDrawable p=pussy.decoder.decode(new FileInputStream(cache_file));
+						final PussyDrawable p=pussy.decoder.decode(cache_file);
 						p.setRefresh(content.getRefresh());
 						mc.put(content.getKey(), p.getBitmap());
 						pussy.mDiskCache.invalidate(content.getKey());
@@ -75,7 +75,7 @@ public class Loader implements Runnable
 					if (cache_file.exists())
 					{
 						//原始缓存
-						PussyDrawable p=pussy.decoder.decode(new FileInputStream(cache_file));
+						PussyDrawable p=pussy.decoder.decode(cache_file);
 						p = content.getTarget().onResourceReady(p, content.getTransformer());
 						//缓存转变过的图片
 						if(p==null)return;
@@ -117,10 +117,10 @@ public class Loader implements Runnable
 			}
 			if(response.get()==null)
 				throw new IOException("empty stream");
-			InputStream input=response.get();
+			File input=response.get();
 			
 			//加入缓存
-			if(cancel){input.close(); return;}
+			if(cancel){return;}
 			PussyDrawable p=pussy.decoder.decode(input);
 			p = content.getTarget().onResourceReady(p, content.getTransformer());
 			if(p==null)return;

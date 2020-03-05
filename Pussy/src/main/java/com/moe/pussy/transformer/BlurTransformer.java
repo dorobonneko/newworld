@@ -10,6 +10,10 @@ import android.renderscript.Element;
 import android.renderscript.Allocation;
 import android.content.Context;
 import com.moe.pussy.Transformer;
+import com.moe.pussy.BitmapPool;
+import android.graphics.Canvas;
+import android.graphics.PaintFlagsDrawFilter;
+import android.graphics.Paint;
 
 public class BlurTransformer implements Transformer
 {
@@ -23,18 +27,23 @@ public class BlurTransformer implements Transformer
 	@Override
 	public Bitmap onTransformer(Bitmap source, int w, int h)
 	{
-		Bitmap out_bitmap=Bitmap.createBitmap(source.getWidth(),source.getHeight(),Bitmap.Config.ARGB_8888);
+		Bitmap out_bitmap=BitmapPool.getBitmap(source.getWidth(),source.getHeight(),Bitmap.Config.ARGB_8888);
+		Canvas canvas=new Canvas(out_bitmap);
+		canvas.setDrawFilter(new PaintFlagsDrawFilter(0,Paint.DITHER_FLAG|Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG));
+		canvas.drawBitmap(source,0,0,null);
 		RenderScript rs=RenderScript.create(c);
-		ScriptIntrinsicBlur sib=ScriptIntrinsicBlur.create(rs,Element.U8_4(rs));
-		Allocation in=Allocation.createFromBitmap(rs,source);
-		Allocation out=Allocation.createFromBitmap(rs,out_bitmap);
-		sib.setRadius(level);
-		sib.setInput(in);
-		sib.forEach(out);
-		out.copyTo(out_bitmap);
+		Allocation in=Allocation.createFromBitmap(rs,out_bitmap);
+		ScriptIntrinsicBlur blur = ScriptIntrinsicBlur.create(rs, in.getElement());
+		
+		//Allocation out=Allocation.createTyped(rs,in.getType());
+		blur.setRadius(level);
+		blur.setInput(in);
+		blur.forEach(in);
+		in.copyTo(out_bitmap);
 		rs.destroy();
-		if(out_bitmap!=source)
-			source.recycle();
+		//if(out_bitmap!=source)
+		BitmapPool.recycle(source);
+		//return out_bitmap;
 		return out_bitmap;
 	}
 

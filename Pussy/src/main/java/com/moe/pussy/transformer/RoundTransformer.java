@@ -2,6 +2,7 @@ package com.moe.pussy.transformer;
 
 import android.graphics.*;
 import com.moe.pussy.Transformer;
+import com.moe.pussy.BitmapPool;
 
 public class RoundTransformer implements Transformer
 {
@@ -27,9 +28,10 @@ public class RoundTransformer implements Transformer
 		int width = source.getWidth();
 		int height = source.getHeight();
 		//画板
-		Bitmap bitmap = Bitmap.createBitmap(width, height, source.getConfig());
+		Bitmap bitmap = BitmapPool.getBitmap(width, height,Bitmap.Config.ARGB_8888);
 		Paint paint = new Paint();
 		Canvas canvas = new Canvas(bitmap);//创建同尺寸的画布
+		canvas.drawColor(0,PorterDuff.Mode.CLEAR);
 		paint.setAntiAlias(true);//画笔抗锯齿
 		paint.setDither(true);
 		//paint.setShader(new BitmapShader(source, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP));
@@ -40,7 +42,7 @@ public class RoundTransformer implements Transformer
 		paint.setFilterBitmap(true);
 		paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
 		canvas.drawBitmap(source, 0, 0, paint);
-		source.recycle();//释放
+		BitmapPool.recycle(source);//释放
 
 		return bitmap;
 	}

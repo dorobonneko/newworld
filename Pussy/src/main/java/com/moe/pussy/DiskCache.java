@@ -95,6 +95,7 @@ public class DiskCache
 		{
 			int i=in.read();
 			out.write(i);
+			out.flush();
 			return i;
 		}
 
@@ -127,8 +128,8 @@ public class DiskCache
 		{
 			out.flush();
 			out.close();
-			try{in.close();
-			}catch(EOFException e){}
+			in.close();
+			
 		}
 
 		@Override

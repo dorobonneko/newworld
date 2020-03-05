@@ -64,7 +64,7 @@ public class PussyDrawable extends Drawable implements Animatable
 		if (bitmap != null)
 			synchronized (bitmap)
 			{
-				if (!bitmap.isRecycled())
+				if (!(bitmap.isRecycled()||BitmapPool.isRecycled(bitmap)))
 				{
 					p1.setDrawFilter(new PaintFlagsDrawFilter(0, Paint.DITHER_FLAG|Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG));
 					if (da != null)

@@ -35,8 +35,6 @@ public class HttpHandler implements Handler
 	public Handler.Response onHandle(Request request)
 	{
 		HttpResponse hrs=new HttpResponse();
-		if(request.isCancel())
-			return hrs;
 		try
 		{
 			HttpURLConnection huc=(HttpURLConnection) new URL(request.getUrl()).openConnection();
@@ -53,7 +51,6 @@ public class HttpHandler implements Handler
 			File tmp=request.getPussy().getDiskCache().getTmp(request.getKey());
 			huc.setRequestProperty("Range", "bytes=".concat(tmp.exists()?String.valueOf(tmp.length()):"0").concat("-"));
 			huc.setFollowRedirects(true);
-			if(request.isCancel())return hrs;
 			int code=huc.getResponseCode();
 			if(code==301||code==302){
 				String location=huc.getHeaderField("Location");
@@ -67,13 +64,12 @@ public class HttpHandler implements Handler
 			if(tmp.length()>0&&code==200)
 				huc.getInputStream().skip(tmp.length());
 			InputStream input= dc.getInputStream(tmp,huc.getInputStream());
-			while(input.read()!=-1&&!request.isCancel());
+			while(input.read()!=-1);
 			input.close();
 			huc.disconnect();
-			if(request.isCancel())
-				return hrs;
-				tmp.renameTo(dc.getCache(request.getKey()));
-				hrs.set(dc.getCache(request.getKey()));
+			tmp.renameTo(dc.getCache(request.getKey()));
+			hrs.set(dc.getCache(request.getKey()));
+			
 			}
 		catch (IOException e)
 		{}
@@ -86,11 +82,9 @@ public class HttpHandler implements Handler
 			this.in= in;
 		}
 		@Override
-		public InputStream get() throws IOException
+		public File get()
 		{
-			if(in!=null)
-			return new FileInputStream(in);
-			return null;
+			return in;
 		}
 
 		
