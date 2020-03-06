@@ -27,6 +27,7 @@ import android.widget.Button;
 import android.support.v4.view.ViewCompat;
 import android.content.res.TypedArray;
 import android.support.v4.content.res.TypedArrayUtils;
+import android.graphics.drawable.ColorDrawable;
 
 public class IndexAdapter extends RecyclerView.Adapter
 {

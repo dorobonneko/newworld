@@ -11,17 +11,18 @@ public class BitmapDecoder implements Decoder
 {
 	//byte[] buff=new byte[32*1024];
 	@Override
-	public PussyDrawable decode(File input)
+	public Bitmap[] decode(File input)
 	{
 		BitmapFactory.Options options=new BitmapFactory.Options();
 		
 		options.inPreferredConfig=Bitmap.Config.RGB_565;
 		options.inJustDecodeBounds=true;
 		BitmapFactory.decodeFile(input.getAbsolutePath(),options);
+		if(options.outWidth<=0||options.outHeight<=0)return new Bitmap[0];
 		options.inJustDecodeBounds=false;
 		options.inBitmap=BitmapPool.getBitmap(options.outWidth,options.outHeight,options.outConfig);
 		options.inMutable=true;
-		return new PussyDrawable(BitmapFactory.decodeFile(input.getAbsolutePath(),options),null);
+		return new Bitmap[]{BitmapFactory.decodeFile(input.getAbsolutePath(),options)};
 	}
 	
 }

@@ -1,6 +1,6 @@
 package com.moe.pussy.handle;
-import com.moe.pussy.Handler;
-import com.moe.pussy.Handler.Response;
+import com.moe.pussy.RequestHandler;
+import com.moe.pussy.RequestHandler.Response;
 import com.moe.pussy.Request;
 import android.net.Uri;
 import java.io.InputStream;
@@ -17,7 +17,7 @@ import java.io.File;
 import com.moe.pussy.DiskCache;
 import java.io.FileInputStream;
 
-public class HttpHandler implements Handler
+public class HttpRequestHandler implements RequestHandler
 {
 
 	@Override
@@ -32,7 +32,7 @@ public class HttpHandler implements Handler
 	}
 
 	@Override
-	public Handler.Response onHandle(Request request)
+	public RequestHandler.Response onHandle(Request request)
 	{
 		HttpResponse hrs=new HttpResponse();
 		try

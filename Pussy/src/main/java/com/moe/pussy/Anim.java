@@ -27,9 +27,7 @@ public class Anim
 						{
 							
 							if(drawable!=null){
-								if(callback==null)
-								callback=drawable.getCallback();
-								if(callback!=null)
+								if(callback==drawable.getCallback())
 								callback.invalidateDrawable(drawable);
 								}
 						}
@@ -51,9 +49,7 @@ public class Anim
 			{
 				va.cancel();
 				if(drawable!=null){
-					if(callback==null)
-						callback=drawable.getCallback();
-					if(callback!=null)
+					if(callback==drawable.getCallback())
 						callback.invalidateDrawable(drawable);
 				}
 			}
@@ -88,9 +84,7 @@ public class Anim
 						{
 
 							if(drawable!=null){
-								if(callback==null)
-									callback=drawable.getCallback();
-								if(callback!=null)
+								if(callback==drawable.getCallback())
 									callback.invalidateDrawable(drawable);
 							}
 						}
@@ -113,9 +107,7 @@ public class Anim
 			{
 				va.cancel();
 				if(drawable!=null){
-					if(callback==null)
-						callback=drawable.getCallback();
-					if(callback!=null)
+					if(callback==drawable.getCallback())
 						callback.invalidateDrawable(drawable);
 				}
 			}

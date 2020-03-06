@@ -2,23 +2,26 @@ package com.moe.pussy;
 import android.graphics.Bitmap;
 import java.io.FileOutputStream;
 import java.io.FileNotFoundException;
+import android.graphics.drawable.Drawable;
 
 public abstract class Target
 {
 	private Content content;
-	public PussyDrawable onResourceReady(PussyDrawable pd,Transformer... trans){
+
+	public void placeHolder(Drawable placeHolder)
+	{
+	}
+	
+	public Bitmap onResourceReady(Bitmap pd,Transformer... trans){
 		if(trans.length>0){
-			Bitmap bitmap=pd.getBitmap();
 			for(Transformer t:trans){
-				bitmap=t.onTransformer(bitmap,0,0);
+				pd=t.onTransformer(pd,0,0);
 			}
-			pd=new PussyDrawable(bitmap,pd.getRefresh());
 		}
-		putCache(pd);
 		return pd;
 	}
 	public abstract void onSucccess(PussyDrawable pd);
-	public abstract void onFailed(Throwable e);
+	public abstract void error(Throwable e,Drawable d);
 	public void putCache(PussyDrawable pd){
 		if(pd.getBitmap()==null)return;
 		content.getMemory().put(content.getKey(),pd.getBitmap());
@@ -37,12 +40,18 @@ public abstract class Target
 		}
 	}
 	protected void onAttachContent(Content c){
+		if(this.content!=null){
+			this.content.clearTarget();
+		}
 		this.content=c;
 	}
 	protected DrawableAnimator getAnim(){
 		if(content!=null)
 		return content.getAnim();
 		return null;
+	}
+	protected Pussy.Refresh getRefresh(){
+		return content.getRefresh();
 	}
 	
 }

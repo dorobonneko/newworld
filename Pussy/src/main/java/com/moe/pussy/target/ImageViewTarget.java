@@ -6,41 +6,42 @@ import com.moe.pussy.Transformer;
 import android.view.ViewTreeObserver;
 import android.graphics.Bitmap;
 import com.moe.pussy.DrawableAnimator;
+import android.graphics.drawable.Drawable;
 
 public class ImageViewTarget extends Target implements ViewTreeObserver.OnGlobalLayoutListener
 {
 	private ImageView view;
-	private PussyDrawable pd;
+	private Bitmap pd;
 	private Transformer[] trans;
 	public ImageViewTarget(ImageView view){
 		this.view=view;
 	}
 
 	@Override
-	public PussyDrawable onResourceReady(PussyDrawable pd, Transformer[] trans)
+	public Bitmap onResourceReady(Bitmap bitmap, Transformer[] trans)
 	{
-		this.pd=pd;
+		this.pd=bitmap;
 		this.trans=trans;
 		if(view.getWidth()==0||view.getHeight()==0){
 			view.getViewTreeObserver().addOnGlobalLayoutListener(this);
 		}else{
-			Bitmap b=pd.getBitmap();
+			Bitmap b=bitmap;
 			if(b!=null)
 			for(Transformer t:trans){
 				b=t.onTransformer(b,view.getWidth(),view.getHeight());
 			}
-			this.pd=new PussyDrawable(b,pd.getRefresh());
+			final PussyDrawable pd=new PussyDrawable(b,getRefresh());
 			//this.pd.setRefresh(pd.getRefresh());
-			putCache(this.pd);
+			putCache(pd);
 			view.post(new Runnable(){
 
 					@Override
 					public void run()
 					{
-						onSucccess(ImageViewTarget.this.pd);
+						onSucccess(pd);
 					}
 				});
-			return this.pd;
+			return b;
 		}
 		return null;
 	}
@@ -49,16 +50,23 @@ public class ImageViewTarget extends Target implements ViewTreeObserver.OnGlobal
 	public void onSucccess(PussyDrawable pd)
 	{
 		pd.stop();
-		pd.setAnimator(getAnim());
 		view.setImageDrawable(pd);
+		pd.setAnimator(getAnim());
 		pd.start();
 	}
 
 	@Override
-	public void onFailed(Throwable e)
+	public void error(Throwable e,Drawable d)
 	{
 		if(getAnim()!=null)getAnim().stop();
-		view.setImageDrawable(null);
+		view.setImageDrawable(d);
+	}
+
+	@Override
+	public void placeHolder(Drawable placeHolder)
+	{
+		if(getAnim()!=null)getAnim().stop();
+		view.setImageDrawable(placeHolder);
 	}
 
 	@Override

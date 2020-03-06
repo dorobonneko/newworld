@@ -6,8 +6,10 @@ import java.io.FileOutputStream;
 import com.moe.pussy.handle.HandleThread;
 import java.io.InputStream;
 import java.io.IOException;
+import com.moe.pussy.RequestHandler.Response;
+import java.io.FileNotFoundException;
 
-public class Loader implements Runnable
+public class Loader implements Runnable,BaseLoader,HandleThread.Callback
 {
 	private Content content;
 	private boolean cancel;
@@ -18,122 +20,82 @@ public class Loader implements Runnable
 	{
 		this.content = content;
 		request = content.getRequest();
-		pussy=request.getPussy();
+		pussy = request.getPussy();
 	}
-	
+
 	@Override
 	public void run()
 	{
 		try
 		{
-			if (cancel)return;
 			MemoryCache mc=pussy.mMemoryCache;
-			DiskCache dc=pussy.mDiskCache;
-			
-			{
-			final Bitmap pd=mc.get(content.getKey());
-			if (pd != null)
-			{
-				if(pd.isRecycled()){
-					mc.remove(content.getKey());
-				}else{
-				pussy.mDiskCache.invalidate(content.getKey());
-				pussy.post(new Runnable(){
-						public void run()
-						{
-							content.getTarget().onSucccess(new PussyDrawable(pd,content.getRefresh()));
-						}
-					});
-				return;
-				}
-			}
-			}
+			DiskCache dc=pussy.getDiskCache();
 			//查询内存缓存
 			if (cancel)return;
-			DiskCache.Cache cache=content.getCache();
-			switch (cache)
-			{
-				case MASK:
-				if (cancel)return;
+			out:
+				{
+					if (cancel)return;
 					File cache_file=dc.getCache(content.getKey());
 					if (cache_file.exists())
 					{
 						//解码
-						final PussyDrawable p=pussy.decoder.decode(cache_file);
-						p.setRefresh(content.getRefresh());
-						mc.put(content.getKey(), p.getBitmap());
-						pussy.mDiskCache.invalidate(content.getKey());
-						pussy.post(new Runnable(){
-								public void run()
-								{
-									content.getTarget().onSucccess(p);
-								}
-							});
-						return;
+						Bitmap[] p=pussy.decoder.decode(cache_file);
+						if (p[0] != null)
+						{
+							putMemory(content.getKey(), p[0]);
+							if (cancel)return;
+							success(p[0]);
+							return;
+						}
+						else
+						{
+							cache_file.delete();
+						}
 					}
 					cache_file = dc.getCache(request.getKey());
 					if (cache_file.exists())
 					{
 						//原始缓存
-						PussyDrawable p=pussy.decoder.decode(cache_file);
-						p = content.getTarget().onResourceReady(p, content.getTransformer());
-						//缓存转变过的图片
-						if(p==null)return;
-						mc.put(content.getKey(), p.getBitmap());
-						final PussyDrawable pd=p;
-						p.setRefresh(content.getRefresh());
-						pussy.post(new Runnable(){
-								public void run()
-								{
-									content.getTarget().onSucccess(pd);
-								}
-							});
-						return;
-					}
-					break;
-			}
-			//查询磁盘缓存（如果有，重新解码加载）
-			if(cancel)return;
-				//加载数据
-				HandleThread ht=pussy.getHandleThread(request.getKey());
-				if(ht!=null){
-					toString();
-				}
-				if(ht==null)
-					pussy.putHandleThread(request.getKey(),ht=new HandleThread(request));
-				final Handler.Response response=ht.get();//线程阻塞
-				
-			
-			//handler加载
-			if(response.getDrawable()!=null){
-				//来自软件内部，直接显示
-				//mc.put(content.getKey(),response.getDrawable());
-				pussy.post(new Runnable(){
-					public void run(){
-						content.getTarget().onSucccess(response.getDrawable());
+						Bitmap[] p=pussy.decoder.decode(cache_file);
+						for (int i=0;i < p.length;i++)
+						{
+							p[i] = content.getTarget().onResourceReady(p[i], content.getTransformer());
 						}
-						});
-				return;
-			}
-			if(response.get()==null)
-				throw new IOException("empty stream");
-			File input=response.get();
-			
-			//加入缓存
-			if(cancel){return;}
-			PussyDrawable p=pussy.decoder.decode(input);
-			p = content.getTarget().onResourceReady(p, content.getTransformer());
-			if(p==null)return;
-			mc.put(content.getKey(), p.getBitmap());
-			if(cancel)return;
-			final PussyDrawable pd=p;
-			p.setRefresh(content.getRefresh());
-			pussy.post(new Runnable(){
-					public void run()
-					{
-						content.getTarget().onSucccess(pd);
+						//缓存转变过的图片
+						if (p.length == 0 || p[0] == null)
+						{
+							//无法解码
+							cache_file.delete();
+							//查询磁盘缓存（如果有，重新解码加载）
+							if (cancel)return;
+							//加载数据
+							HandleThread ht=pussy.getHandleThread(request.getKey());
+							if (ht == null)
+								pussy.putHandleThread(request.getKey(), ht = new HandleThread(request));
+							ht.addCallback(this);
+							//handler加载
+
+						}
+						else
+						{
+							if(content.getCache()==DiskCache.Cache.MASK)
+							p[0].compress(Bitmap.CompressFormat.WEBP,99,new FileOutputStream(dc.getCache(content.getKey())));
+							putMemory(content.getKey(), p[0]);
+							if (cancel)return;
+							success(p[0]);
+							return;
+						}
+					}else{
+						if (cancel)return;
+						//加载数据
+						HandleThread ht=pussy.getHandleThread(request.getKey());
+						if (ht == null)
+							pussy.putHandleThread(request.getKey(), ht = new HandleThread(request));
+						ht.addCallback(this);
 					}
-				});
+
+				}
+
 			//解码加载
 		}
 		catch (final Exception e)
@@ -141,20 +103,106 @@ public class Loader implements Runnable
 			pussy.post(new Runnable(){
 					public void run()
 					{
-						content.getTarget().onFailed(e);
+						Target t=content.getTarget();
+						if(t!=null)t.error(e, content.error);
 					}
 				});
 		}
 	}
 
+	@Override
+	public void onResponse(RequestHandler.Response response)
+	{
+		if (cancel)return;
+		if (response.getBitmap() != null)
+		{
+			//来自软件内部，直接显示
+			Bitmap p = content.getTarget().onResourceReady(response.getBitmap(), content.getTransformer());
+			if (p == null)return;//不做后续处理
+
+			if (cancel)return;
+			putMemory(content.getKey(), p);
+			success(p);
+
+		}
+		else
+		if (response.get() == null)
+			success(null);
+		else
+		{
+			File input=response.get();
+
+			//加入缓存
+			if (cancel)return;
+			Bitmap[] p=pussy.decoder.decode(input);
+			for (int i=0;i < p.length;i++)
+			{
+				p[i] = content.getTarget().onResourceReady(p[i], content.getTransformer());
+			}
+			if (p.length == 0 || p[0] == null)
+			{
+				success(null);
+			}
+			else
+			{
+				try
+				{
+					if (content.getCache() == DiskCache.Cache.MASK)
+						p[0].compress(Bitmap.CompressFormat.WEBP, 99, new FileOutputStream(pussy.getDiskCache().getCache(content.getKey())));
+				}
+				catch (FileNotFoundException e)
+				{}
+				putMemory(content.getKey(), p[0]);
+				if (cancel)return;
+				success(p[0]);
+			}
+		}
+	}
+
+
+
+
+	@Override
+	public void putMemory(String key, Bitmap bitmap)
+	{
+		pussy.mMemoryCache.put(key, bitmap);
+	}
+	private void success(Bitmap bitmap)
+	{
+		if (bitmap == null)
+		{
+			pussy.post(new Runnable(){
+					public void run()
+					{
+						Target t=content.getTarget();
+						if(t!=null)t.error(new NullPointerException("decoder error"), content.error);
+					}
+				});
+		}
+		else
+		{
+			pussy.getDiskCache().invalidate(content.getKey());
+			//putMemory(content.getKey(), bitmap);
+			final PussyDrawable pd=new PussyDrawable(bitmap, content.getRefresh());
+			pussy.post(new Runnable(){
+					public void run()
+					{
+						Target t=content.getTarget();
+						if(t!=null)t.onSucccess(pd);
+					}
+				});}
+	}
+
+
 
 
 	public void cancel()
 	{
+		HandleThread ht=pussy.getHandleThread(request.getKey());
+		if (ht != null)
+			ht.removeCallback(this);
 		cancel = true;
-		/*HandleThread ht=pussy.getHandleThread(request.getKey());
-		if(ht!=null)
-			ht.close();*/
+		
 	}
 	public void reset()
 	{

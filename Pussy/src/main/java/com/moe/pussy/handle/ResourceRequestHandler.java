@@ -1,6 +1,6 @@
 package com.moe.pussy.handle;
-import com.moe.pussy.Handler;
-import com.moe.pussy.Handler.Response;
+import com.moe.pussy.RequestHandler;
+import com.moe.pussy.RequestHandler.Response;
 import com.moe.pussy.Request;
 import android.net.Uri;
 import android.content.Context;
@@ -9,11 +9,14 @@ import com.moe.pussy.PussyDrawable;
 import java.io.InputStream;
 import android.graphics.drawable.Drawable;
 import android.graphics.Canvas;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import com.moe.pussy.BitmapPool;
 
-public class ResourceHandler implements Handler
+public class ResourceRequestHandler implements RequestHandler
 {
 	private Resources res;
-	public ResourceHandler(Context context){
+	public ResourceRequestHandler(Context context){
 		res=context.getResources();
 	}
 	@Override
@@ -28,23 +31,32 @@ public class ResourceHandler implements Handler
 	}
 
 	@Override
-	public Handler.Response onHandle(Request request)
+	public RequestHandler.Response onHandle(Request request)
 	{
 		Uri uri=Uri.parse(request.getUrl());
-		Drawable d=res.getDrawable(Integer.parseInt(uri.getHost()));
-		return new ResResponse(new ResDrawable(d));
+		BitmapFactory.Options options=new BitmapFactory.Options();
+
+		options.inPreferredConfig=Bitmap.Config.RGB_565;
+		options.inJustDecodeBounds=true;
+		BitmapFactory.decodeResource(res,Integer.parseInt(uri.getHost()),options);
+		options.inJustDecodeBounds=false;
+		options.inBitmap=BitmapPool.getBitmap(options.outWidth,options.outHeight,options.outConfig);
+		options.inMutable=true;
+		return new ResResponse(BitmapFactory.decodeResource(res,Integer.parseInt(uri.getHost()),options));
 	}
 	class ResResponse extends Response{
-		private PussyDrawable pd;
-		public ResResponse(PussyDrawable pd){
+		private Bitmap pd;
+		public ResResponse(Bitmap pd){
 			this.pd=pd;
 		}
 
 		@Override
-		public PussyDrawable getDrawable()
+		public Bitmap getBitmap()
 		{
 			return pd;
 		}
+
+		
 
 
 

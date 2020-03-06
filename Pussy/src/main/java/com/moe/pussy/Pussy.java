@@ -22,9 +22,10 @@ import com.moe.pussy.handle.HandleThread;
 import android.os.Looper;
 import android.util.DisplayMetrics;
 import com.moe.pussy.decode.BitmapDecoder;
-import com.moe.pussy.handle.HttpHandler;
+import com.moe.pussy.handle.HttpRequestHandler;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Pussy
 {
@@ -41,17 +42,15 @@ public class Pussy
 	DiskCache mDiskCache;
 
 	Map<Target,Loader> loader_queue=new HashMap<>();
-	private Map<String,HandleThread> request_handler=new HashMap<>();
+	private Map<String,HandleThread> request_handler=new ConcurrentHashMap<>();
 	ThreadPoolExecutor mThreadPoolExecutor;
 	static Decoder decoder;
-	private static List<Handler> handlers;
+	private Dispatcher mDispatcher;
 	private static android.os.Handler mainHandler;
 	static{
 		//初始化数据
 		mainHandler = new android.os.Handler(Looper.getMainLooper());
-		handlers = new ArrayList<>();
 		decoder = new BitmapDecoder();
-		handlers.add(new HttpHandler());
 	}
 	private Pussy()
 	{
@@ -74,6 +73,7 @@ public class Pussy
 	private void init(Context context)
 	{
 		this.mContext = context;
+		mDispatcher =Dispatcher.getDefault(context);
 		mDiskCache = DiskCache.get(this);
 		if (mComponentCallbacks == null)
 		{
@@ -123,6 +123,9 @@ public class Pussy
 			return p;
 		}
 	}
+	public Dispatcher getDispatcher(){
+		return mDispatcher;
+	}
 	public static void post(Runnable run)
 	{
 		mainHandler.post(run);
@@ -156,10 +159,7 @@ public class Pussy
 	{
 		return SSLSocketFactory;
 	}
-	public Handler[] getHandlers()
-	{
-		return handlers.toArray(new Handler[0]);
-	}
+	
 	public HandleThread getHandleThread(String key)
 	{
 		return request_handler.get(key);
@@ -171,6 +171,7 @@ public class Pussy
 	public void putHandleThread(String key, HandleThread ht)
 	{
 		request_handler.put(key, ht);
+		mThreadPoolExecutor.execute(ht);
 	}
 	public void cancel(Target t)
 	{
@@ -179,29 +180,13 @@ public class Pussy
 			Loader l=loader_queue.remove(t);
 			if (l != null)
 			{
-				if (!loader_queue.containsValue(l))
-					l.cancel();
+				//移出线程池
+				mThreadPoolExecutor.remove(l);
+				l.cancel();
 			}
 		}
 	}
-	//重新加载图片
-	void refresh(Target t)
-	{
-		synchronized (loader_queue)
-		{
-			Loader l=loader_queue.get(t);
-			if (l != null)
-			{
-				l.reset();
-				mThreadPoolExecutor.execute(l);
-			}
-		}
-	}
-	//资源加载器
-	public static void addHandler(Handler h)
-	{
-		handlers.add(h);
-	}
+	
 	//解码器
 	public static void decoder(Decoder d)
 	{

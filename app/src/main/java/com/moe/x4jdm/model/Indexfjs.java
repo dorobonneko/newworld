@@ -344,8 +344,9 @@ public class Indexfjs extends Index
 						if(VideoParse.match(href)){
 							return VideoParse.parse(href,"");
 							
-						}
+						}else{
 						return href;
+						}
 					}
 					//break;
 				}

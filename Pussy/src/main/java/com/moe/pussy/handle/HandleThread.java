@@ -1,47 +1,40 @@
 package com.moe.pussy.handle;
 import com.moe.pussy.Request;
-import com.moe.pussy.Handler;
+import com.moe.pussy.RequestHandler;
+import java.util.List;
+import java.util.ArrayList;
 
-public class HandleThread extends Thread
+public class HandleThread implements Runnable
 {
-	private Handler.Response response;
+	private RequestHandler.Response response;
 	private Request request;
-	private int count;
-	private Object locked=new Object();
+	private List<Callback> calls=new ArrayList<>();
+	private boolean success;
 	public HandleThread(Request request){
 		this.request=request;
-		start();
 	}
-
+	public void addCallback(Callback call){
+		if(!success)
+		calls.add(call);
+		else
+			call.onResponse(response);
+	}
+	public void removeCallback(Callback call){
+		calls.remove(call);
+	}
 	@Override
 	public void run()
 	{
-		for(Handler h:request.getPussy().getHandlers()){
-			if(h.canHandle(request)){
-				response=h.onHandle(request);
-				break;
-				}
+		RequestHandler h=request.getPussy().getDispatcher().getHandler(request);
+		if(h!=null)
+		response=h.onHandle(request);
+		success=true;
+		for(Callback call:calls){
+			call.onResponse(response);
 		}
-		if(response==null)
-		response=new Handler.Response();
 	}
 	
-	public Handler.Response get(){
-		synchronized(locked){
-		count++;
-		}
-		synchronized(this){
-		while(response==null);
-		return response;
-		}
-	}
-	public void close(){
-		synchronized(locked){
-		count--;
-		if(count<=0){
-			//request.getPussy().removeHandleThread(request.getKey());
-			//request.cancel();
-			}
-		}
+	public interface Callback{
+		void onResponse(RequestHandler.Response response);
 	}
 }
