@@ -17,7 +17,7 @@ public abstract class Target
 	public Bitmap onResourceReady(Bitmap pd,Transformer... trans){
 		if(trans.length>0){
 			for(Transformer t:trans){
-				pd=t.onTransformer(pd,0,0);
+				pd=t.onTransformer(BitmapPool.get(),pd,0,0);
 			}
 		}
 		return pd;

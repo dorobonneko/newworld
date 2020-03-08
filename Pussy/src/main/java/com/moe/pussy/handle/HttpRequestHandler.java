@@ -16,6 +16,7 @@ import java.util.Map;
 import java.io.File;
 import com.moe.pussy.DiskCache;
 import java.io.FileInputStream;
+import java.util.concurrent.ThreadPoolExecutor;
 
 public class HttpRequestHandler implements RequestHandler
 {
@@ -32,12 +33,24 @@ public class HttpRequestHandler implements RequestHandler
 	}
 
 	@Override
-	public RequestHandler.Response onHandle(Request request)
+	public void onHandle(ThreadPoolExecutor pool,final Request request,final Callback call)
 	{
-		HttpResponse hrs=new HttpResponse();
-		try
-		{
-			HttpURLConnection huc=(HttpURLConnection) new URL(request.getUrl()).openConnection();
+		pool.execute(new Runnable(){
+			public void run(){
+				try
+				{
+					call.onSuccess(onHandle(request));
+				}
+				catch (Exception e)
+				{
+					call.onError(e);
+				}
+
+		{}
+		}});
+	}
+	private Response onHandle(Request request) throws IOException{
+		HttpURLConnection huc=(HttpURLConnection) new URL(request.getUrl()).openConnection();
 			if(huc instanceof HttpsURLConnection){
 				SSLSocketFactory ssf=request.getPussy().getSSLSocketFactory();
 				if(ssf!=null)
@@ -68,12 +81,9 @@ public class HttpRequestHandler implements RequestHandler
 			input.close();
 			huc.disconnect();
 			tmp.renameTo(dc.getCache(request.getKey()));
+			HttpResponse hrs=new HttpResponse();
 			hrs.set(dc.getCache(request.getKey()));
-			
-			}
-		catch (IOException e)
-		{}
-		return hrs;
+			return hrs;
 	}
 	class HttpResponse extends Response
 	{

@@ -25,7 +25,7 @@ public class BlurTransformer implements Transformer
 	}
 	
 	@Override
-	public Bitmap onTransformer(Bitmap source, int w, int h)
+	public Bitmap onTransformer(BitmapPool bp,Bitmap source, int w, int h)
 	{
 		Bitmap out_bitmap=BitmapPool.getBitmap(source.getWidth(),source.getHeight(),Bitmap.Config.ARGB_8888);
 		Canvas canvas=new Canvas(out_bitmap);
@@ -41,8 +41,8 @@ public class BlurTransformer implements Transformer
 		blur.forEach(in);
 		in.copyTo(out_bitmap);
 		rs.destroy();
-		//if(out_bitmap!=source)
-		//BitmapPool.recycle(source);
+		if(out_bitmap!=source)
+		bp.recycle(source);
 		//return out_bitmap;
 		return out_bitmap;
 	}

@@ -4,15 +4,20 @@ import com.moe.pussy.RequestHandler;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
+import com.moe.pussy.RequestHandler.Response;
+import java.util.concurrent.ThreadPoolExecutor;
 
-public class HandleThread implements Runnable
+public class HandleThread implements Runnable,RequestHandler.Callback
 {
 	private RequestHandler.Response response;
 	private Request request;
 	private List<Callback> calls=new CopyOnWriteArrayList<>();
 	private boolean success;
-	public HandleThread(Request request){
+	private ThreadPoolExecutor pool;
+	private int error;
+	public HandleThread(Request request,ThreadPoolExecutor pool){
 		this.request=request;
+		this.pool=pool;
 	}
 	public void addCallback(Callback call){
 		if(!success)
@@ -26,14 +31,31 @@ public class HandleThread implements Runnable
 	@Override
 	public void run()
 	{
+		if(success)return;
 		RequestHandler h=request.getPussy().getDispatcher().getHandler(request);
 		if(h!=null)
-		response=h.onHandle(request);
+			h.onHandle(pool,request,this);
+		
+	}
+
+	@Override
+	public void onSuccess(RequestHandler.Response response)
+	{
 		success=true;
 		for(Callback call:calls){
 			call.onResponse(response);
 		}
 	}
+
+	@Override
+	public void onError(Throwable e)
+	{
+		error++;
+		if(error<3)
+			pool.execute(this);
+	}
+
+
 	
 	public interface Callback{
 		void onResponse(RequestHandler.Response response);

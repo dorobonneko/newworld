@@ -23,7 +23,7 @@ public class RoundTransformer implements Transformer
 	
 
 	@Override
-	public Bitmap onTransformer(Bitmap source, int w, int h)
+	public Bitmap onTransformer(BitmapPool bp,Bitmap source, int w, int h)
 	{
 		int width = source.getWidth();
 		int height = source.getHeight();
@@ -42,8 +42,8 @@ public class RoundTransformer implements Transformer
 		paint.setFilterBitmap(true);
 		paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
 		canvas.drawBitmap(source, 0, 0, paint);
-		//if(bitmap!=source)
-		//BitmapPool.recycle(source);//释放
+		if(bitmap!=source)
+		bp.recycle(source);//释放
 
 		return bitmap;
 	}

@@ -10,9 +10,17 @@ public class BitmapPool
 {
 	private static Map<String,List<Bitmap>> map=new HashMap<String,List<Bitmap>>();
 	private static int maxSize=8;
+	private static BitmapPool bp;
 	private BitmapPool(){
 	}
-	
+	public static BitmapPool get(){
+		if(bp==null)
+			synchronized(BitmapPool.class){
+				if(bp==null)
+					bp=new BitmapPool();
+			}
+		return bp;
+	}
 	
 	public static Bitmap getBitmap(int w,int h,Bitmap.Config config){
 		synchronized(map){

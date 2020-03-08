@@ -128,7 +128,7 @@ public class IndexAdapter extends RecyclerView.Adapter
 				pvh.summary.setText(desc==null?null:Html.fromHtml(desc));
 				pvh.score.setText(jo.getString("score"));
 				Pussy.$(pvh.icon.getContext()).load(jo.getString("src")).execute().transformer(new CropTransformer(Gravity.CENTER)).anime(Anim.fade(500)).into(pvh.icon);
-
+				//Glide.with(pvh.itemView.getContext()).load(jo.getString("src")).centerCrop().crossFade(500).into(pvh.icon);
 			}else if(vh instanceof PostLineViewHolder){
 				PostLineViewHolder plvh=(IndexAdapter.PostLineViewHolder) vh;
 				JSONObject title=index.getJSONObject(position);

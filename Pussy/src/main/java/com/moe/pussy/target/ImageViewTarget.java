@@ -7,6 +7,7 @@ import android.view.ViewTreeObserver;
 import android.graphics.Bitmap;
 import com.moe.pussy.DrawableAnimator;
 import android.graphics.drawable.Drawable;
+import com.moe.pussy.BitmapPool;
 
 public class ImageViewTarget extends Target implements ViewTreeObserver.OnGlobalLayoutListener
 {
@@ -28,7 +29,7 @@ public class ImageViewTarget extends Target implements ViewTreeObserver.OnGlobal
 			Bitmap b=bitmap;
 			if(b!=null)
 			for(Transformer t:trans){
-				b=t.onTransformer(b,view.getWidth(),view.getHeight());
+				b=t.onTransformer(BitmapPool.get(),b,view.getWidth(),view.getHeight());
 			}
 			final PussyDrawable pd=putCache(b);
 			view.post(new Runnable(){

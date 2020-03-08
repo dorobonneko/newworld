@@ -112,7 +112,15 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 										Database.getInstance(getContext()).delete(null);
 										break;
 								}
-							} else{
+							} else if(key.startsWith("show:")){
+								switch(key.substring(5)){
+									case "memory":
+										new AlertDialog.Builder(getActivity()).setMessage("单位Kb\n已使用："+(Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory())/1000+"\n剩余："+Runtime.getRuntime().freeMemory()/1000+"\n总共："+Runtime.getRuntime().totalMemory()/1000+"\n最大："+Runtime.getRuntime().maxMemory()/1000).show();
+										break;
+									case "keys":
+										break;
+								 }
+							}else{
 								String url=Index.getModel(getContext()).search(key);
 								if(url!=null)
 								startActivity(new Intent(getContext(),ListActivity.class).putExtra("url",url));

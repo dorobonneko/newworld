@@ -48,6 +48,7 @@ public class Pussy
 	private static android.os.Handler mainHandler;
 	private MemoryCache mMemoryCache;
 	private ActiveResource mActiveResource;
+	protected ThreadPoolExecutor netThreadPool,fileThreadPool;
 	static{
 		//初始化数据
 		mainHandler = new android.os.Handler(Looper.getMainLooper());
@@ -57,9 +58,8 @@ public class Pussy
 	{
 		mMemoryCache=new MemoryCache();
 		mActiveResource=new ActiveResource(this);
-		mThreadPoolExecutor = new ThreadPoolExecutor(32, 128, 10, TimeUnit.SECONDS, new LinkedBlockingDeque<Runnable>());//先进后出
 		final ThreadGroup group=new ThreadGroup("image load");
-		mThreadPoolExecutor.setThreadFactory(new ThreadFactory(){
+		ThreadFactory tf=new ThreadFactory(){
 
 				@Override
 				public Thread newThread(Runnable p1)
@@ -70,7 +70,11 @@ public class Pussy
 					return t;
 				}
 
-			});                                                 
+			};
+		fileThreadPool = new ThreadPoolExecutor(32, 128, 1, TimeUnit.SECONDS, new LinkedBlockingDeque<Runnable>(),tf);//先进后出
+		netThreadPool = new ThreadPoolExecutor(32, 64, 10, TimeUnit.SECONDS, new LinkedBlockingDeque<Runnable>(),tf);//先进后出
+		mThreadPoolExecutor = new ThreadPoolExecutor(32, 128, 3, TimeUnit.SECONDS, new LinkedBlockingDeque<Runnable>(),tf);//先进后出
+		
 		}
 	private void init(Context context)
 	{
@@ -179,7 +183,7 @@ public class Pussy
 	public void putHandleThread(String key, HandleThread ht)
 	{
 		request_handler.put(key, ht);
-		mThreadPoolExecutor.execute(ht);
+		netThreadPool.execute(ht);
 	}
 	public void cancel(Target t)
 	{

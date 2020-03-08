@@ -12,6 +12,7 @@ import android.graphics.Canvas;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import com.moe.pussy.BitmapPool;
+import java.util.concurrent.ThreadPoolExecutor;
 
 public class ResourceRequestHandler implements RequestHandler
 {
@@ -31,8 +32,10 @@ public class ResourceRequestHandler implements RequestHandler
 	}
 
 	@Override
-	public RequestHandler.Response onHandle(Request request)
+	public void onHandle(ThreadPoolExecutor pool,final Request request,final Callback call)
 	{
+		Runnable run=new Runnable(){
+			public void run(){
 		Uri uri=Uri.parse(request.getUrl());
 		BitmapFactory.Options options=new BitmapFactory.Options();
 
@@ -42,7 +45,9 @@ public class ResourceRequestHandler implements RequestHandler
 		options.inJustDecodeBounds=false;
 		options.inBitmap=BitmapPool.getBitmap(options.outWidth,options.outHeight,options.outConfig);
 		options.inMutable=true;
-		return new ResResponse(BitmapFactory.decodeResource(res,Integer.parseInt(uri.getHost()),options));
+		call.onSuccess(new ResResponse(BitmapFactory.decodeResource(res,Integer.parseInt(uri.getHost()),options)));
+		}};
+		pool.execute(run);
 	}
 	class ResResponse extends Response{
 		private Bitmap pd;

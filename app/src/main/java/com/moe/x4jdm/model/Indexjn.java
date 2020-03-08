@@ -70,7 +70,7 @@ public class Indexjn extends Index
 				}
 			}
 		}
-		catch (IOException e)
+		catch (Exception e)
 		{}
 		return index.toJSONString();
 	}
