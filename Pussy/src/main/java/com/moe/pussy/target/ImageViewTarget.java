@@ -30,9 +30,7 @@ public class ImageViewTarget extends Target implements ViewTreeObserver.OnGlobal
 			for(Transformer t:trans){
 				b=t.onTransformer(b,view.getWidth(),view.getHeight());
 			}
-			final PussyDrawable pd=new PussyDrawable(b,getRefresh());
-			//this.pd.setRefresh(pd.getRefresh());
-			putCache(pd);
+			final PussyDrawable pd=putCache(b);
 			view.post(new Runnable(){
 
 					@Override
@@ -41,7 +39,7 @@ public class ImageViewTarget extends Target implements ViewTreeObserver.OnGlobal
 						onSucccess(pd);
 					}
 				});
-			return b;
+			return null;
 		}
 		return null;
 	}

@@ -8,13 +8,14 @@ import com.moe.pussy.target.ImageViewTarget;
 import java.util.Map;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import java.lang.ref.WeakReference;
 
 public class Content
 {
 	private Request request;
 	private String key=null;
 	private Target target;
-	private DiskCache.Cache cache=DiskCache.Cache.MASK;
+	private DiskCache.Cache cache=DiskCache.Cache.NONE;
 	private List<Transformer> mTransformers=new ArrayList<>();
 	private DrawableAnimator anim;
 	private Pussy.Refresh r;
@@ -27,9 +28,8 @@ public class Content
 	{
 		target=null;
 	}
-	MemoryCache getMemory(){
-		return request.getPussy().mMemoryCache;
-	}
+	
+	
 	public Content placeHolder(Drawable res){
 		placeHolder=res;
 		return this;
@@ -76,17 +76,29 @@ public class Content
 		return this;
 	}
 	public void into(Target t){
-		t.placeHolder(placeHolder);
-		this.target=t;
-		t.onAttachContent(this);
+		if(t==null)return;
 		request.getPussy().cancel(t);
+		t.placeHolder(placeHolder);
+		t.onAttachContent(this);
+		this.target=t;
 		//检查是否有缓存
-		Bitmap pd=getMemory().get(getKey());
-		if(pd!=null){
-			request.getPussy().getDiskCache().invalidate(getKey());
-			t.onSucccess(new PussyDrawable(pd,getRefresh()));
-			return;
+		Resource res=request.getPussy().getActiveResource().get(getKey());
+			if(res!=null){
+				res.acquire();
+				request.getPussy().getDiskCache().invalidate(getKey());
+				t.onSucccess(new PussyDrawable(res.bitmap,getRefresh()));
+				
 			}
+		Bitmap bitmap=request.getPussy().getMemoryCache().remove(getKey());
+			if(bitmap!=null){
+				res=new Resource(getKey(),bitmap);
+				res.acquire();
+				getRequest().getPussy().getActiveResource().add(res);
+				request.getPussy().getDiskCache().invalidate(getKey());
+				t.onSucccess(new PussyDrawable(bitmap,getRefresh()));
+				return;
+		}
+		
 		Loader l=new Loader(this);
 		request.getPussy().loader_queue.put(t,l);
 		request.getPussy().mThreadPoolExecutor.execute(l);

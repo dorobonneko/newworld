@@ -3,12 +3,13 @@ import com.moe.pussy.Request;
 import com.moe.pussy.RequestHandler;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class HandleThread implements Runnable
 {
 	private RequestHandler.Response response;
 	private Request request;
-	private List<Callback> calls=new ArrayList<>();
+	private List<Callback> calls=new CopyOnWriteArrayList<>();
 	private boolean success;
 	public HandleThread(Request request){
 		this.request=request;

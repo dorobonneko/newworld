@@ -6,7 +6,7 @@
 	android:orientation="horizontal"
 	android:gravity="top">
 
-	<com.moe.tinyimage.widget.PercentImageView
+	<com.moe.pussy.widget.PercentImageView
 		android:id="@+id/icon"
 		android:layout_width="wrap_content"
 		android:layout_height="160dp"

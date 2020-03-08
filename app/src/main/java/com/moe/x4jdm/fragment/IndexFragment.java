@@ -1,48 +1,33 @@
 package com.moe.x4jdm.fragment;
-import android.support.v4.app.Fragment;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.ViewGroup;
-import android.view.View;
-import com.moe.x4jdm.R;
-import android.support.v4.widget.SwipeRefreshLayout;
-import com.moe.x4jdm.model.Indexx4jdm;
-import com.alibaba.fastjson.JSONObject;
-import android.support.v7.widget.RecyclerView;
-import android.support.design.widget.TabLayout;
-import android.widget.LinearLayout;
-import com.alibaba.fastjson.JSONArray;
-import android.support.design.widget.TabLayout.Tab;
-import android.widget.TabHost;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v4.view.ViewPager;
-import android.os.Handler;
-import android.os.Message;
-import com.moe.x4jdm.adapter.HeaderAdapter;
-import java.util.Iterator;
-import android.widget.Toast;
-import android.widget.ImageView;
-import android.widget.TextView;
-import com.moe.x4jdm.adapter.PostAdapter;
-import android.content.ClipboardManager;
-import android.util.TypedValue;
-import com.moe.x4jdm.util.Space;
+import android.content.DialogInterface;
 import android.content.Intent;
-import com.moe.x4jdm.ListActivity;
-import com.moe.x4jdm.adapter.PostAdapter.ViewHolder;
-import com.moe.x4jdm.PostViewActivity;
-import com.moe.x4jdm.model.Index;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.RecyclerView;
+import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
-import android.support.v7.app.AlertDialog;
-import android.content.DialogInterface;
-import com.moe.x4jdm.widget.GridLayoutManager;
-import com.moe.x4jdm.adapter.IndexAdapter;
-import com.moe.x4jdm.model.Database;
-import com.moe.x4jdm.widget.IndexGridLayoutManager;
+import android.widget.TextView;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.moe.pussy.Pussy;
+import com.moe.x4jdm.ListActivity;
+import com.moe.x4jdm.PostViewActivity;
+import com.moe.x4jdm.R;
+import com.moe.x4jdm.adapter.IndexAdapter;
+import com.moe.x4jdm.adapter.PostAdapter;
+import com.moe.x4jdm.model.Database;
+import com.moe.x4jdm.model.Index;
+import com.moe.x4jdm.util.Space;
+import com.moe.x4jdm.widget.GridLayoutManager;
+import com.moe.x4jdm.widget.IndexGridLayoutManager;
 
 public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener,View.OnClickListener,PostAdapter.OnItemClickListener
 {
@@ -51,6 +36,7 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 	private RecyclerView recyclerview;
 	private JSONArray data;
 	private IndexAdapter mIndexAdapter;
+	private Thread mThread;
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
@@ -142,11 +128,15 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 	@Override
 	public void onRefresh()
 	{
-		new Thread(){
+		if(mThread!=null)
+			mThread.interrupt();
+		(mThread=new Thread(){
 			public void run()
 			{
 				Index.getModel(getContext()).clearCache();
+				if(interrupted())return;
 				final String data=Index.getModel(getContext()).getIndex();
+				if(interrupted())return;
 				mSwipeRefreshLayout.post(new Runnable(){
 
 						@Override
@@ -156,7 +146,7 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 						}
 					});
 			}
-		}.start();
+		}).start();
 	}
 
     private void load(String data)
@@ -166,11 +156,11 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 		mSwipeRefreshLayout.setRefreshing(false);
 		if (data == null)return;
 		JSONArray ja=JSONArray.parseArray(data);
-		int size=this.data.size();
+		int size=mIndexAdapter.getItemCount();
 		this.data.clear();
 		mIndexAdapter.notifyItemRangeRemoved(0,size);
 		this.data.addAll(ja);
-		mIndexAdapter.notifyItemRangeInserted(0,this.data.size());
+		mIndexAdapter.notifyItemRangeInserted(0,this.mIndexAdapter.getItemCount());
 //		JSONObject jo=JSONObject.parseObject(data);
 //		if (jo == null)return;
 //		JSONArray tabs=jo.getJSONArray("tab");

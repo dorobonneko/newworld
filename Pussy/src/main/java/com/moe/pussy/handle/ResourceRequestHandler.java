@@ -36,7 +36,7 @@ public class ResourceRequestHandler implements RequestHandler
 		Uri uri=Uri.parse(request.getUrl());
 		BitmapFactory.Options options=new BitmapFactory.Options();
 
-		options.inPreferredConfig=Bitmap.Config.RGB_565;
+		options.inPreferredConfig=Bitmap.Config.ARGB_8888;
 		options.inJustDecodeBounds=true;
 		BitmapFactory.decodeResource(res,Integer.parseInt(uri.getHost()),options);
 		options.inJustDecodeBounds=false;
@@ -62,48 +62,5 @@ public class ResourceRequestHandler implements RequestHandler
 
 		
 	}
-	class ResDrawable extends PussyDrawable{
-		private Drawable d;
-		public ResDrawable(Drawable d){
-			this.d=d;
-		}
-
-		@Override
-		public void draw(Canvas p1)
-		{
-			d.draw(p1);
-		}
-
-		@Override
-		public int getIntrinsicWidth()
-		{
-			return d.getIntrinsicWidth();
-		}
-
-		@Override
-		public int getIntrinsicHeight()
-		{
-			return d.getIntrinsicHeight();
-		}
-
-		@Override
-		public void setBounds(int left, int top, int right, int bottom)
-		{
-			d.setBounds(left, top, right, bottom);
-		}
-
-		@Override
-		public void setAlpha(int p1)
-		{
-			d.setAlpha(p1);
-		}
-
-		@Override
-		public int getOpacity()
-		{
-			return d.getOpacity();
-		}
-
-		
-	}
+	
 }

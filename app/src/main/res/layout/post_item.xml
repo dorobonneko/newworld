@@ -16,7 +16,7 @@
 			android:layout_height="wrap_content"
 			app:cardCornerRadius="5dp">
 
-			<com.moe.tinyimage.widget.PercentImageView
+			<com.moe.pussy.widget.PercentImageView
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:id="@+id/icon"

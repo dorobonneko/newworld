@@ -28,13 +28,26 @@ import android.support.v4.view.ViewCompat;
 import android.content.res.TypedArray;
 import android.support.v4.content.res.TypedArrayUtils;
 import android.graphics.drawable.ColorDrawable;
+import android.view.animation.RotateAnimation;
+import android.view.animation.LinearInterpolator;
 
 public class IndexAdapter extends RecyclerView.Adapter
 {
 	private JSONArray index;
+	private LoadMoreViewHolder vh;
+	private int icon;
+	private String text;
+	private RotateAnimation rotate;
 	public IndexAdapter(JSONArray index)
 	{
 		this.index = index;
+		text="已到底";
+		icon=R.drawable.check;
+		rotate=new RotateAnimation(0,360,RotateAnimation.RELATIVE_TO_SELF,0.5f,RotateAnimation.RELATIVE_TO_SELF,0.5f);
+		rotate.setRepeatCount(-1);
+		rotate.setDuration(500);
+		rotate.setInterpolator(new LinearInterpolator());
+		
 	}
 	@Override
 	public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup p1, int p2)
@@ -54,10 +67,26 @@ public class IndexAdapter extends RecyclerView.Adapter
 			case 6:
 				return new TextItemViewHolder(new Button(p1.getContext()));
 				//return new PostLineViewHolder(LayoutInflater.from(p1.getContext()).inflate(R.layout.post_line_item, p1, false));
+			case 7:
+				return vh=new LoadMoreViewHolder(LayoutInflater.from(p1.getContext()).inflate(R.layout.loadmore, p1, false));
+				
 		}
 		return null;
 	}
-
+	public void setFoot(int icon, String text,boolean anim)
+	{
+		this.icon = icon;
+		this.text = text;
+		if (vh != null)
+		{
+			vh.icon.setImageResource(icon);
+			vh.title.setText(text);
+			if(anim)
+				vh.icon.startAnimation(rotate);
+			else
+				vh.icon.clearAnimation();
+		}
+	}
 	@Override
 	public void onBindViewHolder(RecyclerView.ViewHolder vh, int position)
 	{
@@ -109,13 +138,17 @@ public class IndexAdapter extends RecyclerView.Adapter
 				TextItemViewHolder plvh=(TextItemViewHolder) vh;
 				JSONObject title=index.getJSONObject(position);
 				plvh.title.setText(title.getString("title"));
+				}else if(vh instanceof LoadMoreViewHolder){
+					LoadMoreViewHolder lmvh=(IndexAdapter.LoadMoreViewHolder) vh;
+					lmvh.icon.setImageResource(icon);
+					lmvh.title.setText(text);
 				}
 	}
 
 	@Override
 	public int getItemCount()
 	{
-		return index.size();
+		return index.isEmpty()?0:(index.size()+1);
 	}
 
 	@Override
@@ -123,6 +156,8 @@ public class IndexAdapter extends RecyclerView.Adapter
 	{
 		if(index.isEmpty())
 			return 0;
+		if(position==getItemCount()-1)
+			return 7;
 		Object item= index.get(position);
 		if(item==null)
 			return 0;
@@ -147,6 +182,15 @@ public class IndexAdapter extends RecyclerView.Adapter
 				return 2;
 		}
 		return 0;
+	}
+	public class LoadMoreViewHolder extends RecyclerView.ViewHolder{
+		TextView title;
+		ImageView icon;
+		public LoadMoreViewHolder(View v){
+			super(v);
+			title=v.findViewById(R.id.title);
+			icon=v.findViewById(R.id.icon);
+		}
 	}
 	public class TextItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 		private TextView title;

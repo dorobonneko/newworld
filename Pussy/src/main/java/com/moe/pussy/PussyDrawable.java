@@ -7,6 +7,7 @@ import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable.Callback;
 import android.graphics.PaintFlagsDrawFilter;
 import android.graphics.Paint;
+import java.lang.ref.WeakReference;
 
 public class PussyDrawable extends Drawable implements Animatable
 {
@@ -19,12 +20,7 @@ public class PussyDrawable extends Drawable implements Animatable
 		this.bitmap = bitmap;
 		refresh=r;
 	}
-	public PussyDrawable()
-	{}
-	public void setRefresh(Pussy.Refresh r)
-	{
-		refresh = r;
-	}
+	
 	public void setAnimator(DrawableAnimator da)
 	{
 		this.da = da;
@@ -61,10 +57,14 @@ public class PussyDrawable extends Drawable implements Animatable
 	@Override
 	public void draw(Canvas p1)
 	{
-		if (bitmap != null)
+		Bitmap bitmap=this.bitmap;
+		if (bitmap != null){
 			synchronized (bitmap)
 			{
-				if (!(bitmap.isRecycled()||BitmapPool.isRecycled(bitmap)))
+				if (bitmap.isRecycled()||BitmapPool.isRecycled(bitmap)){
+					if(refresh!=null)
+						refresh.refresh();
+				}else
 				{
 					p1.setDrawFilter(new PaintFlagsDrawFilter(0, Paint.DITHER_FLAG|Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG));
 					if (da != null)
@@ -72,8 +72,8 @@ public class PussyDrawable extends Drawable implements Animatable
 					else
 						p1.drawBitmap(bitmap, 0, 0, null);
 				}
-				else if(refresh!=null)
-					refresh.refresh();
+				
+			}
 			}else if(refresh!=null){
 				refresh.refresh();
 			}
@@ -96,12 +96,14 @@ public class PussyDrawable extends Drawable implements Animatable
 	}
 	public int getByteCount()
 	{
+		Bitmap bitmap=this.bitmap;
 		if (bitmap != null)
 			return bitmap.getByteCount();
 		return 0;
 	}
 	public void recycle()
 	{
+		Bitmap bitmap=this.bitmap;
 		if (bitmap != null)
 			synchronized (bitmap)
 			{
@@ -114,12 +116,14 @@ public class PussyDrawable extends Drawable implements Animatable
 	}
 	public Bitmap getBitmap()
 	{
+		Bitmap bitmap=this.bitmap;
 		return bitmap;
 	}
 
 	@Override
 	public int getIntrinsicWidth()
 	{
+		Bitmap bitmap=this.bitmap;
 		if (bitmap != null)
 			return bitmap.getWidth();
 		return super.getIntrinsicWidth();
@@ -128,9 +132,11 @@ public class PussyDrawable extends Drawable implements Animatable
 	@Override
 	public int getIntrinsicHeight()
 	{
+		Bitmap bitmap=this.bitmap;
 		if (bitmap != null)
 			return bitmap.getHeight();
 		return super.getIntrinsicHeight();
 	}
+
 
 }

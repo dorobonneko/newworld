@@ -1,21 +1,20 @@
 package com.moe.x4jdm.fragment;
-import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
-import android.view.ViewGroup;
 import android.os.Bundle;
-import android.view.View;
-import com.moe.x4jdm.R;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import com.moe.x4jdm.model.Indexx4jdm;
-import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.JSONArray;
-import com.moe.x4jdm.util.Space;
 import android.util.TypedValue;
-import com.moe.x4jdm.adapter.PostAdapter;
-import android.support.v7.widget.SimpleItemAnimator;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.moe.x4jdm.R;
+import com.moe.x4jdm.adapter.IndexAdapter;
 import com.moe.x4jdm.model.Index;
-import com.moe.x4jdm.widget.GridLayoutManager;
+import com.moe.x4jdm.util.Space;
+import com.moe.x4jdm.widget.IndexGridLayoutManager;
 
 public class ListFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener
 {
@@ -26,7 +25,7 @@ public class ListFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 	private int count;
 	private JSONArray post_data;
 	private boolean loadMore,canloadmore=true;
-	private PostAdapter pa;
+	private IndexAdapter pa;
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
@@ -41,8 +40,8 @@ public class ListFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 		mSwipeRefreshLayout.setOnRefreshListener(this);
 		mRecyclerView=view.findViewById(R.id.recyclerview);
 		
-		pa=new PostAdapter(post_data=new JSONArray(),true);
-		mRecyclerView.setLayoutManager(new GridLayoutManager(getContext(),pa));
+		pa=new IndexAdapter(post_data=new JSONArray());
+		mRecyclerView.setLayoutManager(new IndexGridLayoutManager(getContext(),pa));
 		//((SimpleItemAnimator)mRecyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
 		mRecyclerView.addItemDecoration(new Space((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,8,getResources().getDisplayMetrics())));
 		mRecyclerView.setAdapter(pa);

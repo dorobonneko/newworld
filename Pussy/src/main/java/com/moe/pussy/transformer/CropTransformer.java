@@ -79,13 +79,14 @@ public class CropTransformer implements Transformer
 			}
 		}
 		try{
-			Bitmap buff=BitmapPool.getBitmap(rect.width(),rect.height(),Bitmap.Config.RGB_565);
+			Bitmap buff=BitmapPool.getBitmap(rect.width(),rect.height(),Bitmap.Config.ARGB_8888);
 			Canvas canvas=new Canvas(buff);
 			canvas.translate(-rect.left,-rect.top);
 			canvas.drawBitmap(source,0,0,null);
 			//Bitmap buff=source.createBitmap(source,rect.left,rect.top,rect.width(),rect.height());
 			//if(buff!=source)
-			BitmapPool.recycle(source);
+			//BitmapPool.recycle(source);
+			//source.recycle();
 		return buff;
 		}catch(Exception e){}
 	return null;

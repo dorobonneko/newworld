@@ -42,7 +42,7 @@ public class BlurTransformer implements Transformer
 		in.copyTo(out_bitmap);
 		rs.destroy();
 		//if(out_bitmap!=source)
-		BitmapPool.recycle(source);
+		//BitmapPool.recycle(source);
 		//return out_bitmap;
 		return out_bitmap;
 	}

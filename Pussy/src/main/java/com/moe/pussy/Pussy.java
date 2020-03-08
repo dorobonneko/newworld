@@ -38,7 +38,6 @@ public class Pussy
 	private ComponentCallbacks mComponentCallbacks;
 	private Application.ActivityLifecycleCallbacks mActivityLifecycle;
 	private Context mContext;
-	MemoryCache mMemoryCache;
 	DiskCache mDiskCache;
 
 	Map<Target,Loader> loader_queue=new HashMap<>();
@@ -47,6 +46,8 @@ public class Pussy
 	static Decoder decoder;
 	private Dispatcher mDispatcher;
 	private static android.os.Handler mainHandler;
+	private MemoryCache mMemoryCache;
+	private ActiveResource mActiveResource;
 	static{
 		//初始化数据
 		mainHandler = new android.os.Handler(Looper.getMainLooper());
@@ -54,6 +55,8 @@ public class Pussy
 	}
 	private Pussy()
 	{
+		mMemoryCache=new MemoryCache();
+		mActiveResource=new ActiveResource(this);
 		mThreadPoolExecutor = new ThreadPoolExecutor(32, 128, 10, TimeUnit.SECONDS, new LinkedBlockingDeque<Runnable>());//先进后出
 		final ThreadGroup group=new ThreadGroup("image load");
 		mThreadPoolExecutor.setThreadFactory(new ThreadFactory(){
@@ -68,8 +71,7 @@ public class Pussy
 				}
 
 			});                                                 
-		mMemoryCache = new MemoryCache();
-	}
+		}
 	private void init(Context context)
 	{
 		this.mContext = context;
@@ -81,6 +83,12 @@ public class Pussy
 		}
 		if (mActivityLifecycle == null)
 			((Application)context.getApplicationContext()).registerActivityLifecycleCallbacks(mActivityLifecycle = new ActivityLifecycle()); 
+	}
+	public ActiveResource getActiveResource(){
+		return mActiveResource;
+	}
+	public MemoryCache getMemoryCache(){
+		return mMemoryCache;
 	}
 	public static Pussy $(Context context)
 	{
@@ -175,6 +183,13 @@ public class Pussy
 	}
 	public void cancel(Target t)
 	{
+		if(t==null)return;
+		Content content=t.getContent();
+		if(content!=null){
+		Resource res=getActiveResource().get(content.getKey());
+		if(res!=null)
+			res.release();
+		}
 		synchronized (loader_queue)
 		{
 			Loader l=loader_queue.remove(t);
@@ -219,10 +234,18 @@ public class Pussy
 		mThreadPoolExecutor.shutdown();
 		synchronized (loader_queue)
 		{
-			Iterator<Loader> i=loader_queue.values().iterator();
+			Iterator<Map.Entry<Target,Loader>> i=loader_queue.entrySet().iterator();
 			while (i.hasNext())
 			{
-				i.next().cancel();
+				Map.Entry<Target,Loader> entry=i.next();
+				i.remove();
+				Content content=entry.getKey().getContent();
+				if(content!=null){
+					Resource res=getActiveResource().get(content.getKey());
+					if(res!=null)
+						res.release();
+				}
+				entry.getValue().cancel();
 			}
 		}
 	}

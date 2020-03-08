@@ -9,7 +9,7 @@ import java.util.List;
 public class BitmapPool
 {
 	private static Map<String,List<Bitmap>> map=new HashMap<String,List<Bitmap>>();
-	private static int maxSize=32;
+	private static int maxSize=8;
 	private BitmapPool(){
 	}
 	
@@ -22,7 +22,7 @@ public class BitmapPool
 		if(list.isEmpty())
 			return Bitmap.createBitmap(w,h,config);
 			Bitmap b= list.remove(0);
-			b.reconfigure(w,h,config);
+			//b.reconfigure(w,h,config);
 			return b;
 			}
 	}

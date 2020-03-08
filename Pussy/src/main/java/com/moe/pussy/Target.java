@@ -11,7 +11,9 @@ public abstract class Target
 	public void placeHolder(Drawable placeHolder)
 	{
 	}
-	
+	Content getContent(){
+		return content;
+	}
 	public Bitmap onResourceReady(Bitmap pd,Transformer... trans){
 		if(trans.length>0){
 			for(Transformer t:trans){
@@ -22,22 +24,25 @@ public abstract class Target
 	}
 	public abstract void onSucccess(PussyDrawable pd);
 	public abstract void error(Throwable e,Drawable d);
-	public void putCache(PussyDrawable pd){
-		if(pd.getBitmap()==null)return;
-		content.getMemory().put(content.getKey(),pd.getBitmap());
+	public PussyDrawable putCache(Bitmap pd){
+		if(pd==null)return null;
+		Resource res=new Resource(content.getKey(),pd);
+		res.acquire();
+		content.getRequest().getPussy().getActiveResource().add(res);
 		if(content.getCache()==DiskCache.Cache.MASK){
 			//持久化
-			Bitmap bitmap=pd.getBitmap();
+			Bitmap bitmap=pd;
 			if (bitmap != null)
 			{
 				try
 				{
-					bitmap.compress(Bitmap.CompressFormat.WEBP, 100, new FileOutputStream(content.getRequest().getPussy().mDiskCache.getCache(content.getKey())));
+					bitmap.compress(Bitmap.CompressFormat.WEBP, 99, new FileOutputStream(content.getRequest().getPussy().mDiskCache.getCache(content.getKey())));
 				}
 				catch (FileNotFoundException e)
 				{}
 			}
 		}
+		return new PussyDrawable(pd,getRefresh());
 	}
 	protected void onAttachContent(Content c){
 		if(this.content!=null){

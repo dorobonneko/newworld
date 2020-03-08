@@ -53,6 +53,7 @@ public class Application extends android.app.Application implements Thread.Uncau
 		//Bugly.init(this,"39c93f2bb3",false);
 		Thread.currentThread().setUncaughtExceptionHandler(this);
 		trustEveryone();
+		//LeakCanary.install(this);
 	}
 	public static void trustEveryone() {
         try {

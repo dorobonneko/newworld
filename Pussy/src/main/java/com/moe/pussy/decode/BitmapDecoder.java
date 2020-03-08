@@ -15,7 +15,7 @@ public class BitmapDecoder implements Decoder
 	{
 		BitmapFactory.Options options=new BitmapFactory.Options();
 		
-		options.inPreferredConfig=Bitmap.Config.RGB_565;
+		options.inPreferredConfig=Bitmap.Config.ARGB_8888;
 		options.inJustDecodeBounds=true;
 		BitmapFactory.decodeFile(input.getAbsolutePath(),options);
 		if(options.outWidth<=0||options.outHeight<=0)return new Bitmap[0];

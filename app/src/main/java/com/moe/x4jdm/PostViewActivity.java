@@ -35,6 +35,8 @@ import com.moe.x4jdm.model.Index;
 import java.util.Map;
 import com.moe.pussy.Anim;
 import com.moe.pussy.transformer.BlurTransformer;
+import android.support.v4.view.AsyncLayoutInflater;
+import android.view.ViewGroup;
 
 public class PostViewActivity extends AppCompatActivity implements View.OnApplyWindowInsetsListener,PlayViewPagerAdapter.OnClickListener,View.OnClickListener
 {
@@ -51,34 +53,42 @@ public class PostViewActivity extends AppCompatActivity implements View.OnApplyW
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.post_view);
-		setSupportActionBar(toolbar = (Toolbar)findViewById(R.id.toolbar));
-		url = getIntent().getStringExtra("url");
-		key=getIntent().getStringExtra("key");
-		icon = findViewById(R.id.icon);
-		title = findViewById(R.id.title);
-		summary = findViewById(R.id.summary);
-		summary.setMovementMethod(LinkMovementMethod.getInstance());
-		profile = findViewById(R.id.profile);
-		profile.setMovementMethod(ScrollingMovementMethod.getInstance());
-		backicon = findViewById(R.id.backicon);
-		retry=findViewById(R.id.retry);
-		retry.setOnClickListener(this);
-		CollapsingToolbarLayout ctl=findViewById(R.id.collapsing);
-		ctl.setTitleEnabled(false);
-		getSupportActionBar().setTitle(null);
-		//AppBarLayout abl=findViewById(R.id.appbarlayout);
-		//abl.setFitsSystemWindows(true);
-		//abl.setOnApplyWindowInsetsListener(this);
-		//abl.requestFitSystemWindows()
-		mTabLayout = findViewById(R.id.tablayout);
-		mViewPager = findViewById(R.id.viewpager);
-		mTabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
-		mTabLayout.setupWithViewPager(mViewPager, true);
-		mViewPager.setAdapter(new PlayViewPagerAdapter(play_data = new JSONArray()));
-		((PlayViewPagerAdapter)mViewPager.getAdapter()).setOnClickListener(this);
-		icon.setLayerType(View.LAYER_TYPE_SOFTWARE,null);
-		load();
+		new AsyncLayoutInflater(this).inflate(R.layout.post_view, null, new AsyncLayoutInflater.OnInflateFinishedListener(){
+
+				@Override
+				public void onInflateFinished(View p1, int p2, ViewGroup p3)
+				{
+					setContentView(p1);
+					setSupportActionBar(toolbar = (Toolbar)findViewById(R.id.toolbar));
+					url = getIntent().getStringExtra("url");
+					key=getIntent().getStringExtra("key");
+					icon = findViewById(R.id.icon);
+					title = findViewById(R.id.title);
+					summary = findViewById(R.id.summary);
+					summary.setMovementMethod(LinkMovementMethod.getInstance());
+					profile = findViewById(R.id.profile);
+					profile.setMovementMethod(ScrollingMovementMethod.getInstance());
+					backicon = findViewById(R.id.backicon);
+					retry=findViewById(R.id.retry);
+					retry.setOnClickListener(PostViewActivity.this);
+					CollapsingToolbarLayout ctl=findViewById(R.id.collapsing);
+					ctl.setTitleEnabled(false);
+					getSupportActionBar().setTitle(null);
+					//AppBarLayout abl=findViewById(R.id.appbarlayout);
+					//abl.setFitsSystemWindows(true);
+					//abl.setOnApplyWindowInsetsListener(this);
+					//abl.requestFitSystemWindows()
+					mTabLayout = findViewById(R.id.tablayout);
+					mViewPager = findViewById(R.id.viewpager);
+					mTabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
+					mTabLayout.setupWithViewPager(mViewPager, true);
+					mViewPager.setAdapter(new PlayViewPagerAdapter(play_data = new JSONArray()));
+					((PlayViewPagerAdapter)mViewPager.getAdapter()).setOnClickListener(PostViewActivity.this);
+					icon.setLayerType(View.LAYER_TYPE_SOFTWARE,null);
+					load();
+				}
+			});
+		
 	}
 
 	@Override
