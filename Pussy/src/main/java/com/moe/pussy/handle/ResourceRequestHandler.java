@@ -43,7 +43,7 @@ public class ResourceRequestHandler implements RequestHandler
 		options.inJustDecodeBounds=true;
 		BitmapFactory.decodeResource(res,Integer.parseInt(uri.getHost()),options);
 		options.inJustDecodeBounds=false;
-		options.inBitmap=BitmapPool.getBitmap(options.outWidth,options.outHeight,options.outConfig);
+		options.inBitmap=BitmapPool.getBitmap(options.outWidth,options.outHeight,options.inPreferredConfig);
 		options.inMutable=true;
 		call.onSuccess(new ResResponse(BitmapFactory.decodeResource(res,Integer.parseInt(uri.getHost()),options)));
 		}};

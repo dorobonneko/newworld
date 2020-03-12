@@ -14,6 +14,16 @@ import org.jsoup.select.Elements;
 public class Indexhh extends Index
 {
 
+	
+
+
+	@Override
+	public String getFilter()
+	{
+		return null;
+	}
+
+
 	@Override
 	public void clearCache()
 	{

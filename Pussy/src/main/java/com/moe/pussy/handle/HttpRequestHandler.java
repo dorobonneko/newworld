@@ -39,7 +39,10 @@ public class HttpRequestHandler implements RequestHandler
 			public void run(){
 				try
 				{
-					call.onSuccess(onHandle(request));
+					Response res=onHandle(request);
+					if(res==null)
+						throw new NullPointerException();
+						call.onSuccess(res);
 				}
 				catch (Exception e)
 				{

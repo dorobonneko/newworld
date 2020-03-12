@@ -1,49 +1,44 @@
 package com.moe.pussy;
-import android.content.Context;
-import android.app.Fragment;
-import android.view.View;
-import javax.net.ssl.SSLSocketFactory;
-import java.util.Map;
-import java.util.HashMap;
-import android.content.ComponentCallbacks2;
-import android.content.res.Configuration;
-import android.content.ComponentCallbacks;
-import android.app.Application;
-import android.os.Bundle;
 import android.app.Activity;
+import android.app.Application;
+import android.app.Fragment;
 import android.app.FragmentManager;
-import java.util.Iterator;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.List;
-import java.util.ArrayList;
-import com.moe.pussy.handle.HandleThread;
+import android.content.ComponentCallbacks;
+import android.content.ComponentCallbacks2;
+import android.content.Context;
+import android.content.res.Configuration;
+import android.os.Bundle;
 import android.os.Looper;
 import android.util.DisplayMetrics;
-import com.moe.pussy.decode.BitmapDecoder;
-import com.moe.pussy.handle.HttpRequestHandler;
+import android.view.View;
+import com.moe.pussy.handle.HandleThread;
+import java.lang.ref.WeakReference;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import javax.net.ssl.SSLSocketFactory;
 
 public class Pussy
 {
 	private static Map<Context,Pussy> context_pussy=new HashMap<>();
 	private static Map<Fragment,Pussy> fragment_pussy=new HashMap<>();
 	private static Map<View,Pussy> view_pussy=new HashMap<>();
-	static String userAgent="Pussy_1.0";
-	private static SSLSocketFactory SSLSocketFactory;
-	static long diskCacheSize=128 * 1024 * 1024;
+	protected String userAgent="Pussy_1.0";
+	private SSLSocketFactory SSLSocketFactory;
 	private ComponentCallbacks mComponentCallbacks;
 	private Application.ActivityLifecycleCallbacks mActivityLifecycle;
-	private Context mContext;
-	DiskCache mDiskCache;
+	private WeakReference<Context> mContext;
+	protected DiskCache mDiskCache;
 
-	Map<Target,Loader> loader_queue=new HashMap<>();
-	private Map<String,HandleThread> request_handler=new ConcurrentHashMap<>();
+	//Map<Target,Loader> loader_queue=new HashMap<>();
+	static Map<String,HandleThread> request_handler=new ConcurrentHashMap<>();
 	ThreadPoolExecutor mThreadPoolExecutor;
-	static Decoder decoder;
+	Decoder decoder;
 	private Dispatcher mDispatcher;
 	private static android.os.Handler mainHandler;
 	private MemoryCache mMemoryCache;
@@ -52,10 +47,12 @@ public class Pussy
 	static{
 		//初始化数据
 		mainHandler = new android.os.Handler(Looper.getMainLooper());
-		decoder = new BitmapDecoder();
-	}
+		}
 	private Pussy()
 	{
+		userAgent=PussyConfig.userAgent;
+		SSLSocketFactory=PussyConfig.mSSLSocketFactory;
+		decoder=PussyConfig.mDecoder;
 		mMemoryCache=new MemoryCache();
 		mActiveResource=new ActiveResource(this);
 		final ThreadGroup group=new ThreadGroup("image load");
@@ -71,14 +68,14 @@ public class Pussy
 				}
 
 			};
-		fileThreadPool = new ThreadPoolExecutor(32, 128, 1, TimeUnit.SECONDS, new LinkedBlockingDeque<Runnable>(),tf);//先进后出
+		fileThreadPool = new ThreadPoolExecutor(64, 128, 1, TimeUnit.SECONDS, new LinkedBlockingDeque<Runnable>(),tf);//先进后出
 		netThreadPool = new ThreadPoolExecutor(32, 64, 10, TimeUnit.SECONDS, new LinkedBlockingDeque<Runnable>(),tf);//先进后出
 		mThreadPoolExecutor = new ThreadPoolExecutor(32, 128, 3, TimeUnit.SECONDS, new LinkedBlockingDeque<Runnable>(),tf);//先进后出
 		
 		}
 	private void init(Context context)
 	{
-		this.mContext = context;
+		this.mContext = new WeakReference<Context>(context);
 		mDispatcher =Dispatcher.getDefault(context);
 		mDiskCache = DiskCache.get(this);
 		if (mComponentCallbacks == null)
@@ -121,7 +118,7 @@ public class Pussy
 			return p;
 		}
 	}
-	public synchronized static Pussy $(View v)
+	public static Pussy $(View v)
 	{
 		synchronized (view_pussy)
 		{
@@ -142,17 +139,13 @@ public class Pussy
 	{
 		mainHandler.post(run);
 	}
-	public static void userAgent(String useragent)
+	public void userAgent(String useragent)
 	{
-		Pussy.userAgent = useragent;
+		this.userAgent = useragent;
 	}
-	public static void sslSocketFactory(SSLSocketFactory ssf)
+	public void sslSocketFactory(SSLSocketFactory ssf)
 	{
-		Pussy.SSLSocketFactory = ssf;
-	}
-	public static void diskCacheSize(long size)
-	{
-		Pussy.diskCacheSize = size;
+		SSLSocketFactory = ssf;
 	}
 	public Request load(String url)
 	{
@@ -172,19 +165,7 @@ public class Pussy
 		return SSLSocketFactory;
 	}
 	
-	public HandleThread getHandleThread(String key)
-	{
-		return request_handler.get(key);
-	}
-	public void removeHandleThread(String key)
-	{
-		request_handler.remove(key);
-	}
-	public void putHandleThread(String key, HandleThread ht)
-	{
-		request_handler.put(key, ht);
-		netThreadPool.execute(ht);
-	}
+	
 	public void cancel(Target t)
 	{
 		if(t==null)return;
@@ -193,27 +174,16 @@ public class Pussy
 		Resource res=getActiveResource().get(content.getKey());
 		if(res!=null)
 			res.release();
+		Loader l=content.loader;
+		if(l!=null)
+			l.cancel();
 		}
-		synchronized (loader_queue)
-		{
-			Loader l=loader_queue.remove(t);
-			if (l != null)
-			{
-				//移出线程池
-				mThreadPoolExecutor.remove(l);
-				l.cancel();
-			}
-		}
+		
 	}
 	
-	//解码器
-	public static void decoder(Decoder d)
-	{
-		decoder = d;
-	}
 	public Context getContext()
 	{
-		return mContext;
+		return mContext.get();
 	}
 	public void trimMemory()
 	{
@@ -235,27 +205,12 @@ public class Pussy
 	{
 		clearMemory();
 		trimCache();
-		mThreadPoolExecutor.shutdown();
-		synchronized (loader_queue)
-		{
-			Iterator<Map.Entry<Target,Loader>> i=loader_queue.entrySet().iterator();
-			while (i.hasNext())
-			{
-				Map.Entry<Target,Loader> entry=i.next();
-				i.remove();
-				Content content=entry.getKey().getContent();
-				if(content!=null){
-					Resource res=getActiveResource().get(content.getKey());
-					if(res!=null)
-						res.release();
-				}
-				entry.getValue().cancel();
-			}
-		}
+		mThreadPoolExecutor.shutdownNow();
+		
 	}
 	int[] getScreenSize()
 	{
-		DisplayMetrics dm=mContext.getResources().getDisplayMetrics();
+		DisplayMetrics dm=mContext.get().getResources().getDisplayMetrics();
 		return new int[]{dm.widthPixels,dm.heightPixels};
 	}
 	class ComponentCallbacks3 implements ComponentCallbacks2

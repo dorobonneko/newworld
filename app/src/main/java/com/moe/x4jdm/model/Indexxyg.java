@@ -16,10 +16,6 @@ import java.net.URLDecoder;
 public class Indexxyg extends Index
 {
 
-	@Override
-	public void clearCache()
-	{
-	}
 
 	@Override
 	public String getIndex()

@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.io.EOFException;
+import java.io.BufferedOutputStream;
 
 public class DiskCache
 {
@@ -21,7 +22,7 @@ public class DiskCache
 		cachePath=path.getAbsolutePath();
 		if(!path.exists())
 			path.mkdirs();
-		size=p.diskCacheSize;
+		this.size=PussyConfig.diskCacheSize;
 	}
 	public static DiskCache get(Pussy p){
 		if(mDiskCache==null){
@@ -83,19 +84,19 @@ public class DiskCache
 	public class CacheInputStream extends InputStream
 	{
 		private InputStream in;
-		private OutputStream out;
+		private BufferedOutputStream out;
 		private File file;
 		public CacheInputStream(InputStream in,File out) throws FileNotFoundException{
 			this.in=in;
 			this.file=out;
-			this.out=new FileOutputStream(out,true);
+			this.out=new BufferedOutputStream(new FileOutputStream(out,true),8192);
 		}
 		@Override
 		public int read() throws IOException
 		{
 			int i=in.read();
 			out.write(i);
-			out.flush();
+			//out.flush();
 			return i;
 		}
 

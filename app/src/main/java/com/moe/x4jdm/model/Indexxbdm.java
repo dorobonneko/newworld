@@ -19,11 +19,6 @@ import com.moe.x4jdm.video.VideoParse;
 
 public class Indexxbdm extends Index
 {
-	@Override
-	public void clearCache()
-	{
-		
-	}
 
 	@Override
 	public String getIndex()

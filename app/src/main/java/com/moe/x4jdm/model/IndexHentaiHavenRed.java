@@ -17,11 +17,6 @@ import org.jsoup.Connection;
 
 public class IndexHentaiHavenRed extends Index
 {
-	@Override
-	public void clearCache()
-	{
-		// TODO: Implement this method
-	}
 
 	@Override
 	public String getIndex()

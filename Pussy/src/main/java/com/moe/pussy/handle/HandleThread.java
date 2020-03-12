@@ -18,6 +18,7 @@ public class HandleThread implements Runnable,RequestHandler.Callback
 	public HandleThread(Request request,ThreadPoolExecutor pool){
 		this.request=request;
 		this.pool=pool;
+		pool.execute(this);
 	}
 	public void addCallback(Callback call){
 		if(!success)
@@ -41,6 +42,7 @@ public class HandleThread implements Runnable,RequestHandler.Callback
 	@Override
 	public void onSuccess(RequestHandler.Response response)
 	{
+		this.response=response;
 		success=true;
 		for(Callback call:calls){
 			call.onResponse(response);

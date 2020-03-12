@@ -17,6 +17,16 @@ import java.util.regex.Matcher;
 
 public class Indexahv extends Index
 {
+
+
+
+
+	@Override
+	public String getFilter()
+	{
+		return null;
+	}
+
 	@Override
 	public void clearCache()
 	{

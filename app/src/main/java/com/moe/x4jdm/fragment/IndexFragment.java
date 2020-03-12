@@ -37,6 +37,7 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 	private JSONArray data;
 	private IndexAdapter mIndexAdapter;
 	private Thread mThread;
+	private String key;
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
@@ -97,6 +98,10 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 								f=getFragmentManager().findFragmentByTag("time");
 								if(f!=null)
 								getFragmentManager().beginTransaction().remove(f).commit();
+								f=getFragmentManager().findFragmentByTag("filter");
+								if(f!=null)
+									getFragmentManager().beginTransaction().remove(f).commit();
+								
 								mSwipeRefreshLayout.setRefreshing(true);
 								onRefresh();
 								Pussy.$(getContext()).clearMemory();
@@ -159,6 +164,7 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 
     private void load(String data)
 	{
+		key=Index.getKey(getContext());
 		progress.setVisibility(View.GONE);
 		mSwipeRefreshLayout.setEnabled(true);
 		mSwipeRefreshLayout.setRefreshing(false);
@@ -216,7 +222,7 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 
 	
 
-	private void createMainView(JSONObject jo, LayoutInflater inflater, ViewGroup parent)
+	/*private void createMainView(JSONObject jo, LayoutInflater inflater, ViewGroup parent)
 	{
 
 		View main=inflater.inflate(R.layout.main_item, parent, false);
@@ -256,7 +262,7 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 	},0);
 		
 		}
-	}
+	}*/
 
 	@Override
 	public void onClick(View p1)

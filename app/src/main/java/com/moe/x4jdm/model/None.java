@@ -5,11 +5,6 @@ public class None extends Index
 {
 
 	@Override
-	public void clearCache()
-	{
-	}
-
-	@Override
 	public String getIndex()
 	{
 		return null;

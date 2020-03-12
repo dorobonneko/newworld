@@ -15,6 +15,7 @@ import java.util.LinkedHashMap;
 public class Indexadh extends Index
 {
 
+
 	@Override
 	public void clearCache()
 	{

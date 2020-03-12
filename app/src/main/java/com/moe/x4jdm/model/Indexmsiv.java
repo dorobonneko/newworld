@@ -15,6 +15,15 @@ import java.util.LinkedHashMap;
 public class Indexmsiv extends Index
 {
 
+	
+
+	@Override
+	public String getFilter()
+	{
+		return null;
+	}
+
+
 	@Override
 	public void clearCache()
 	{

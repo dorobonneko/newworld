@@ -35,7 +35,7 @@ public class VideoParse
 	public static String parseQqSign(String sign){
 		try
 		{
-			Connection.Response res=Jsoup.connect("https://quan.qq.com/video/" + sign).method(Connection.Method.HEAD).followRedirects(false).ignoreContentType(true).execute();
+			Connection.Response res=Jsoup.connect("https://quan.qq.com/video/" + sign.substring(0,37)).method(Connection.Method.HEAD).followRedirects(false).ignoreContentType(true).execute();
 			if(res.statusCode()==301||res.statusCode()==302){
 			String location=res.header("Location");
 			if(location!=null)

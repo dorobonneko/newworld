@@ -20,6 +20,7 @@ import org.jsoup.select.Elements;
 
 public class Indexsakura2 extends Index
 {
+
 	private String time;
 	
 	@Override

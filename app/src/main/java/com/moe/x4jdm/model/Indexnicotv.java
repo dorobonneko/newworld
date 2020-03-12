@@ -19,6 +19,7 @@ import java.net.URLDecoder;
 
 public class Indexnicotv extends Index
 {
+
 	private String time;
 	@Override
 	public void clearCache()

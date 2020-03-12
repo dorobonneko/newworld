@@ -17,6 +17,16 @@ import com.moe.x4jdm.util.EscapeUnescape;
 
 public class Indexjyk extends Index
 {
+
+	
+
+
+	@Override
+	public String getFilter()
+	{
+		return null;
+	}
+
 	@Override
 	public void clearCache()
 	{

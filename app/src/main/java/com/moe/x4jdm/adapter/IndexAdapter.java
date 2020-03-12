@@ -38,8 +38,10 @@ public class IndexAdapter extends RecyclerView.Adapter
 	private int icon;
 	private String text;
 	private RotateAnimation rotate;
-	public IndexAdapter(JSONArray index)
+	private boolean loadmore;
+	public IndexAdapter(JSONArray index,boolean loadmore)
 	{
+		this.loadmore=loadmore;
 		this.index = index;
 		text="已到底";
 		icon=R.drawable.check;
@@ -48,6 +50,14 @@ public class IndexAdapter extends RecyclerView.Adapter
 		rotate.setDuration(500);
 		rotate.setInterpolator(new LinearInterpolator());
 		
+	}
+	
+	public IndexAdapter(JSONArray index)
+	{
+		this(index,true);
+	}
+	public Object getItem(int position){
+		return index.get(position);
 	}
 	@Override
 	public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup p1, int p2)
@@ -69,6 +79,8 @@ public class IndexAdapter extends RecyclerView.Adapter
 				//return new PostLineViewHolder(LayoutInflater.from(p1.getContext()).inflate(R.layout.post_line_item, p1, false));
 			case 7:
 				return vh=new LoadMoreViewHolder(LayoutInflater.from(p1.getContext()).inflate(R.layout.loadmore, p1, false));
+			case 8:
+				return new PostViewHolder(LayoutInflater.from(p1.getContext()).inflate(R.layout.post_line_item, p1, false));
 				
 		}
 		return null;
@@ -126,8 +138,9 @@ public class IndexAdapter extends RecyclerView.Adapter
 				pvh.title.setText(jo.getString("title"));
 				String desc=jo.getString("desc");
 				pvh.summary.setText(desc==null?null:Html.fromHtml(desc));
+				if(pvh.score!=null)
 				pvh.score.setText(jo.getString("score"));
-				Pussy.$(pvh.icon.getContext()).load(jo.getString("src")).execute().transformer(new CropTransformer(Gravity.CENTER)).anime(Anim.fade(500)).into(pvh.icon);
+				Pussy.$(pvh.icon.getContext()).load(jo.getString("src")).execute().tag(jo.getString("title")).transformer(new CropTransformer(Gravity.CENTER)).anime(Anim.fade(500)).into(pvh.icon);
 				//Glide.with(pvh.itemView.getContext()).load(jo.getString("src")).centerCrop().crossFade(500).into(pvh.icon);
 			}else if(vh instanceof PostLineViewHolder){
 				PostLineViewHolder plvh=(IndexAdapter.PostLineViewHolder) vh;
@@ -148,7 +161,7 @@ public class IndexAdapter extends RecyclerView.Adapter
 	@Override
 	public int getItemCount()
 	{
-		return index.isEmpty()?0:(index.size()+1);
+		return index.isEmpty()?0:(index.size()+(loadmore?1:0));
 	}
 
 	@Override
@@ -156,13 +169,18 @@ public class IndexAdapter extends RecyclerView.Adapter
 	{
 		if(index.isEmpty())
 			return 0;
-		if(position==getItemCount()-1)
+		if(loadmore&&position==index.size())
 			return 7;
+			if(position>index.size()){
+				return 0;
+			}
 		Object item= index.get(position);
 		if(item==null)
 			return 0;
 		if (index.isValidObject(item.toString())){
 			JSONObject jo=index.getJSONObject(position);
+			if(jo.containsKey("key"))
+				return 8;
 			if(jo.containsKey("src"))
 				return 4;
 			if(jo.containsKey("desc"))
@@ -214,7 +232,7 @@ public class IndexAdapter extends RecyclerView.Adapter
 
 		public JSONObject getObject()
 		{
-			return index.getJSONObject(getAdapterPosition());
+			return (JSONObject)getItem(getAdapterPosition());
 		}
 	}
 	public class HeaderTitleViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
@@ -260,7 +278,7 @@ public class IndexAdapter extends RecyclerView.Adapter
 
 		public JSONObject getObject()
 		{
-			return index.getJSONObject(getAdapterPosition());
+			return (JSONObject)getItem(getAdapterPosition());
 		}
 	}
 	public class PostViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener
@@ -290,7 +308,7 @@ public class IndexAdapter extends RecyclerView.Adapter
 
 		public JSONObject getObject()
 		{
-			return index.getJSONObject(getAdapterPosition());
+			return (JSONObject)getItem(getAdapterPosition());
 		}
 	}
 	public class HeaderViewHolder extends RecyclerView.ViewHolder implements ViewPager.OnPageChangeListener

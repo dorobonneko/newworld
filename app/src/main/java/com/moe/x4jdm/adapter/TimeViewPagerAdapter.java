@@ -9,20 +9,22 @@ import com.moe.x4jdm.util.Space;
 import com.moe.x4jdm.widget.GridLayoutManager;
 import java.util.ArrayList;
 import java.util.List;
+import com.moe.x4jdm.widget.IndexGridLayoutManager;
 
 public class TimeViewPagerAdapter extends PagerAdapter
 {
 	private JSONArray ja;
 	private static List<String> week;
+	private int lastPosition;
 	static{
 		week=new ArrayList<>();
-		week.add("星期日");
-		week.add("星期一");
-		week.add("星期二");
-		week.add("星期三");
-		week.add("星期四");
-		week.add("星期五");
-		week.add("星期六");
+		week.add("日");
+		week.add("月");
+		week.add("水");
+		week.add("火");
+		week.add("木");
+		week.add("金");
+		week.add("土");
 	}
 	private List<RecyclerView> cache=new ArrayList<>();
 	public TimeViewPagerAdapter(JSONArray ja){
@@ -52,11 +54,21 @@ public class TimeViewPagerAdapter extends PagerAdapter
 		}else{
 			view=cache.remove(0);
 		}
-		PostAdapter pa=new PostAdapter(ja.getJSONArray(position),false);
-		view.setLayoutManager(new GridLayoutManager(container.getContext(),pa));
+		IndexAdapter pa=new IndexAdapter(ja.getJSONArray(position),false);
+		view.setLayoutManager(new IndexGridLayoutManager(container.getContext(),pa));
 		view.setAdapter(pa);
 		container.addView(view);
 		return view;
+	}
+
+	@Override
+	public void setPrimaryItem(ViewGroup container, int position, Object object)
+	{
+		//super.setPrimaryItem(container, position, object);
+		if(lastPosition!=position){
+			lastPosition=position;
+		
+		}
 	}
 
 	@Override

@@ -17,6 +17,7 @@ import org.jsoup.select.Elements;
 
 public class Indexsakura extends Index
 {
+
 	private String time;
 	@Override
 	public void clearCache()

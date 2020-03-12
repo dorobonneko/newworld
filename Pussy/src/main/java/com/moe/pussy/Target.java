@@ -4,23 +4,26 @@ import java.io.FileOutputStream;
 import java.io.FileNotFoundException;
 import android.graphics.drawable.Drawable;
 
-public abstract class Target
+public abstract class Target implements SizeReady
 {
 	private Content content;
-
+	private int width,height;
 	public void placeHolder(Drawable placeHolder)
 	{
 	}
 	Content getContent(){
 		return content;
 	}
-	public Bitmap onResourceReady(Bitmap pd,Transformer... trans){
-		if(trans.length>0){
-			for(Transformer t:trans){
-				pd=t.onTransformer(BitmapPool.get(),pd,0,0);
-			}
+	@Override
+	public void onSizeReady(int w,int h){
+		width=w;
+		height=h;
+	}
+	public Bitmap onResourceReady(Bitmap bitmap,Transformer... trans){
+		for(Transformer t:trans){
+			bitmap=t.onTransformer(BitmapPool.get(),bitmap,width,height);
 		}
-		return pd;
+		return bitmap;
 	}
 	public abstract void onSucccess(PussyDrawable pd);
 	public abstract void error(Throwable e,Drawable d);

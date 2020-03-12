@@ -9,7 +9,7 @@ import com.moe.pussy.DrawableAnimator;
 import android.graphics.drawable.Drawable;
 import com.moe.pussy.BitmapPool;
 
-public class ImageViewTarget extends Target implements ViewTreeObserver.OnGlobalLayoutListener
+public class ImageViewTarget extends Target implements ViewTreeObserver.OnPreDrawListener
 {
 	private ImageView view;
 	private Bitmap pd;
@@ -24,7 +24,12 @@ public class ImageViewTarget extends Target implements ViewTreeObserver.OnGlobal
 		this.pd=bitmap;
 		this.trans=trans;
 		if(view.getWidth()==0||view.getHeight()==0){
-			view.getViewTreeObserver().addOnGlobalLayoutListener(this);
+			view.post(new Runnable(){
+				public void run(){
+					view.getViewTreeObserver().addOnPreDrawListener(ImageViewTarget.this);
+					}
+					});
+			//view.requestLayout();
 		}else{
 			Bitmap b=bitmap;
 			if(b!=null)
@@ -69,14 +74,15 @@ public class ImageViewTarget extends Target implements ViewTreeObserver.OnGlobal
 	}
 
 	@Override
-	public void onGlobalLayout()
+	public boolean onPreDraw()
 	{
-		view.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+		view.getViewTreeObserver().removeOnPreDrawListener(this);
 		new Thread(){
 			public void run(){
 				onResourceReady(pd,trans);
 			}
 		}.start();
+		return false;
 	}
 	
 	

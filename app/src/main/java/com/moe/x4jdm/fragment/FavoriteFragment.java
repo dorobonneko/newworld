@@ -15,6 +15,8 @@ import com.moe.x4jdm.model.Index;
 import com.moe.x4jdm.util.Space;
 import com.moe.x4jdm.widget.GridLayoutManager;
 import com.moe.x4jdm.model.Database;
+import com.moe.x4jdm.adapter.IndexAdapter;
+import com.moe.x4jdm.widget.IndexGridLayoutManager;
 
 public class FavoriteFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener
 {
@@ -22,7 +24,7 @@ public class FavoriteFragment extends Fragment implements SwipeRefreshLayout.OnR
 	private SwipeRefreshLayout mSwipeRefreshLayout;
 	private RecyclerView mRecyclerView;
 	private JSONArray post_data;
-	private PostAdapter pa;
+	private IndexAdapter pa;
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
@@ -37,8 +39,8 @@ public class FavoriteFragment extends Fragment implements SwipeRefreshLayout.OnR
 		mSwipeRefreshLayout.setOnRefreshListener(this);
 		mRecyclerView=view.findViewById(R.id.recyclerview);
 
-		pa=new PostAdapter(post_data=new JSONArray(),false);
-		mRecyclerView.setLayoutManager(new GridLayoutManager(getContext(),pa));
+		pa=new IndexAdapter(post_data=new JSONArray(),false);
+		mRecyclerView.setLayoutManager(new IndexGridLayoutManager(getContext(),pa));
 		//((SimpleItemAnimator)mRecyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
 		mRecyclerView.addItemDecoration(new Space((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,8,getResources().getDisplayMetrics())));
 		mRecyclerView.setAdapter(pa);

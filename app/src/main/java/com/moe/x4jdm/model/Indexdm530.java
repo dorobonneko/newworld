@@ -21,6 +21,7 @@ import com.moe.x4jdm.video.VideoParse;
 
 public class Indexdm530 extends Index
 {
+
 	private String time;
 	public Indexdm530(){
 			}

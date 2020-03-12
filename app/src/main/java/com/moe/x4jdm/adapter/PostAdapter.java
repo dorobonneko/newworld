@@ -21,7 +21,7 @@ import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import com.moe.pussy.Pussy;
 import com.moe.pussy.transformer.CropTransformer;
-
+@Deprecated
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ItemViewHolder>
 {
 	private JSONArray ja;

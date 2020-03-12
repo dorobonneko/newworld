@@ -13,13 +13,14 @@ import java.lang.ref.WeakReference;
 public class Content
 {
 	private Request request;
-	private String key=null;
+	private String key=null,tag;
 	private Target target;
 	private DiskCache.Cache cache=DiskCache.Cache.NONE;
 	private List<Transformer> mTransformers=new ArrayList<>();
 	private DrawableAnimator anim;
 	private Pussy.Refresh r;
 	Drawable placeHolder,error;
+	Loader loader;
 	public Content(Request r){
 		this.request=r;
 	}
@@ -29,7 +30,13 @@ public class Content
 		target=null;
 	}
 	
-	
+	public Content tag(String tag){
+		this.tag=tag;
+		return this;
+	}
+	String tag(){
+		return tag;
+	}
 	public Content placeHolder(Drawable res){
 		placeHolder=res;
 		return this;
@@ -82,27 +89,9 @@ public class Content
 		t.onAttachContent(this);
 		this.target=t;
 		//检查是否有缓存
-		Resource res=request.getPussy().getActiveResource().get(getKey());
-			if(res!=null){
-				res.acquire();
-				request.getPussy().getDiskCache().invalidate(getKey());
-				t.onSucccess(new PussyDrawable(res.bitmap,getRefresh()));
-				
-			}
-		Bitmap bitmap=request.getPussy().getMemoryCache().remove(getKey());
-			if(bitmap!=null){
-				res=new Resource(getKey(),bitmap);
-				res.acquire();
-				getRequest().getPussy().getActiveResource().add(res);
-				request.getPussy().getDiskCache().invalidate(getKey());
-				t.onSucccess(new PussyDrawable(bitmap,getRefresh()));
-				return;
+		loader=new Loader(this);
+		loader.begin();
 		}
-		
-		Loader l=new Loader(this);
-		request.getPussy().loader_queue.put(t,l);
-		request.getPussy().mThreadPoolExecutor.execute(l);
-	}
 	public void into(ImageView view){
 		//view.setImageDrawable(null);
 		ImageViewTarget ivt=(ImageViewTarget) view.getTag();

@@ -5,6 +5,16 @@ import android.content.res.AssetManager;
 public class IndexJs extends Index
 {
 
+	
+
+
+	@Override
+	public String getFilter()
+	{
+		return null;
+	}
+
+
 	@Override
 	public boolean hasTime()
 	{

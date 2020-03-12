@@ -18,6 +18,7 @@ import android.net.Uri;
 
 class Indexx4jdm extends Index
 {
+
     private static Indexx4jdm mIndexModel;
 	private String time;
 	private String index;

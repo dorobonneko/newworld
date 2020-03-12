@@ -17,7 +17,7 @@ public class BitmapLoader implements Runnable
 	@Override
 	public void run()
 	{
-		call.onSuccess(key,decoder.decode(file)[0],file);
+		call.onSuccess(key,decoder.decode(file),file);
 	}
 
 	

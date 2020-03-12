@@ -9,6 +9,9 @@
     <item
         android:id="@+id/time"
         android:title="时间表"/>
+		<item
+			android:id="@+id/filter"
+			android:title="筛选"/>
     <item
         android:id="@+id/order"
         android:title="推荐"/>

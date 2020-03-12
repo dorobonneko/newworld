@@ -15,12 +15,6 @@ import java.util.LinkedHashMap;
 
 public class Indexhb extends Index
 {
-
-	@Override
-	public void clearCache()
-	{
-	}
-
 	@Override
 	public String getIndex()
 	{

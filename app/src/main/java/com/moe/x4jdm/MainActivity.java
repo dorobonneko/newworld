@@ -21,6 +21,7 @@ import com.moe.x4jdm.fragment.IndexFragment;
 import com.moe.x4jdm.fragment.ListFragment;
 import com.moe.x4jdm.fragment.TimeFragment;
 import com.moe.x4jdm.model.Index;
+import com.moe.x4jdm.fragment.FilterFragment;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,SharedPreferences.OnSharedPreferenceChangeListener{
 
@@ -82,6 +83,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 			case R.id.favorite:
 				show("favorite");
 				break;
+			case R.id.filter:
+				show("filter");
+				break;
 			case R.id.redpacket:
 				String qrcode="c1x04252qlecmighcngswb99hq";
 				try
@@ -110,11 +114,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 			case "favorite":
 				f=new FavoriteFragment();
 				break;
+			case "filter":
+				f=new FilterFragment();
+				break;
             case "order":
                 f=new ListFragment();
 				Bundle b=new Bundle();
 				b.putString("url",Index.getModel(getApplicationContext()).getGold());
 				b.putInt("page",1);
+				b.putString("key",Index.getKey(getApplicationContext()));
 				f.setArguments(b);
                 break;
 			
@@ -150,6 +158,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 				Menu menu=mNavigationView.getMenu();
 				menu.findItem(R.id.order).setVisible(index.getGold()!=null);
 				menu.findItem(R.id.time).setVisible(index.hasTime());
+				menu.findItem(R.id.filter).setVisible(index.getFilter()!=null);
+				
 				break;
 		}
 	}

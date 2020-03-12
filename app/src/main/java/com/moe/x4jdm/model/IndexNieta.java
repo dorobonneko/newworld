@@ -21,6 +21,8 @@ import java.net.URLDecoder;
 public class IndexNieta extends Index
 {
 
+
+
 	@Override
 	public void clearCache()
 	{

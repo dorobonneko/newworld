@@ -76,6 +76,9 @@ public abstract class Index
 			case "jyk":
 				models.put(web,index=new Indexjyk());
 				break;
+			case "qqdm":
+				models.put(web,index=new Indexqqdm());
+				break;
 			default:
 			models.put(web,index=new None());
 			break;
@@ -87,15 +90,32 @@ public abstract class Index
 		return web;
 	}
 	
-	public abstract void clearCache();
+	public void clearCache(){}
 	public abstract String getIndex();
-	public abstract String getTime();
+	public String getTime(){
+		return null;
+	}
 	public abstract String getList(String url);
 	public abstract String getPost(String url);
 	public abstract Map<String,String> getVideoUrl(String url);
-	public abstract String search(String key);
-	public abstract String makeUrl(String url);
+	public String search(String key){
+		return null;
+	}
+	public String makeUrl(String url){
+		return url;
+	}
 	public abstract String getHost();
-	public abstract String getGold();
-	public abstract boolean hasTime();
+	public String getGold(){
+		return null;
+	}
+	public boolean hasTime(){
+		return false;
+	}
+	public String getFilter(){
+		return null;
+	}
+	
+	public String makeFilter(String filter){
+		return null;
+	}
 }
