@@ -49,6 +49,8 @@ public class Indexadh extends Index
 						post.put("title", e.selectFirst("h2").text());
 						post.put("href", e.selectFirst("a.lnk-blk").absUrl("href"));
 						post.put("src", e.selectFirst("img.lazy").absUrl("data-src"));
+						try{post.put("score", e.selectFirst(".quality").text());}catch(Exception ee){}
+						
 						index.add(post);
 					}
 					//main.put("item", item_json);
@@ -118,6 +120,8 @@ public class Indexadh extends Index
 				Element num=e.selectFirst(".num-episode");
 				if (num != null)
 					post.put("desc", num.text());
+				try{post.put("score", e.selectFirst(".quality").text());}catch(Exception ee){}
+				
 				item_json.add(post);
 			}
 			list.put("item", item_json);
@@ -140,7 +144,7 @@ public class Indexadh extends Index
 			Element img=doc.selectFirst("meta[property='og:image']");
 			if (img != null)
 				post.put("src", img.absUrl("content"));
-			JSONObject list=JSONObject.parseObject(getList(doc.selectFirst(".btn.lin.blk").absUrl("href")));
+			JSONObject list=JSONObject.parseObject(getList(doc.selectFirst("p > a.btn.lin.blk").absUrl("href")));
 			JSONArray items=list.getJSONArray("item");
 			Iterator<JSONObject> items_i=(Iterator<JSONObject>) items.iterator();
 			while (items_i.hasNext())

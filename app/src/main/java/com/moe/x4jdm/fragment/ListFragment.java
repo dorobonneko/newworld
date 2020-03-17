@@ -39,9 +39,13 @@ public class ListFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 		mSwipeRefreshLayout=view.findViewById(R.id.swiperefreshlayout);
 		mSwipeRefreshLayout.setOnRefreshListener(this);
 		mRecyclerView=view.findViewById(R.id.recyclerview);
-		
+		mRecyclerView.setItemViewCacheSize(20);
+		mRecyclerView.setDrawingCacheEnabled(true);
+		mRecyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+		mRecyclerView.setHasFixedSize(true);
 		pa=new IndexAdapter(post_data=new JSONArray());
 		mRecyclerView.setLayoutManager(new IndexGridLayoutManager(getContext(),pa));
+		
 		//((SimpleItemAnimator)mRecyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
 		mRecyclerView.addItemDecoration(new Space((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,8,getResources().getDisplayMetrics())));
 		mRecyclerView.setAdapter(pa);

@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable.Callback;
 import android.graphics.PaintFlagsDrawFilter;
 import android.graphics.Paint;
 import java.lang.ref.WeakReference;
+import android.graphics.PorterDuff;
 
 public class PussyDrawable extends Drawable implements Animatable
 {

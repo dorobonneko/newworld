@@ -92,7 +92,7 @@ public class FilterAdapter extends RecyclerView.Adapter
 		{
 			JSONObject object=(JSONObject) getItem(getAdapterPosition());
 			String key=object.getString("key");
-			String value=object.getJSONArray("value").getJSONObject(p1.getPosition()).getString("value");
+			String value=object.getJSONArray("value").getJSONObject(p1.getPosition()).get("value").toString();
 			FilterAdapter.this.key.put(key,value);
 			if(l!=null)
 				l.onChange();

@@ -23,23 +23,26 @@ public class Loader implements Runnable,HandleThread.Callback,BitmapLoader.Callb
 		this.content = content;
 		request = content.getRequest();
 		pussy = request.getPussy();
-		target=content.getTarget();
+		target = content.getTarget();
 	}
-	public void begin(){
+	public void begin()
+	{
 		Resource res=request.getPussy().getActiveResource().get(content.getKey());
-		if(res!=null){
+		if (res != null)
+		{
 			res.acquire();
 			request.getPussy().getDiskCache().invalidate(content.getKey());
-			target.onSucccess(new PussyDrawable(res.bitmap,content.getRefresh()));
+			target.onSucccess(new PussyDrawable(res.bitmap, content.getRefresh()));
 			return;
 		}
 		Bitmap bitmap=request.getPussy().getMemoryCache().remove(content.getKey());
-		if(bitmap!=null){
-			res=new Resource(content.getKey(),bitmap);
+		if (bitmap != null)
+		{
+			res = new Resource(content.getKey(), bitmap);
 			res.acquire();
 			pussy.getActiveResource().add(res);
 			request.getPussy().getDiskCache().invalidate(content.getKey());
-			target.onSucccess(new PussyDrawable(bitmap,content.getRefresh()));
+			target.onSucccess(new PussyDrawable(bitmap, content.getRefresh()));
 			return;
 		}
 		pussy.mThreadPoolExecutor.execute(this);
@@ -52,34 +55,36 @@ public class Loader implements Runnable,HandleThread.Callback,BitmapLoader.Callb
 			DiskCache dc=pussy.getDiskCache();
 			//查询内存缓存
 			File cache_file=dc.getCache(content.getKey());
-			if (cache_file.exists())
+			if (cache_file != null)
 			{
 				//解码
-				pussy.fileThreadPool.execute(new BitmapLoader(pussy.decoder,content.getKey(),cache_file,this));
-				
-			}
-			cache_file = dc.getCache(request.getKey());
-			if (cache_file.exists())
-			{
-				//原始缓存
-				pussy.fileThreadPool.execute(new BitmapLoader(pussy.decoder,request.getKey(),cache_file,this));
+				pussy.fileThreadPool.execute(new BitmapLoader(pussy.decoder, content.getKey(), cache_file, this));
+
 			}
 			else
 			{
-				//加载数据
-				HandleThread ht=pussy.request_handler.get(request.getKey());
-				if (ht == null)
-					pussy.request_handler.put(request.getKey(), ht = new HandleThread(request, pussy.netThreadPool));
-				ht.addCallback(this);
-			}
+				cache_file = dc.getCache(request.getKey());
+				if (cache_file != null)
+				{
+					//原始缓存
+					pussy.fileThreadPool.execute(new BitmapLoader(pussy.decoder, request.getKey(), cache_file, this));
+				}
+				else
+				{
+					//加载数据
+					HandleThread ht=pussy.request_handler.get(request.getKey());
+					if (ht == null)
+						pussy.request_handler.put(request.getKey(), ht = new HandleThread(request, pussy.netThreadPool));
+					ht.addCallback(this);
+				}
 
-			
+			}
 
 			//解码加载
 		}
 		catch (final Exception e)
 		{
-			Toast.makeText(pussy.getContext(),content.tag(),Toast.LENGTH_SHORT).show();
+			//Toast.makeText(pussy.getContext(), content.tag(), Toast.LENGTH_SHORT).show();
 			pussy.post(new Runnable(){
 					public void run()
 					{
@@ -111,8 +116,8 @@ public class Loader implements Runnable,HandleThread.Callback,BitmapLoader.Callb
 			File input=response.get();
 
 			//加入缓存
-			pussy.fileThreadPool.execute(new BitmapLoader(pussy.decoder,request.getKey(),input,this));
-			
+			pussy.fileThreadPool.execute(new BitmapLoader(pussy.decoder, request.getKey(), input, this));
+
 		}
 	}
 
@@ -124,7 +129,7 @@ public class Loader implements Runnable,HandleThread.Callback,BitmapLoader.Callb
 	{
 		if (bitmap == null)
 		{
-			Toast.makeText(pussy.getContext(),content.tag(),Toast.LENGTH_SHORT).show();
+			//Toast.makeText(pussy.getContext(), content.tag(), Toast.LENGTH_SHORT).show();
 			pussy.post(new Runnable(){
 					public void run()
 					{
@@ -153,31 +158,42 @@ public class Loader implements Runnable,HandleThread.Callback,BitmapLoader.Callb
 	@Override
 	public void onSuccess(String key, Bitmap bitmap, File file)
 	{
-		if(cancel){
+		if (cancel)
+		{
 			BitmapPool.recycle(bitmap);
 			return;
 		}
-		if(key.equals(content.getKey())){
-			if(bitmap==null){
+		if (key.equals(content.getKey()))
+		{
+			if (bitmap == null)
+			{
 				file.delete();
 				File cache_file = pussy.getDiskCache().getCache(request.getKey());
 				if (cache_file.exists())
-					//原始缓存
-					pussy.fileThreadPool.execute(new BitmapLoader(pussy.decoder,content.getKey(),cache_file,this));
-				}else{
-					success(bitmap,null);
-				}
-		}else{
-			if(bitmap==null){
+				//原始缓存
+					pussy.fileThreadPool.execute(new BitmapLoader(pussy.decoder, content.getKey(), cache_file, this));
+			}
+			else
+			{
+				success(bitmap, null);
+			}
+		}
+		else
+		{
+			if (bitmap == null)
+			{
 				file.delete();
 				HandleThread ht=pussy.request_handler.get(request.getKey());
 				if (ht == null)
 					pussy.request_handler.put(request.getKey(), ht = new HandleThread(request, pussy.netThreadPool));
 				ht.addCallback(this);
-			}else{
-				if(content.getTarget()!=null){
-					bitmap=content.getTarget().onResourceReady(bitmap,content.getTransformer());
-					if(bitmap==null)return;
+			}
+			else
+			{
+				if (content.getTarget() != null)
+				{
+					bitmap = content.getTarget().onResourceReady(bitmap, content.getTransformer());
+					if (bitmap == null)return;
 					try
 					{
 						if (content.getCache() == DiskCache.Cache.MASK)
@@ -185,8 +201,10 @@ public class Loader implements Runnable,HandleThread.Callback,BitmapLoader.Callb
 					}
 					catch (FileNotFoundException e)
 					{}
-					success(bitmap,null);
-				}else{
+					success(bitmap, null);
+				}
+				else
+				{
 					BitmapPool.recycle(bitmap);
 				}
 			}
@@ -203,5 +221,5 @@ public class Loader implements Runnable,HandleThread.Callback,BitmapLoader.Callb
 		cancel = true;
 
 	}
-	
+
 }

@@ -79,6 +79,9 @@ public abstract class Index
 			case "qqdm":
 				models.put(web,index=new Indexqqdm());
 				break;
+			case "pnext":
+				models.put(web,index=new Indexpnext());
+				break;
 			default:
 			models.put(web,index=new None());
 			break;

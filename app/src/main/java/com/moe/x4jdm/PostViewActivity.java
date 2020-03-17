@@ -168,7 +168,7 @@ public class PostViewActivity extends AppCompatActivity implements View.OnApplyW
 														}));
 								String profile=jo.getString("profile");
 								if(profile!=null)
-								PostViewActivity.this.profile.setText(Html.fromHtml(profile));
+								PostViewActivity.this.profile.setText(Html.fromHtml(profile.replaceAll("\n","<br/>")));
 								if(jo.getString("src")!=null){
 								Pussy.$(PostViewActivity.this).load(jo.getString("src")).execute().transformer(new CropTransformer(Gravity.CENTER), new RoundTransformer((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5, getResources().getDisplayMetrics()))).anime(Anim.cicle(300)).into(icon);
 								Pussy.$(PostViewActivity.this).load(jo.getString("src")).execute().transformer(new CropTransformer(Gravity.CENTER), new BlurTransformer(getApplicationContext(), 15)).into(backicon);

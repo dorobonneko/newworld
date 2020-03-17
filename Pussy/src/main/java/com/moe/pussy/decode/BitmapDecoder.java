@@ -22,7 +22,16 @@ public class BitmapDecoder implements Decoder
 		options.inJustDecodeBounds=false;
 		options.inBitmap=BitmapPool.getBitmap(options.outWidth,options.outHeight,options.inPreferredConfig);
 		options.inMutable=true;
-		return BitmapFactory.decodeFile(input.getAbsolutePath(),options);
+		Bitmap bitmap=BitmapFactory.decodeFile(input.getAbsolutePath(),options);
+		if(options.outMimeType==null||options.outWidth<=0||options.outHeight<=0){
+				BitmapPool.recycle(bitmap);
+				bitmap=null;
+			}else if(bitmap.getWidth()<=0||bitmap.getHeight()<=0){
+				bitmap.recycle();
+				bitmap=null;
+		}
+		
+			return bitmap;
 	}
 	
 }

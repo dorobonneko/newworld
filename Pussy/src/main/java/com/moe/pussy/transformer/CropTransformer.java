@@ -23,6 +23,7 @@ public class CropTransformer implements Transformer
 	@Override
 	public Bitmap onTransformer(BitmapPool bp,Bitmap source,int w, int h)
 	{
+		if(source==null)return null;
 		float scale=1;
 		int displayWidth=0,displayHeight=0,image_width=source.getWidth(),image_height=source.getHeight();
 		if (w == -2)
@@ -78,8 +79,11 @@ public class CropTransformer implements Transformer
 				rect.offset(0,(image_height-rect.height())/2);
 			}
 		}
-		try{
-			Bitmap buff=BitmapPool.getBitmap(rect.width(),rect.height(),Bitmap.Config.ARGB_8888);
+		if(rect.width()<=0||rect.height()<=0){
+			source.recycle();
+			return null;
+			}
+		Bitmap buff=BitmapPool.getBitmap(rect.width(),rect.height(),Bitmap.Config.ARGB_8888);
 			Canvas canvas=new Canvas(buff);
 			canvas.setDrawFilter(new PaintFlagsDrawFilter(0,Paint.ANTI_ALIAS_FLAG|Paint.DITHER_FLAG|Paint.FILTER_BITMAP_FLAG));
 			canvas.translate(-rect.left,-rect.top);
@@ -89,8 +93,6 @@ public class CropTransformer implements Transformer
 			BitmapPool.recycle(source);
 			//source.recycle();
 		return buff;
-		}catch(Exception e){}
-	return null;
 	}
 
 

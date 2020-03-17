@@ -16,6 +16,8 @@ import com.moe.x4jdm.model.Index;
 import com.moe.x4jdm.util.Space;
 import com.moe.x4jdm.widget.IndexGridLayoutManager;
 import com.moe.x4jdm.adapter.FilterAdapter;
+import android.os.Handler;
+import android.os.Message;
 
 public class FilterFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener,FilterAdapter.OnChangeListener
 {
@@ -48,6 +50,10 @@ public class FilterFragment extends Fragment implements SwipeRefreshLayout.OnRef
 		mRecyclerView.setNestedScrollingEnabled(false);
 		fa.setOnChangeListener(this);
 		mRecyclerView=view.findViewById(R.id.recyclerview2);
+		mRecyclerView.setHasFixedSize(true);
+		mRecyclerView.setItemViewCacheSize(20);
+		mRecyclerView.setDrawingCacheEnabled(true);
+		mRecyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
 		mRecyclerView.addItemDecoration(new Space((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,8,getResources().getDisplayMetrics())));
 		mRecyclerView.addOnScrollListener(new Scroll());
 		this.pa=new IndexAdapter(post_data=new JSONArray());
@@ -65,8 +71,7 @@ public class FilterFragment extends Fragment implements SwipeRefreshLayout.OnRef
 		if(b!=null){
 			page=b.getInt("page",1);
 		}
-		mSwipeRefreshLayout.setRefreshing(true);
-		onRefresh();
+		handler.sendEmptyMessageDelayed(0,300);
 	}
 
 	@Override
@@ -138,11 +143,20 @@ public class FilterFragment extends Fragment implements SwipeRefreshLayout.OnRef
 	@Override
 	public void onChange()
 	{
-		mSwipeRefreshLayout.setRefreshing(true);
-		onRefresh();
+		handler.removeMessages(0);
+		handler.sendEmptyMessageDelayed(0,300);
 	}
 
-	
+	private Handler handler=new Handler(){
+
+		@Override
+		public void handleMessage(Message msg)
+		{
+			mSwipeRefreshLayout.setRefreshing(true);
+			onRefresh();
+		}
+		
+	};
 	class Scroll extends RecyclerView.OnScrollListener
 	{
 

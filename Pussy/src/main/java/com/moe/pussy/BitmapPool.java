@@ -29,13 +29,13 @@ public class BitmapPool
 	{
 		synchronized (map)
 		{
-			List<Bitmap> list=map.get(w + "x" + h + config);
+			List<Bitmap> list=map.get(w * h + config.name());
 			if (list == null)
-				map.put(w + "x" + h + config, list = new ArrayList<Bitmap>());
+				map.put(w * h + config.name(), list = new ArrayList<Bitmap>());
 			if (list.isEmpty())
 				return Bitmap.createBitmap(w, h, config);
 			Bitmap b= list.remove(0);
-			//b.reconfigure(w,h,config);
+			b.reconfigure(w,h,config);
 			return b;
 		}
 	}
@@ -46,7 +46,7 @@ public class BitmapPool
 		int h=bitmap.getHeight();
 		synchronized (map)
 		{
-			List<Bitmap> list=map.get(w + "x" + h + bitmap.getConfig());
+			List<Bitmap> list=map.get(w * h + bitmap.getConfig().name());
 			if (list == null)
 			{
 				//该尺寸图片没有申请记录，不保存该尺寸图片
@@ -68,7 +68,7 @@ public class BitmapPool
 	}
 	public static boolean isRecycled(Bitmap bitmap)
 	{
-		List<Bitmap> list=map.get(bitmap.getWidth() + "x" + bitmap.getHeight() + bitmap.getConfig());
+		List<Bitmap> list=map.get(bitmap.getWidth() * bitmap.getHeight() + bitmap.getConfig().name());
 		if (list == null)return false;
 		return list.contains(bitmap);
 	}

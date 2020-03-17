@@ -16,6 +16,7 @@ import com.moe.x4jdm.PostViewActivity;
 import com.moe.x4jdm.model.Index;
 import com.moe.pussy.Pussy;
 import com.moe.pussy.transformer.CropTransformer;
+import com.moe.x4jdm.ListActivity;
 
 public class HeaderAdapter extends PagerAdapter
 {
@@ -77,7 +78,13 @@ public class HeaderAdapter extends PagerAdapter
 		@Override
 		public void onClick(View p1)
 		{
-			p1.getContext().startActivity(new Intent(p1.getContext(),PostViewActivity.class).putExtra("url",ja.getJSONObject(position).getString("href")).putExtra("key",Index.getKey(p1.getContext())));
+			if(getObject().getBooleanValue("list"))
+				p1.getContext().startActivity(new Intent(p1.getContext(), ListActivity.class).putExtra("url", getObject().getString("href")).putExtra("key",getObject().getString("key")==null?Index.getKey(p1.getContext()):getObject().getString("key")));
+			else
+				p1.getContext().startActivity(new Intent(p1.getContext(), PostViewActivity.class).putExtra("url", getObject().getString("href")).putExtra("key",getObject().getString("key")==null?Index.getKey(p1.getContext()):getObject().getString("key")));
+		}
+		public JSONObject getObject(){
+			return ja.getJSONObject(position);
 		}
 
 		

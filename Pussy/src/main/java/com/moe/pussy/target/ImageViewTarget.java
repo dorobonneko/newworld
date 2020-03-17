@@ -22,6 +22,7 @@ public class ImageViewTarget extends Target implements ViewTreeObserver.OnPreDra
 	public Bitmap onResourceReady(Bitmap bitmap, Transformer[] trans)
 	{
 		this.pd=bitmap;
+		
 		this.trans=trans;
 		if(view.getWidth()==0||view.getHeight()==0){
 			view.post(new Runnable(){
@@ -53,10 +54,13 @@ public class ImageViewTarget extends Target implements ViewTreeObserver.OnPreDra
 	@Override
 	public void onSucccess(PussyDrawable pd)
 	{
+		if(pd!=null){
 		pd.stop();
 		view.setImageDrawable(pd);
 		pd.setAnimator(getAnim());
-		pd.start();
+		pd.start();}else{
+			error(null,null);
+		}
 	}
 
 	@Override
@@ -80,6 +84,8 @@ public class ImageViewTarget extends Target implements ViewTreeObserver.OnPreDra
 		new Thread(){
 			public void run(){
 				onResourceReady(pd,trans);
+				pd=null;
+				trans=null;
 			}
 		}.start();
 		return false;

@@ -9,6 +9,7 @@ public class Request
 	private String url,key,location;
 	private Map<String,String> header=new HashMap<>();
 	private String body;
+	private boolean cancel;
 	public Request(Pussy p,String url){
 		this.p=p;
 		this.url=url;
@@ -19,6 +20,13 @@ public class Request
 		this.url=Uri.fromParts("drawable",String.valueOf(res),null).toString();
 	}
 
+	public boolean isCancel()
+	{
+		return false;
+	}
+	public void cancel(){
+		cancel=true;
+	}
 	public void setLocation(String location)
 	{
 		this.location=location;

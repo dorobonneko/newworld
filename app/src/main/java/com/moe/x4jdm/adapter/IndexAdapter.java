@@ -30,6 +30,7 @@ import android.support.v4.content.res.TypedArrayUtils;
 import android.graphics.drawable.ColorDrawable;
 import android.view.animation.RotateAnimation;
 import android.view.animation.LinearInterpolator;
+import com.moe.pussy.transformer.RoundTransformer;
 
 public class IndexAdapter extends RecyclerView.Adapter
 {
@@ -49,13 +50,22 @@ public class IndexAdapter extends RecyclerView.Adapter
 		rotate.setRepeatCount(-1);
 		rotate.setDuration(500);
 		rotate.setInterpolator(new LinearInterpolator());
-		
+		setHasStableIds(true);
 	}
 	
 	public IndexAdapter(JSONArray index)
 	{
 		this(index,true);
 	}
+
+	@Override
+	public long getItemId(int position)
+	{
+		return position;
+	}
+
+	
+	
 	public Object getItem(int position){
 		return index.get(position);
 	}
@@ -140,7 +150,7 @@ public class IndexAdapter extends RecyclerView.Adapter
 				pvh.summary.setText(desc==null?null:Html.fromHtml(desc));
 				if(pvh.score!=null)
 				pvh.score.setText(jo.getString("score"));
-				Pussy.$(pvh.icon.getContext()).load(jo.getString("src")).execute().tag(jo.getString("title")).transformer(new CropTransformer(Gravity.CENTER)).anime(Anim.fade(500)).into(pvh.icon);
+				Pussy.$(pvh.icon.getContext()).load(jo.getString("src")).execute().tag(jo.getString("title")).transformer(new CropTransformer(Gravity.CENTER),new RoundTransformer(pvh.itemView.getResources().getDisplayMetrics(),5)).anime(Anim.fade(500)).into(pvh.icon);
 				//Glide.with(pvh.itemView.getContext()).load(jo.getString("src")).centerCrop().crossFade(500).into(pvh.icon);
 			}else if(vh instanceof PostLineViewHolder){
 				PostLineViewHolder plvh=(IndexAdapter.PostLineViewHolder) vh;
@@ -155,6 +165,8 @@ public class IndexAdapter extends RecyclerView.Adapter
 					LoadMoreViewHolder lmvh=(IndexAdapter.LoadMoreViewHolder) vh;
 					lmvh.icon.setImageResource(icon);
 					lmvh.title.setText(text);
+					if(rotate.hasStarted())
+						lmvh.icon.startAnimation(rotate);
 				}
 	}
 

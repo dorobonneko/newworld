@@ -184,7 +184,7 @@ public class Indexhh extends Index
 	@Override
 	public String getHost()
 	{
-		return "https://hentaihaven.gg/";
+		return "https://hentaihaven.io/";
 	}
 
 	@Override

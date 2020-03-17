@@ -20,6 +20,11 @@ public class HandleThread implements Runnable,RequestHandler.Callback
 		this.pool=pool;
 		pool.execute(this);
 	}
+
+	public void cancel()
+	{
+		request.cancel();
+	}
 	public void addCallback(Callback call){
 		if(!success)
 		calls.add(call);

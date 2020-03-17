@@ -29,7 +29,7 @@ public class Indexxbdm extends Index
 			Document doc=Jsoup.connect(getHost()).get();
 			
 			Elements headers=doc.select(".carousel-inner > .item > a");
-			if(headers!=null){
+			if(!headers.isEmpty()){
 				JSONArray header=new JSONArray();
 				index.add(header);
 				Iterator<Element> headers_i=headers.iterator();
@@ -43,7 +43,7 @@ public class Indexxbdm extends Index
 				}
 			}
 			Elements a_tab=doc.select(".container .myui-panel-box > ul > li > a");
-			if(a_tab!=null){
+			if(!a_tab.isEmpty()){
 				JSONArray tabs=new JSONArray();
 				index.add(tabs);
 				Iterator<Element> a_tab_i=a_tab.iterator();
@@ -57,7 +57,7 @@ public class Indexxbdm extends Index
 				tabs.remove(tabs.size()-1);
 			}
 			Elements mains=doc.select(".myui-panel-box:has(h3.title)");
-			if(mains!=null){
+			if(!mains.isEmpty()){
 				//JSONArray main=new JSONArray();
 				//index.put("main",main);
 				Iterator<Element> mains_i=mains.iterator();

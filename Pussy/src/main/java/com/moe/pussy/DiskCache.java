@@ -67,15 +67,23 @@ public class DiskCache
 			for(File f:files)
 			f.delete();
 	}
-	public InputStream getInputStream(File cache,InputStream input) throws FileNotFoundException{
+	/*public InputStream getInputStream(File cache,InputStream input) throws FileNotFoundException{
 		return new CacheInputStream(input,cache);
-	}
+	}*/
 	public File getCache(String key){
-		File cache=new File(cachePath,key);
-		cache.setLastModified(System.currentTimeMillis());
-		return cache;
+		return getCache(key,false);
 	}
-	public File getTmp(String key){
+	public File getCache(String key,boolean outFile){
+		File cache=new File(cachePath,key);
+		if(cache.exists()){
+			cache.setLastModified(System.currentTimeMillis());
+			return cache;
+		}
+		if(outFile)
+			return cache;
+		return null;
+	}
+	public File getDirty(String key){
 		return new File(cachePath,key+".tmp");
 	}
 	public void invalidate(String key){

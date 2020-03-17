@@ -84,7 +84,11 @@ public class Content
 	}
 	public void into(Target t){
 		if(t==null)return;
-		request.getPussy().cancel(t);
+		Content c=t.getContent();
+		if(c!=null&&getRequest().getKey().equals(c.getRequest().getKey())){
+			return;
+		}
+		request.getPussy().cancel(t,getRequest().getKey());
 		t.placeHolder(placeHolder);
 		t.onAttachContent(this);
 		this.target=t;

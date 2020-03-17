@@ -135,6 +135,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
       }else{
           ft.add(R.id.content,f,this.cursor=cursor);
       }
+	  ft.setTransition(ft.TRANSIT_FRAGMENT_FADE);
       ft.commit();
     }
 

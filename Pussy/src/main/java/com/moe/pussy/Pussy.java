@@ -166,7 +166,7 @@ public class Pussy
 	}
 	
 	
-	public void cancel(Target t)
+	public void cancel(Target t,String key)
 	{
 		if(t==null)return;
 		Content content=t.getContent();
@@ -177,6 +177,11 @@ public class Pussy
 		Loader l=content.loader;
 		if(l!=null)
 			l.cancel();
+			if(!key.equals(content.getRequest().getKey())){
+			HandleThread ht=request_handler.remove(content.getRequest().getKey());
+			if(ht!=null)
+			ht.cancel();
+			}
 		}
 		
 	}
