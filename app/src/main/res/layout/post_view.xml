@@ -87,7 +87,7 @@
 				android:layout_height="wrap_content"
 				android:layout_gravity="center"
 				android:id="@+id/retry"
-				android:text="retry"
+				android:text="@string/retry"
 				android:background="?attr/selectableItemBackgroundBorderless"/>
 		</android.support.design.widget.CollapsingToolbarLayout>
 
@@ -124,7 +124,7 @@
 				android:id="@+id/viewpager"
 				/>
 		</LinearLayout>
-
+		
 	</android.support.v4.widget.NestedScrollView>
 </android.support.design.widget.CoordinatorLayout>
 

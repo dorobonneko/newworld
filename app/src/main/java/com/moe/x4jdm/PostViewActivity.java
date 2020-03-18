@@ -43,6 +43,8 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.LinearLayoutManager;
 import com.moe.x4jdm.adapter.PlayAdapter;
 import android.support.design.widget.BottomSheetDialog;
+import android.widget.ProgressBar;
+import android.widget.FrameLayout;
 
 public class PostViewActivity extends AppCompatActivity implements View.OnApplyWindowInsetsListener,PlayViewPagerAdapter.OnClickListener,View.OnClickListener
 {
@@ -58,37 +60,45 @@ public class PostViewActivity extends AppCompatActivity implements View.OnApplyW
 	private PlayAdapter pa;
 	private RecyclerView recyclerview;
 	private BottomSheetDialog sheet;
+	private View progress;
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
+		View v= getWindow().getDecorView();
+		v.setSystemUiVisibility(v.getSystemUiVisibility()|v.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
 		super.onCreate(savedInstanceState);
-		new AsyncLayoutInflater(this).inflate(R.layout.post_view, null, new AsyncLayoutInflater.OnInflateFinishedListener(){
+		progress=new ProgressBar(this);
+		FrameLayout.LayoutParams fl=new FrameLayout.LayoutParams(-2,-2);
+		fl.gravity=Gravity.CENTER;
+		progress.setLayoutParams(fl);
+		ViewGroup content=((ViewGroup)findViewById(android.R.id.content));
+		content.addView(progress);
+		new AsyncLayoutInflater(this).inflate(R.layout.post_view, content, new AsyncLayoutInflater.OnInflateFinishedListener(){
 
 				@Override
 				public void onInflateFinished(View p1, int p2, ViewGroup p3)
 				{
-					setContentView(p1);
-					setSupportActionBar(toolbar = (Toolbar)findViewById(R.id.toolbar));
+					setSupportActionBar(toolbar = (Toolbar)p1.findViewById(R.id.toolbar));
 					url = getIntent().getStringExtra("url");
 					key=getIntent().getStringExtra("key");
-					icon = findViewById(R.id.icon);
-					title = findViewById(R.id.title);
-					summary = findViewById(R.id.summary);
+					icon = p1.findViewById(R.id.icon);
+					title = p1.findViewById(R.id.title);
+					summary =p1. findViewById(R.id.summary);
 					summary.setMovementMethod(LinkMovementMethod.getInstance());
-					profile = findViewById(R.id.profile);
+					profile = p1.findViewById(R.id.profile);
 					profile.setMovementMethod(ScrollingMovementMethod.getInstance());
-					backicon = findViewById(R.id.backicon);
-					retry=findViewById(R.id.retry);
+					backicon = p1.findViewById(R.id.backicon);
+					retry=p1.findViewById(R.id.retry);
 					retry.setOnClickListener(PostViewActivity.this);
-					CollapsingToolbarLayout ctl=findViewById(R.id.collapsing);
+					CollapsingToolbarLayout ctl=p1.findViewById(R.id.collapsing);
 					ctl.setTitleEnabled(false);
 					getSupportActionBar().setTitle(null);
 					//AppBarLayout abl=findViewById(R.id.appbarlayout);
 					//abl.setFitsSystemWindows(true);
 					//abl.setOnApplyWindowInsetsListener(this);
 					//abl.requestFitSystemWindows()
-					mTabLayout = findViewById(R.id.tablayout);
-					mViewPager = findViewById(R.id.viewpager);
+					mTabLayout =p1. findViewById(R.id.tablayout);
+					mViewPager = p1.findViewById(R.id.viewpager);
 					mTabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
 					mTabLayout.setupWithViewPager(mViewPager, true);
 					mViewPager.setAdapter(new PlayViewPagerAdapter(play_data = new JSONArray()));
@@ -99,6 +109,8 @@ public class PostViewActivity extends AppCompatActivity implements View.OnApplyW
 					recyclerview.setLayoutManager(new LinearLayoutManager(p1.getContext()));
 					recyclerview.setAdapter(pa=new PlayAdapter());
 					load();
+					p3.addView(p1);
+					//setContentView(p1);
 				}
 			});
 		
@@ -164,10 +176,14 @@ public class PostViewActivity extends AppCompatActivity implements View.OnApplyW
 							@Override
 							public void run()
 							{
+								progress.setVisibility(View.INVISIBLE);
 								if (jo == null || jo.isEmpty()){
 									retry.setVisibility(View.VISIBLE);
 									return;
 								}
+								View v= getWindow().getDecorView();
+								v.setSystemUiVisibility(v.getSystemUiVisibility()&(~v.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR));
+								
 								PostViewActivity.this.jo=jo;
 								title.setText(jo.getString("title"));
 								String desc=jo.getString("desc");
@@ -200,7 +216,9 @@ public class PostViewActivity extends AppCompatActivity implements View.OnApplyW
 
 							@Override
 							public void run()
-							{retry.setVisibility(View.VISIBLE);
+							{
+								progress.setVisibility(View.INVISIBLE);
+								retry.setVisibility(View.VISIBLE);
 							}
 						});
 				}
@@ -253,6 +271,7 @@ public class PostViewActivity extends AppCompatActivity implements View.OnApplyW
 		switch(p1.getId()){
 			case R.id.retry:
 				load();
+				progress.setVisibility(View.VISIBLE);
 				p1.setVisibility(View.INVISIBLE);
 				break;
 		}
