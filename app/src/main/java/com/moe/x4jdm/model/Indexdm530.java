@@ -242,6 +242,10 @@ private String getPage(String url){
 						if(video_url!=null)
 						urls.put(video_url,video_url);
 						break;
+					case "sina":
+						video_url=VideoParse.parseSina(video_url);
+						urls.put(video_url,video_url);
+						break;
 						default:
 				
 				if(video_url.matches("[0-9]{0,4}_.*")){
@@ -254,10 +258,14 @@ private String getPage(String url){
 						urls.put(video_url,video_url);
 				}else{
 					//判断地址是否是合法
+					if(video_url.startsWith("https://ck-qq.com/")||video_url.startsWith("https://hkwycc.com/v/")){
+						url=VideoParse.ckQq(video_url);
+						if(url!=null)urls.put(url,url);
+					}else
 					if(VideoParse.match(video_url)){
 						url=VideoParse.parse(video_url,"");
 						if(url!=null)urls.put(url,url);
-					}
+					}else
 					//https://cache.miaomiaojia.cc/ipsign/extend/parse_url.php?version=static&vid=http%3A%2F%2Fv.pptv.com%2Fshow%2FMaPYVibxlX50AfuY.html&type=pptv&hd=2&ran=1582254120&access=d48fb23dc8d27f3f889e3551c68ba379&ctype=phone
 					if(video_url.startsWith("http"))
 					urls.put(video_url,video_url);

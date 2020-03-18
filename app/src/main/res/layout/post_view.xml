@@ -11,7 +11,8 @@
 		android:layout_width="match_parent"
 		android:layout_height="234dp"
 		android:id="@+id/appbarlayout"
-		android:fitsSystemWindows="true">
+		android:fitsSystemWindows="true"
+		android:background="@null">
 
 		<android.support.design.widget.CollapsingToolbarLayout
 			android:id="@+id/collapsing"
@@ -19,7 +20,8 @@
 			android:layout_height="match_parent"
 			app:contentScrim="?attr/colorPrimary"
 			app:layout_scrollFlags="scroll|exitUntilCollapsed"
-			android:fitsSystemWindows="true">
+			android:fitsSystemWindows="true"
+			android:background="@null">
 
 			<ImageView
 				android:fitsSystemWindows="true"
@@ -124,6 +126,5 @@
 		</LinearLayout>
 
 	</android.support.v4.widget.NestedScrollView>
-
 </android.support.design.widget.CoordinatorLayout>
 

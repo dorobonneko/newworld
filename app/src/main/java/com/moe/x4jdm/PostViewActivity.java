@@ -37,6 +37,12 @@ import com.moe.pussy.Anim;
 import com.moe.pussy.transformer.BlurTransformer;
 import android.support.v4.view.AsyncLayoutInflater;
 import android.view.ViewGroup;
+import android.support.design.widget.HeaderScrollingViewBehavior;
+import android.support.design.widget.BottomSheetBehavior;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.LinearLayoutManager;
+import com.moe.x4jdm.adapter.PlayAdapter;
+import android.support.design.widget.BottomSheetDialog;
 
 public class PostViewActivity extends AppCompatActivity implements View.OnApplyWindowInsetsListener,PlayViewPagerAdapter.OnClickListener,View.OnClickListener
 {
@@ -49,6 +55,9 @@ public class PostViewActivity extends AppCompatActivity implements View.OnApplyW
 	private JSONArray play_data;
 	private Button retry;
 	private JSONObject jo;
+	private PlayAdapter pa;
+	private RecyclerView recyclerview;
+	private BottomSheetDialog sheet;
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -85,6 +94,10 @@ public class PostViewActivity extends AppCompatActivity implements View.OnApplyW
 					mViewPager.setAdapter(new PlayViewPagerAdapter(play_data = new JSONArray()));
 					((PlayViewPagerAdapter)mViewPager.getAdapter()).setOnClickListener(PostViewActivity.this);
 					icon.setLayerType(View.LAYER_TYPE_SOFTWARE,null);
+					sheet=new BottomSheetDialog(p1.getContext());
+					sheet.setContentView(recyclerview=new RecyclerView(p1.getContext()),new ViewGroup.LayoutParams(-1,-2));
+					recyclerview.setLayoutManager(new LinearLayoutManager(p1.getContext()));
+					recyclerview.setAdapter(pa=new PlayAdapter());
 					load();
 				}
 			});
@@ -211,17 +224,8 @@ public class PostViewActivity extends AppCompatActivity implements View.OnApplyW
 							@Override
 							public void run()
 							{
-								final String[] urls=url.values().toArray(new String[0]);
-								
-								new AlertDialog.Builder(PostViewActivity.this).setItems(url.keySet().toArray(new String[0]), new DialogInterface.OnClickListener(){
-
-										@Override
-										public void onClick(DialogInterface p1, int p2)
-										{
-											startActivity(new Intent(Intent.ACTION_VIEW).setDataAndType(Uri.parse(urls[p2]), "video/*"));
-
-										}
-									}).show();
+								pa.addAll(url);
+								sheet.show();
 							}
 						});
 					else

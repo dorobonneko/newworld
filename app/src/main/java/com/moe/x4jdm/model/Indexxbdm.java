@@ -214,7 +214,8 @@ public class Indexxbdm extends Index
 			String[] target=url.substring(url.indexOf("?")+1,url.length()-5).split("-");
 			Document doc=Jsoup.connect(url).get();
 			Element script=doc.selectFirst("div.embed-responsive > script");
-			if(script==null)return null;
+			if(script==null)
+				return null;
 			Matcher m=Pattern.compile("VideoUrl=unescape\\(\"(.*?)\"\\)",Pattern.MULTILINE).matcher(script.toString());
 			if(m.find()){
 				String videourl=EscapeUnescape.unescape(m.group(1));

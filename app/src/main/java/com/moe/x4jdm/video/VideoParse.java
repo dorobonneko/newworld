@@ -12,6 +12,7 @@ import com.moe.x4jdm.util.Md5;
 import android.util.Base64;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.regex.PatternSyntaxException;
 
 public class VideoParse
 {
@@ -31,6 +32,31 @@ public class VideoParse
 			return parseIqiyi(url);
 		}
 		//return null;
+	}
+	public static String ckQq(String url){
+		try
+		{
+			String data=Jsoup.connect(url).ignoreContentType(true).execute().body();
+			Matcher matcher=Pattern.compile("url:\\s'(.*?)',", Pattern.MULTILINE).matcher(data);
+			if (matcher.find())
+			{
+
+				return matcher.group(1);
+			}
+			else
+			{
+				matcher = Pattern.compile("var\\shuiid\\s=\\s\\\"(.*?)\\\";", Pattern.MULTILINE).matcher(data);
+				if (matcher.find())
+				{
+					return matcher.group(1);
+				}
+			}
+		}
+		catch (PatternSyntaxException e)
+		{}
+		catch (IOException e)
+		{}
+		return null;
 	}
 	public static String parseQqSign(String sign){
 		try
@@ -60,6 +86,20 @@ public class VideoParse
 			}
 			}catch(Exception e){}
 			return url;
+	}
+	public static String parseSina(String vid){
+		String url="http://ask.ivideo.sina.com.cn/v_play_ipad.php?vid="+vid+"&uid=1&pid=1&tid=334&plid=4001&prid=ja_7_2184731619&referrer=http%3A%2F%2Fvideo.sina.com.cn&ran=0.85694&r=video.sina.com.cn&v=4.1.43.10&p=i&k=ccabfbc59d0e9df0";
+		try
+		{
+			Connection.Response res=Jsoup.connect(url).method(Connection.Method.HEAD).followRedirects(false).ignoreContentType(true).execute();
+			if(res.statusCode()==301||res.statusCode()==302){
+				String location=res.header("Location");
+				return location;
+			}
+		}
+		catch (IOException e)
+		{}
+		return null;
 	}
 	public static String parsePptv(String url){
 		return null;

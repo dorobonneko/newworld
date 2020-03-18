@@ -10,13 +10,15 @@ android:fitsSystemWindows="true">
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
 	android:id="@+id/appbarlayout"
-	android:fitsSystemWindows="true">
+	android:fitsSystemWindows="true"
+	android:background="@null"
+	app:elevation="3dp">
 
 	<android.support.design.widget.CollapsingToolbarLayout
 		android:id="@+id/collapsing"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		app:contentScrim="?attr/colorPrimary"
+		app:contentScrim="@null"
 		app:layout_scrollFlags="scroll|enterAlways|exitUntilCollapsed|snap"
 		android:fitsSystemWindows="true">
 		<android.support.v7.widget.RecyclerView
