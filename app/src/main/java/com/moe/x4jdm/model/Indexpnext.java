@@ -12,11 +12,37 @@ import java.net.URLEncoder;
 import android.text.TextUtils;
 import com.moe.x4jdm.video.VideoParse;
 import java.util.HashMap;
+import java.util.Arrays;
+import java.util.Collections;
 
 public class Indexpnext extends Index
 {
 	private String time;
-
+	private String getKey(String str){
+		
+		long userPKey=System.currentTimeMillis();
+		int userPMain=17;//(int) Math.ceil(100*Math.random());
+		int userPBase=(int) Math.floor(userPKey/userPMain/102*.8);
+		String data=str.substring(str.indexOf("&")+1)+"userPKey"+userPKey+"userPMain"+userPMain+"userPBase"+userPBase;
+		data=filter(data);
+		String userUser="";
+		for(int n=0;n<data.length();n++)
+		{
+			if(n%5==0&&n<=80)
+				userUser+=data.charAt(n);
+		}
+		return String.format("&userPKey=%d&userPMain=%d&userPBase=%d&userUser=%s",userPKey,userPMain,userPBase,userUser);
+		}
+	private String filter(String str){
+		StringBuilder sb=new StringBuilder();
+		for(int i=0;i<str.length();i++){
+			char c=str.charAt(i);
+			if((c>='a'&&c<='z')||(c>='A'&&c<='Z')||(c>='0'&&c<='9')){
+				sb.append(c);
+			}
+		}
+		return sb.toString();
+	}
 	@Override
 	public String getFilter()
 	{
@@ -26,7 +52,7 @@ public class Indexpnext extends Index
 	@Override
 	public String makeFilter(String filter)
 	{
-		return getHost()+"/apiH5.php?r=class/classlist&page=%d"+filter;
+		return getHost()+"/apiH5.php?r=class/classlist"+filter+"&page=%d";
 	}
 	
 	@Override
@@ -55,7 +81,7 @@ public class Indexpnext extends Index
 		JSONArray index=new JSONArray();
 		try
 		{
-			JSONObject data=JSONObject.parseObject(Jsoup.connect(getHost()+"/apiH5.php?r=index/getbannerlist").ignoreContentType(true).referrer(getHost()).execute().body());
+			JSONObject data=JSONObject.parseObject(Jsoup.connect(getHost()+"/apiH5.php?r=index/getbannerlist"+getKey("&")).ignoreContentType(true).referrer(getHost()).execute().body());
 			if(data.getIntValue("code")==0){
 				data=data.getJSONObject("specialData");
 				if(data==null)throw new IOException();
@@ -127,7 +153,7 @@ public class Indexpnext extends Index
 			Uri uri=Uri.parse(url);
 			String page=uri.getQueryParameter("page");
 			list.put("page",page==null?1:page);
-			JSONObject data=JSONObject.parseObject(Jsoup.connect(url).ignoreContentType(true).referrer(getHost()).execute().body());
+			JSONObject data=JSONObject.parseObject(Jsoup.connect(url+getKey(url)).ignoreContentType(true).referrer(getHost()).execute().body());
 			JSONObject param=data.getJSONObject("params");
 			JSONArray posts=null;
 			if(param!=null){
@@ -173,7 +199,8 @@ public class Indexpnext extends Index
 		JSONObject post=new JSONObject();
 		try
 		{
-			JSONObject data=JSONObject.parseObject(Jsoup.connect(getHost() + "/apiH5.php?r=video/videoinfo&videoId=" + url + "&sourceId=0&userId=").ignoreContentType(true).referrer(getHost()).execute().body());
+			url=getHost() + "/apiH5.php?r=video/videoinfo&videoId=" + url + "&sourceId=0&userId=";
+			JSONObject data=JSONObject.parseObject(Jsoup.connect(url+getKey(url)).ignoreContentType(true).referrer(getHost()).execute().body());
 			data=data.getJSONObject("videoInfo");
 			JSONObject videoInfo=data.getJSONObject("videoInfo");
 			JSONArray videoList=data.getJSONArray("videoList");
@@ -213,11 +240,13 @@ public class Indexpnext extends Index
 		Map<String,String> map=new HashMap<>();
 		try
 		{
-			JSONObject data=JSONObject.parseObject(Jsoup.connect(getHost() + "/apiH5.php?r=video/videosource&sourceId=" + video_id).ignoreContentType(true).referrer(getHost()).execute().body());
+			String url=getHost() + "/apiH5.php?r=video/videosource&sourceId="+video_id;
+			JSONObject data=JSONObject.parseObject(Jsoup.connect(url +getKey(url)).ignoreContentType(true).referrer(getHost()).execute().body());
 			data=data.getJSONObject("videoSource");
-			String url=data.getString("url");
+			url=data.getString("url");
 			if(url.equals(data.getString("baseUrl"))){
-			data=JSONObject.parseObject(Jsoup.connect(getHost()+"/apiH5.php?r=video/"+data.getString("type")+"curl&url="+URLEncoder.encode(url)).ignoreContentType(true).referrer(getHost()).execute().body());
+				String query="&url="+url;
+			data=JSONObject.parseObject(Jsoup.connect(getHost()+"/apiH5.php?r=video/"+data.getString("type")+"curl&url="+URLEncoder.encode(url)+getKey(query)).ignoreContentType(true).referrer(getHost()).execute().body());
 			map.put(data.getString("url"),data.getString("url"));
 			}else{
 				map.put(data.getString("url"),data.getString("url"));
