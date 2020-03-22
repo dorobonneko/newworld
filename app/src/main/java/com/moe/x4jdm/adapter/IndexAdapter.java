@@ -31,6 +31,8 @@ import android.graphics.drawable.ColorDrawable;
 import android.view.animation.RotateAnimation;
 import android.view.animation.LinearInterpolator;
 import com.moe.pussy.transformer.RoundTransformer;
+import com.youth.banner.Banner;
+import com.moe.pussy.transformer.EmbossTransFormer;
 
 public class IndexAdapter extends RecyclerView.Adapter
 {
@@ -91,7 +93,8 @@ public class IndexAdapter extends RecyclerView.Adapter
 				return vh=new LoadMoreViewHolder(LayoutInflater.from(p1.getContext()).inflate(R.layout.loadmore, p1, false));
 			case 8:
 				return new PostViewHolder(LayoutInflater.from(p1.getContext()).inflate(R.layout.post_line_item, p1, false));
-				
+			case 9:
+				return new PostViewHolder(LayoutInflater.from(p1.getContext()).inflate(R.layout.header_item,p1,false));
 		}
 		return null;
 	}
@@ -191,6 +194,13 @@ public class IndexAdapter extends RecyclerView.Adapter
 			return 0;
 		if (index.isValidObject(item.toString())){
 			JSONObject jo=index.getJSONObject(position);
+			String type=jo.getString("viewtype");
+			if(type!=null){
+				switch(type){
+					case "poster":
+						return 9;
+				}
+			}
 			if(jo.containsKey("key"))
 				return 8;
 			if(jo.containsKey("src"))
@@ -331,12 +341,17 @@ public class IndexAdapter extends RecyclerView.Adapter
 			super(v);
 			viewpager = (ViewPager) v;
 			v.setLayoutParams(new ViewGroup.LayoutParams(-1, (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 200, v.getResources().getDisplayMetrics())));
-			viewpager.addOnPageChangeListener(this);
-		}
+			viewpager.setOnPageChangeListener(this);
+			}
+
+		
+
 
 		@Override
 		public void onPageSelected(int p1)
 		{
+			
+			
 		}
 
 		@Override
@@ -349,8 +364,20 @@ public class IndexAdapter extends RecyclerView.Adapter
 			}
 			else if (p1 == ViewPager.SCROLL_STATE_IDLE)
 			{
+				int position=viewpager.getCurrentItem();
+				if (position == 0) {
+						viewpager.setCurrentItem(viewpager.getAdapter().getCount() - 2, false);
+
+					} else if (position == viewpager.getAdapter().getCount() - 1) {
+						// 当视图在最后一个是,将页面号设置为图片的第一张。
+						viewpager.setCurrentItem(1, false);
+					}
+				
 				//松手
 				handler.sendEmptyMessageDelayed(0, 3000);
+			}else{
+				
+				
 			}
 		}
 		private Handler handler=new Handler(){
@@ -358,9 +385,16 @@ public class IndexAdapter extends RecyclerView.Adapter
 			@Override
 			public void handleMessage(Message msg)
 			{
+				/*if (viewpager.getCurrentItem() == 0) {
+					viewpager.setCurrentItem(viewpager.getAdapter().getCount() - 2, false);
+
+				} else if (viewpager.getCurrentItem() == viewpager.getAdapter().getCount() - 1) {
+					// 当视图在最后一个是,将页面号设置为图片的第一张。
+					viewpager.setCurrentItem(1, false);
+				}*/
 				int current=viewpager.getCurrentItem();
-				if (current >= viewpager.getAdapter().getCount() - 1)
-					current = -1;
+				//if (current >= viewpager.getAdapter().getCount() - 1)
+					//current = -1;
 				viewpager.setCurrentItem(++current, true);
 				//handler.sendEmptyMessageDelayed(0,3000);
 			}

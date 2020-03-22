@@ -152,9 +152,10 @@ public class Pussy
 		return new Request(this, url);
 	}
 
-	public Request load(int res)
+	public Content load(int res)
 	{
-		return new Request(this, res);
+		
+		return  new Request(this, res).execute();
 	}
 	public DiskCache getDiskCache()
 	{

@@ -47,7 +47,7 @@ public class Indexadh extends Index
 					{
 						JSONObject post=new JSONObject();
 						post.put("title", e.selectFirst("h2").text());
-						post.put("href", e.selectFirst("a.lnk-blk").absUrl("href"));
+						try{post.put("href", e.selectFirst("a.lnk-blk").absUrl("href"));}catch(Exception ee){}
 						post.put("src", e.selectFirst("img.lazy").absUrl("data-src"));
 						try{post.put("score", e.selectFirst(".quality").text());}catch(Exception ee){}
 						

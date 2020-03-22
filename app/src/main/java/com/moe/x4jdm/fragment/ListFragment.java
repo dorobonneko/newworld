@@ -78,7 +78,7 @@ public class ListFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 		new Thread(){
 			public void run(){
 				try{
-				final JSONObject jo=JSONObject.parseObject(Index.getModel(getContext()).getList(String.format(url,page)));
+				final JSONObject jo=JSONObject.parseObject(Index.getModel(getContext()).getList(url.replace("%d",String.valueOf(page))));
 				getView().post(new Runnable(){
 
 						@Override

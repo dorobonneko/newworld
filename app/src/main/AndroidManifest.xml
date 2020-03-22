@@ -19,7 +19,8 @@
         android:roundIcon="@drawable/logo"
         android:label="@string/app_name"
         android:theme="@style/AppTheme"
-        android:resizeableActivity="false">
+        android:resizeableActivity="false"
+		android:hardwareAccelerated="true">
 <activity
 			android:enabled="true"
 			android:name=".CrashActivity"

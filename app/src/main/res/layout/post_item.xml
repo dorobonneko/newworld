@@ -37,6 +37,7 @@
 				android:textColor="#ffffffff"/>
 
 			<TextView
+				android:textSize="12sp"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:id="@+id/score"
@@ -48,12 +49,14 @@
 
 		</FrameLayout>
 		<TextView
+			android:textSize="14sp"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:gravity="start"
 			android:id="@+id/title"
 			android:minLines="2"
-			android:maxLines="2"/>
+			android:maxLines="2"
+			/>
 
 	</LinearLayout>
 

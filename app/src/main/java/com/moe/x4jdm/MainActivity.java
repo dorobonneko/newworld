@@ -22,8 +22,17 @@ import com.moe.x4jdm.fragment.ListFragment;
 import com.moe.x4jdm.fragment.TimeFragment;
 import com.moe.x4jdm.model.Index;
 import com.moe.x4jdm.fragment.FilterFragment;
+import com.moe.pussy.Pussy;
+import android.widget.ImageView;
+import android.view.View;
+import com.moe.pussy.transformer.CircleTransFormation;
+import android.support.v7.app.AlertDialog;
+import android.content.DialogInterface;
+import com.moe.pussy.target.ViewBackgroundTarget;
+import com.moe.pussy.transformer.CropTransformer;
+import android.util.TypedValue;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,SharedPreferences.OnSharedPreferenceChangeListener{
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,SharedPreferences.OnSharedPreferenceChangeListener,DrawerLayout.DrawerListener,View.OnClickListener{
 
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle abdt;
@@ -42,9 +51,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         mDrawerLayout=findViewById(R.id.drawerlayout);
-        abdt=new ActionBarDrawerToggle(this,mDrawerLayout,toolbar,R.string.app_name,R.string.app_name);
+        mDrawerLayout.addDrawerListener(this);
+		abdt=new ActionBarDrawerToggle(this,mDrawerLayout,toolbar,R.string.app_name,R.string.app_name);
         mNavigationView=findViewById(R.id.navigation_view);
         mNavigationView.setNavigationItemSelectedListener(this);
+		ImageView icon=mNavigationView.getHeaderView(0).findViewById(R.id.icon);
+		Pussy.$(this).load(R.drawable.logo).transformer(new CircleTransFormation((int)Math.ceil(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,2,getResources().getDisplayMetrics())))).into(icon);
+		ViewBackgroundTarget vbt=new ViewBackgroundTarget((View)icon.getParent());
+		Pussy.$(this).load(R.drawable.background).transformer(new CropTransformer(Gravity.CENTER)).into(vbt);
+		//vbt.getView().setBackgroundResource(R.raw.background);
+		icon.setOnClickListener(this);
         if(cursor==null){
             show("index");
         }
@@ -101,13 +117,36 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
     private void show(String cursor){
-        if(cursor.equals(this.cursor))return;
+        if(cursor.equals(this.cursor))
+			return;
+		switch(cursor){
+            case "index":
+                mNavigationView.getMenu().findItem(R.id.index).setChecked(true);
+				break;
+            case "time":
+				mNavigationView.getMenu().findItem(R.id.time).setChecked(true);
+				
+                break;
+			case "favorite":
+				mNavigationView.getMenu().findItem(R.id.favorite).setChecked(true);
+				
+				break;
+			case "filter":
+				mNavigationView.getMenu().findItem(R.id.filter).setChecked(true);
+				
+				break;
+            case "order":
+				mNavigationView.getMenu().findItem(R.id.order).setChecked(true);
+				
+				break;
+				}
         Fragment f=getSupportFragmentManager().findFragmentByTag(cursor);
         if(f==null)
         switch(cursor){
             case "index":
                 f=new IndexFragment();
-                break;
+				mNavigationView.getMenu().findItem(R.id.index).setChecked(true);
+				 break;
             case "time":
                 f=new TimeFragment();
                 break;
@@ -144,7 +183,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 	{
 		if(!"index".equals(cursor)){
 			show("index");
-			mNavigationView.getMenu().getItem(0).setChecked(true);
 			}else
 		moveTaskToBack(true);
 	}
@@ -160,10 +198,91 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 				menu.findItem(R.id.order).setVisible(index.getGold()!=null);
 				menu.findItem(R.id.time).setVisible(index.hasTime());
 				menu.findItem(R.id.filter).setVisible(index.getFilter()!=null);
+				Fragment f=getSupportFragmentManager().findFragmentByTag("order");
+				if(f!=null)
+					getSupportFragmentManager().beginTransaction().remove(f).commitAllowingStateLoss();
+				f=getSupportFragmentManager().findFragmentByTag("time");
+				if(f!=null)
+					getSupportFragmentManager().beginTransaction().remove(f).commitAllowingStateLoss();
+				f=getSupportFragmentManager().findFragmentByTag("filter");
+				if(f!=null)
+					getSupportFragmentManager().beginTransaction().remove(f).commitAllowingStateLoss();
+				IndexFragment index_f=(IndexFragment) getSupportFragmentManager().findFragmentByTag("index");
+				if(index_f!=null){
+				index_f.setRefreshing(true);
+				index_f.onRefresh();
+				}
+				//Pussy.$(getContext()).clearMemory();
 				
 				break;
 		}
 	}
+
+	@Override
+	public void onDrawerOpened(View p1)
+	{
+		View v= getWindow().getDecorView();
+		v.setSystemUiVisibility(v.getSystemUiVisibility()|v.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+		
+	}
+
+	@Override
+	public void onDrawerStateChanged(int p1)
+	{
+	}
+
+	@Override
+	public void onDrawerSlide(View p1, float p2)
+	{
+	}
+
+	@Override
+	public void onDrawerClosed(View p1)
+	{
+		View v= getWindow().getDecorView();
+		v.setSystemUiVisibility(v.getSystemUiVisibility()&(~v.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR));
+		
+	}
+
+	@Override
+	public void onClick(View p1)
+	{
+		if("index".equals(cursor)){
+			String[] keys=getResources().getStringArray(R.array.site);
+			new AlertDialog.Builder(this).setItems(keys, new DialogInterface.OnClickListener(){
+
+					@Override
+					public void onClick(DialogInterface p1, int p2)
+					{
+						String[] data=getResources().getStringArray(R.array.site_key);
+						getSharedPreferences("web",0).edit().putString("web",data[p2]).commit();
+						mDrawerLayout.closeDrawer(Gravity.START);
+					}
+				}).show();
+		}else if("favorite".equals(cursor)){
+			final String[] keys=new String[]{"adh","hh","xyg","msiv","hhr","ppc","ahv","llias","jyk"};
+			new AlertDialog.Builder(this).setItems(keys, new DialogInterface.OnClickListener(){
+
+					@Override
+					public void onClick(DialogInterface p1, int p2)
+					{
+						getSharedPreferences("web",0).edit().putString("web",keys[p2]).commit();
+						mDrawerLayout.closeDrawer(Gravity.START);
+						show("index");
+						
+					}
+				}).show();
+		}
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState)
+	{
+		super.onSaveInstanceState(outState);
+		outState.putString("cursor",cursor);
+	}
+
+
 
 	
 }

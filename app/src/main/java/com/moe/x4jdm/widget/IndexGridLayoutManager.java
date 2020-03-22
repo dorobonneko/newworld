@@ -19,6 +19,7 @@ public class IndexGridLayoutManager extends GridLayoutManager
 						case 5://post_line
 						case 8:
 						case 7://load_more
+						case 9:
 						case 100:
 						return 3;
 						case 4:

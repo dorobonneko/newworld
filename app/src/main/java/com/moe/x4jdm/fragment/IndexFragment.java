@@ -38,6 +38,12 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 	private IndexAdapter mIndexAdapter;
 	private Thread mThread;
 	private String key;
+
+	public void setRefreshing(boolean p0)
+	{
+		if(mSwipeRefreshLayout!=null)
+			mSwipeRefreshLayout.setRefreshing(p0);
+	}
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
@@ -92,20 +98,7 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 							String key=search.getText().toString().trim();
 							if(key.startsWith("class:")){
 								getContext().getSharedPreferences("web",0).edit().putString("web",key.substring(6)).commit();
-								Fragment f=getFragmentManager().findFragmentByTag("order");
-								if(f!=null)
-								getFragmentManager().beginTransaction().remove(f).commit();
-								f=getFragmentManager().findFragmentByTag("time");
-								if(f!=null)
-								getFragmentManager().beginTransaction().remove(f).commit();
-								f=getFragmentManager().findFragmentByTag("filter");
-								if(f!=null)
-									getFragmentManager().beginTransaction().remove(f).commit();
-								
-								mSwipeRefreshLayout.setRefreshing(true);
-								onRefresh();
-								Pussy.$(getContext()).clearMemory();
-							}else if(key.startsWith("clear:")){
+								}else if(key.startsWith("clear:")){
 								switch(key.substring(6)){
 									case "memory":
 										Pussy.$(getContext()).clearMemory();

@@ -35,7 +35,7 @@ public class Indexmsiv extends Index
 		JSONArray index=new JSONArray();
 		try
 		{
-			Document doc= Jsoup.connect(getHost() + "wp-content/themes/LightSNS_1.6.40/mobile/templates/page/topic-rank.php").userAgent("Mozilla (Linux;Android 10)").get();
+			Document doc= Jsoup.connect(getHost() + "wp-content/themes/LightSNS_1.6.41/mobile/templates/page/topic-rank.php").userAgent("Mozilla (Linux;Android 10)").get();
 			Elements tabs=doc.select("li");
 			JSONArray tab=new JSONArray();
 			index.add(tab);
@@ -49,7 +49,7 @@ public class Indexmsiv extends Index
 			}
 			//JSONArray main=new JSONArray();
 			//index.put("main",main);
-			JSONObject jo=JSONObject.parseObject(getList(getHost()+"wp-content/themes/LightSNS_1.6.40/mobile/module/post/data.php?page=1&type=all&load_type=more"));
+			JSONObject jo=JSONObject.parseObject(getList(getHost()+"wp-content/themes/LightSNS_1.6.41/mobile/module/post/data.php?page=1&type=all&load_type=more"));
 			
 			index.addAll(jo.getJSONArray("item"));
 		}
@@ -98,7 +98,7 @@ public class Indexmsiv extends Index
 					tab_item.put("title",post.selectFirst("h1").text());
 					String src=post.selectFirst(".jinsom-video-img").attr("style");
 					tab_item.put("src",src.substring(22,src.length()-2));
-					
+					tab_item.put("viewtype","poster");
 					String post_id=Uri.parse(post.selectFirst(".content .link").absUrl("href")).getQueryParameter("post_id");
 					JSONObject post_jo=new JSONObject();
 					post_jo.put("title",tab_item.getString("title"));
@@ -133,7 +133,7 @@ public class Indexmsiv extends Index
 		Map<String,String> urls=new LinkedHashMap<>();
 		try
 		{
-			JSONObject play=JSONObject.parseObject(Jsoup.connect(getHost() + "wp-content/themes/LightSNS_1.6.40/mobile/module/post/video.php").ignoreContentType(true).method(Connection.Method.POST).userAgent("Mozilla (Linux;Android 10)").requestBody("post_id=" + url).execute().body());
+			JSONObject play=JSONObject.parseObject(Jsoup.connect(getHost() + "wp-content/themes/LightSNS_1.6.41/mobile/module/post/video.php").ignoreContentType(true).method(Connection.Method.POST).userAgent("Mozilla (Linux;Android 10)").requestBody("post_id=" + url).execute().body());
 			urls.put("Play",play.getString("url"));
 		}
 		catch (IOException e)
@@ -144,13 +144,13 @@ public class Indexmsiv extends Index
 	@Override
 	public String search(String key)
 	{
-		return getHost()+"wp-content/themes/LightSNS_1.6.40/mobile/module/post/search.php?keyword="+key+"&type=video&page=%d&search=";
+		return getHost()+"wp-content/themes/LightSNS_1.6.41/mobile/module/post/search.php?keyword="+key+"&type=video&page=%d&search=";
 	}
 
 	@Override
 	public String makeUrl(String url)
 	{
-		return getHost()+"wp-content/themes/LightSNS_1.6.40/mobile/module/post/topic.php"+url.substring(url.indexOf("?"))+"&type=video&page=%d&load_type=more";
+		return getHost()+"wp-content/themes/LightSNS_1.6.41/mobile/module/post/topic.php"+url.substring(url.indexOf("?"))+"&type=video&page=%d&load_type=more";
 	}
 
 	@Override
@@ -162,7 +162,7 @@ public class Indexmsiv extends Index
 	@Override
 	public String getGold()
 	{
-		return getHost()+"wp-content/themes/LightSNS_1.6.40/mobile/module/post/data.php?page=%d&type=commend&load_type=more";
+		return getHost()+"wp-content/themes/LightSNS_1.6.41/mobile/module/post/data.php?page=%d&type=commend&load_type=more";
 	}
 	
 }

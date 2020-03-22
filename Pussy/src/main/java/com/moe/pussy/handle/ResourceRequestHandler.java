@@ -37,15 +37,17 @@ public class ResourceRequestHandler implements RequestHandler
 		Runnable run=new Runnable(){
 			public void run(){
 		Uri uri=Uri.parse(request.getUrl());
+		int id=Integer.parseInt(uri.getSchemeSpecificPart());
 		BitmapFactory.Options options=new BitmapFactory.Options();
-
+		options.inDensity = Bitmap.DENSITY_NONE ;
+		options.inScaled = false ;
 		options.inPreferredConfig=Bitmap.Config.ARGB_8888;
 		options.inJustDecodeBounds=true;
-		BitmapFactory.decodeResource(res,Integer.parseInt(uri.getHost()),options);
+		BitmapFactory.decodeResource(res,id,options);
 		options.inJustDecodeBounds=false;
 		options.inBitmap=BitmapPool.getBitmap(options.outWidth,options.outHeight,options.inPreferredConfig);
 		options.inMutable=true;
-		call.onSuccess(new ResResponse(BitmapFactory.decodeResource(res,Integer.parseInt(uri.getHost()),options)));
+		call.onSuccess(new ResResponse(BitmapFactory.decodeResource(res,id,options)));
 		}};
 		pool.execute(run);
 	}

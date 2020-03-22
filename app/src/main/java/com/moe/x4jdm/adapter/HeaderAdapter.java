@@ -24,6 +24,8 @@ public class HeaderAdapter extends PagerAdapter
 	private List<View> cache=new ArrayList<>();
 	public HeaderAdapter(JSONArray ja){
 		this.ja=ja;
+		ja.add(0,ja.get(ja.size()-1));
+		ja.add(ja.size(),ja.get(1));
 	}
 	@Override
 	public int getCount()
