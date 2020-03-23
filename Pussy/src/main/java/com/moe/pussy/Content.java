@@ -9,8 +9,9 @@ import java.util.Map;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import java.lang.ref.WeakReference;
+import com.moe.pussy.handle.HandleThread;
 
-public class Content
+public class Content implements SizeReady
 {
 	private Request request;
 	private String key=null,tag;
@@ -19,15 +20,29 @@ public class Content
 	private List<Transformer> mTransformers=new ArrayList<>();
 	private DrawableAnimator anim;
 	private Pussy.Refresh r;
-	Drawable placeHolder,error;
-	Loader loader;
+	private Drawable placeHolder;
+	protected Drawable error;
+	protected Loader loader;
 	public Content(Request r){
 		this.request=r;
 	}
 
-	void clearTarget()
+	@Override
+	public void onSizeReady(int w, int h)
 	{
+		loader.onSizeReady(w,h);
+	}
+
+
+	void cancel()
+	{
+		synchronized(this){
 		target=null;
+			HandleThread ht=request.getPussy().request_handler.get(request.getKey());
+			if (ht != null)
+				ht.removeCallback(loader);
+			
+		}
 	}
 	
 	public Content tag(String tag){
@@ -58,7 +73,7 @@ public class Content
 			r=new Pussy.Refresh(this);
 			return r;
 	}
-	public DrawableAnimator getAnim(){
+	public final DrawableAnimator getAnim(){
 		return anim;
 	}
 	public Content anime(DrawableAnimator anim){
@@ -73,7 +88,9 @@ public class Content
 		return request;
 	}
 	Target getTarget(){
+		synchronized(this){
 		return  target;
+		}
 	}
 	DiskCache.Cache getCache(){
 		return cache;
@@ -84,14 +101,15 @@ public class Content
 	}
 	public void into(Target t){
 		if(t==null)return;
+		this.target=t;
 		Content c=t.getContent();
 		if(c!=null&&getRequest().getKey().equals(c.getRequest().getKey())){
 			return;
 		}
 		request.getPussy().cancel(t,getRequest().getKey());
-		t.placeHolder(placeHolder);
 		t.onAttachContent(this);
-		this.target=t;
+		t.placeHolder(placeHolder);
+		
 		//检查是否有缓存
 		loader=new Loader(this);
 		loader.begin();

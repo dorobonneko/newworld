@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import com.moe.pussy.DrawableAnimator;
 import android.graphics.drawable.Drawable;
 import com.moe.pussy.BitmapPool;
+import java.util.ArrayList;
 
 public class ImageViewTarget extends ViewTarget implements ViewTreeObserver.OnPreDrawListener
 {

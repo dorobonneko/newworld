@@ -47,36 +47,36 @@ public class Pussy
 	static{
 		//初始化数据
 		mainHandler = new android.os.Handler(Looper.getMainLooper());
-		}
+	}
 	private Pussy()
 	{
-		userAgent=PussyConfig.userAgent;
-		SSLSocketFactory=PussyConfig.mSSLSocketFactory;
-		decoder=PussyConfig.mDecoder;
-		mMemoryCache=new MemoryCache();
-		mActiveResource=new ActiveResource(this);
+		userAgent = PussyConfig.userAgent;
+		SSLSocketFactory = PussyConfig.mSSLSocketFactory;
+		decoder = PussyConfig.mDecoder;
+		mMemoryCache = new MemoryCache();
+		mActiveResource = new ActiveResource(this);
 		final ThreadGroup group=new ThreadGroup("image load");
 		ThreadFactory tf=new ThreadFactory(){
 
-				@Override
-				public Thread newThread(Runnable p1)
-				{
-					Thread t=new Thread(group,p1);
-					t.setPriority(Thread.MAX_PRIORITY);
-					t.setDaemon(true);
-					return t;
-				}
+			@Override
+			public Thread newThread(Runnable p1)
+			{
+				Thread t=new Thread(group, p1);
+				t.setPriority(Thread.MAX_PRIORITY);
+				t.setDaemon(true);
+				return t;
+			}
 
-			};
-		fileThreadPool = new ThreadPoolExecutor(64, 128, 1, TimeUnit.SECONDS, new LinkedBlockingDeque<Runnable>(),tf);//先进后出
-		netThreadPool = new ThreadPoolExecutor(32, 64, 10, TimeUnit.SECONDS, new LinkedBlockingDeque<Runnable>(),tf);//先进后出
-		mThreadPoolExecutor = new ThreadPoolExecutor(32, 128, 3, TimeUnit.SECONDS, new LinkedBlockingDeque<Runnable>(),tf);//先进后出
-		
-		}
+		};
+		fileThreadPool = new ThreadPoolExecutor(64, 128, 1, TimeUnit.SECONDS, new LinkedBlockingDeque<Runnable>(), tf);//先进后出
+		netThreadPool = new ThreadPoolExecutor(32, 64, 10, TimeUnit.SECONDS, new LinkedBlockingDeque<Runnable>(), tf);//先进后出
+		mThreadPoolExecutor = new ThreadPoolExecutor(32, 128, 3, TimeUnit.SECONDS, new LinkedBlockingDeque<Runnable>(), tf);//先进后出
+
+	}
 	private void init(Context context)
 	{
 		this.mContext = new WeakReference<Context>(context);
-		mDispatcher =Dispatcher.getDefault(context);
+		mDispatcher = Dispatcher.getDefault(context);
 		mDiskCache = DiskCache.get(this);
 		if (mComponentCallbacks == null)
 		{
@@ -85,10 +85,12 @@ public class Pussy
 		if (mActivityLifecycle == null)
 			((Application)context.getApplicationContext()).registerActivityLifecycleCallbacks(mActivityLifecycle = new ActivityLifecycle()); 
 	}
-	public ActiveResource getActiveResource(){
+	public ActiveResource getActiveResource()
+	{
 		return mActiveResource;
 	}
-	public MemoryCache getMemoryCache(){
+	public MemoryCache getMemoryCache()
+	{
 		return mMemoryCache;
 	}
 	public static Pussy $(Context context)
@@ -132,7 +134,8 @@ public class Pussy
 			return p;
 		}
 	}
-	public Dispatcher getDispatcher(){
+	public Dispatcher getDispatcher()
+	{
 		return mDispatcher;
 	}
 	public static void post(Runnable run)
@@ -154,7 +157,7 @@ public class Pussy
 
 	public Content load(int res)
 	{
-		
+
 		return  new Request(this, res).execute();
 	}
 	public DiskCache getDiskCache()
@@ -165,28 +168,30 @@ public class Pussy
 	{
 		return SSLSocketFactory;
 	}
-	
-	
-	public void cancel(Target t,String key)
+
+
+	public void cancel(Target t, String key)
 	{
-		if(t==null)return;
+		if (t == null)return;
 		Content content=t.getContent();
-		if(content!=null){
-		Resource res=getActiveResource().get(content.getKey());
-		if(res!=null)
-			res.release();
-		Loader l=content.loader;
-		if(l!=null)
-			l.cancel();
-			if(!key.equals(content.getRequest().getKey())){
-			HandleThread ht=request_handler.remove(content.getRequest().getKey());
-			if(ht!=null)
-			ht.cancel();
+		if (content != null)
+		{
+			content.cancel();
+			if (!key.equals(content.getRequest().getKey()))
+			{
+				HandleThread ht=request_handler.remove(content.getRequest().getKey());
+				if (ht != null)
+					ht.cancel();
 			}
+			Resource res=getActiveResource().get(content.getKey());
+			if (res != null)
+				res.release();
+			t.onResourceReady(null,null);
+			
 		}
-		
+
 	}
-	
+
 	public Context getContext()
 	{
 		return mContext.get();
@@ -212,7 +217,7 @@ public class Pussy
 		clearMemory();
 		trimCache();
 		mThreadPoolExecutor.shutdownNow();
-		
+
 	}
 	int[] getScreenSize()
 	{
@@ -383,6 +388,11 @@ public class Pussy
 		public Refresh(Content l)
 		{
 			this.l = l;
+		}
+
+		public boolean isCancel()
+		{
+			return l.getTarget()==null;
 		}
 		public void refresh()
 		{

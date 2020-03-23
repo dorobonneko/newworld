@@ -4,30 +4,15 @@ import java.io.FileOutputStream;
 import java.io.FileNotFoundException;
 import android.graphics.drawable.Drawable;
 
-public abstract class Target implements SizeReady
+public interface Target extends SizeReady
 {
-	private Content content;
-	private int width,height;
-	public void placeHolder(Drawable placeHolder)
-	{
-	}
-	Content getContent(){
-		return content;
-	}
-	@Override
-	public void onSizeReady(int w,int h){
-		width=w;
-		height=h;
-	}
-	public Bitmap onResourceReady(Bitmap bitmap,Transformer... trans){
-		for(Transformer t:trans){
-			bitmap=t.onTransformer(BitmapPool.get(),bitmap,width,height);
-		}
-		return bitmap;
-	}
+	public abstract void placeHolder(Drawable placeHolder);
+	public Content getContent();
+	//原始资源准备完毕，等待回调onSizeReady
+	public abstract void onResourceReady(Bitmap bitmap,Transformer... trans);
 	public abstract void onSucccess(PussyDrawable pd);
 	public abstract void error(Throwable e,Drawable d);
-	public PussyDrawable putCache(Bitmap pd){
+	/*public PussyDrawable putCache(Bitmap pd){
 		if(pd==null)return null;
 		Resource res=new Resource(content.getKey(),pd);
 		res.acquire();
@@ -46,20 +31,8 @@ public abstract class Target implements SizeReady
 			}
 		}
 		return new PussyDrawable(pd,getRefresh());
-	}
-	protected void onAttachContent(Content c){
-		if(this.content!=null){
-			this.content.clearTarget();
-		}
-		this.content=c;
-	}
-	protected DrawableAnimator getAnim(){
-		if(content!=null)
-		return content.getAnim();
-		return null;
-	}
-	protected Pussy.Refresh getRefresh(){
-		return content.getRefresh();
-	}
+	}*/
+	public abstract void onAttachContent(Content c);
+	
 	
 }

@@ -128,7 +128,6 @@ public class IndexAdapter extends RecyclerView.Adapter
 			}
 			tab.setOnTabSelectedListener((TabViewHolder)vh);
 			tab.setTabMode(tab.getTabCount() <= 5 ?tab.MODE_FIXED: tab.MODE_SCROLLABLE);
-
 		}
 		else if (vh instanceof HeaderViewHolder)
 		{

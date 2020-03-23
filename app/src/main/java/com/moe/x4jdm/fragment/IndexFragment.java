@@ -62,7 +62,7 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 		progress = mSwipeRefreshLayout.findViewById(R.id.progress);
 		recyclerview = mSwipeRefreshLayout.findViewById(R.id.recyclerview);
 		mSwipeRefreshLayout.setOnRefreshListener(this);
-		recyclerview.setItemViewCacheSize(5);
+		recyclerview.setItemViewCacheSize(20);
 		recyclerview.setHasFixedSize(true);
 		recyclerview.addItemDecoration(new Space((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,8,getResources().getDisplayMetrics())));
 		recyclerview.setAdapter(mIndexAdapter=new IndexAdapter(data=new JSONArray()));
