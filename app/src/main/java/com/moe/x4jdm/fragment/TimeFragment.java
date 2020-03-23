@@ -15,6 +15,9 @@ import java.util.Iterator;
 import com.moe.x4jdm.util.Copy;
 import java.util.Calendar;
 import com.moe.x4jdm.model.Index;
+import android.support.v7.widget.Toolbar;
+import android.view.ViewTreeObserver;
+import android.graphics.Rect;
 
 public class TimeFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener,ViewPager.OnPageChangeListener
 {
@@ -29,7 +32,7 @@ public class TimeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState)
+    public void onViewCreated(final View view, Bundle savedInstanceState)
     {
         super.onViewCreated(view, savedInstanceState);
 		mSwipeRefreshLayout=view.findViewById(R.id.swiperefreshlayout);
@@ -40,6 +43,23 @@ public class TimeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 		mViewPager.setAdapter(new TimeViewPagerAdapter(time_data=new JSONArray()));
 		mTabLayout.setTabMode(mTabLayout.MODE_FIXED);
 		mViewPager.addOnPageChangeListener(this);
+		final Toolbar bar=getActivity().findViewById(R.id.toolbar);
+		bar.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener(){
+
+				@Override
+				public boolean onPreDraw()
+				{
+					bar.getViewTreeObserver().removeOnPreDrawListener(this);
+					Rect rect=new Rect();
+					bar.getGlobalVisibleRect(rect);
+					mSwipeRefreshLayout.setPadding(0,rect.bottom,0,0);
+					//view.setPadding(0,rect.bottom,0,0);
+					int offset=mSwipeRefreshLayout.getProgressCircleDiameter();
+					mSwipeRefreshLayout.setProgressViewOffset(false,rect.bottom-offset,rect.bottom+offset);
+					
+					return false;
+				}
+			});
     }
 
 	@Override

@@ -17,6 +17,9 @@ import com.moe.x4jdm.widget.GridLayoutManager;
 import com.moe.x4jdm.model.Database;
 import com.moe.x4jdm.adapter.IndexAdapter;
 import com.moe.x4jdm.widget.IndexGridLayoutManager;
+import android.support.v7.widget.Toolbar;
+import android.view.ViewTreeObserver;
+import android.graphics.Rect;
 
 public class FavoriteFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener
 {
@@ -45,6 +48,23 @@ public class FavoriteFragment extends Fragment implements SwipeRefreshLayout.OnR
 		mRecyclerView.addItemDecoration(new Space((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,8,getResources().getDisplayMetrics())));
 		mRecyclerView.setAdapter(pa);
 		//mRecyclerView.addOnScrollListener(new Scroll());
+		final Toolbar bar=getActivity().findViewById(R.id.toolbar);
+		bar.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener(){
+
+				@Override
+				public boolean onPreDraw()
+				{
+					bar.getViewTreeObserver().removeOnPreDrawListener(this);
+					Rect rect=new Rect();
+					bar.getGlobalVisibleRect(rect);
+					mSwipeRefreshLayout.setPadding(0,rect.bottom,0,0);
+					//view.setPadding(0,rect.bottom,0,0);
+					int offset=mSwipeRefreshLayout.getProgressCircleDiameter();
+					mSwipeRefreshLayout.setProgressViewOffset(false,rect.bottom-offset,rect.bottom+offset);
+
+					return false;
+				}
+			});
 	}
 
 	@Override

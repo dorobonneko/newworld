@@ -31,6 +31,7 @@ import android.content.DialogInterface;
 import com.moe.pussy.target.ViewBackgroundTarget;
 import com.moe.pussy.transformer.CropTransformer;
 import android.util.TypedValue;
+import android.app.ActionBar;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,SharedPreferences.OnSharedPreferenceChangeListener,DrawerLayout.DrawerListener,View.OnClickListener{
 
@@ -40,6 +41,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private String cursor;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+		View v= getWindow().getDecorView();
+		v.setSystemUiVisibility(v.getSystemUiVisibility()|v.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+		
         super.onCreate(savedInstanceState);
 		getSharedPreferences("web",0).registerOnSharedPreferenceChangeListener(this);
         if(savedInstanceState!=null){
@@ -68,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 		//throw new NullPointerException();
     }
 
+	
 	
     @Override
     protected void onPostCreate(Bundle savedInstanceState)
@@ -222,7 +227,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 	public void onDrawerOpened(View p1)
 	{
 		View v= getWindow().getDecorView();
-		v.setSystemUiVisibility(v.getSystemUiVisibility()|v.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+		v.setSystemUiVisibility(v.getSystemUiVisibility()&(~v.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR));
 		
 	}
 
@@ -240,7 +245,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 	public void onDrawerClosed(View p1)
 	{
 		View v= getWindow().getDecorView();
-		v.setSystemUiVisibility(v.getSystemUiVisibility()&(~v.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR));
+		v.setSystemUiVisibility(v.getSystemUiVisibility()|v.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+		
 		
 	}
 

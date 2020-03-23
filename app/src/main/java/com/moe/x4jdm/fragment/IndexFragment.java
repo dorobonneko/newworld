@@ -28,6 +28,9 @@ import com.moe.x4jdm.model.Index;
 import com.moe.x4jdm.util.Space;
 import com.moe.x4jdm.widget.GridLayoutManager;
 import com.moe.x4jdm.widget.IndexGridLayoutManager;
+import android.support.v7.widget.Toolbar;
+import android.graphics.Rect;
+import android.view.ViewTreeObserver;
 
 public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener,View.OnClickListener,PostAdapter.OnItemClickListener
 {
@@ -63,9 +66,25 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 		recyclerview.setHasFixedSize(true);
 		recyclerview.addItemDecoration(new Space((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,8,getResources().getDisplayMetrics())));
 		recyclerview.setAdapter(mIndexAdapter=new IndexAdapter(data=new JSONArray()));
-		
 		recyclerview.setLayoutManager(new IndexGridLayoutManager(view.getContext(),mIndexAdapter));
-		//recyclerview.setLayoutManager(new LinearLayoutManager(getContext()));
+		final Toolbar bar=getActivity().findViewById(R.id.toolbar);
+		bar.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener(){
+
+				@Override
+				public boolean onPreDraw()
+				{
+					bar.getViewTreeObserver().removeOnPreDrawListener(this);
+					Rect rect=new Rect();
+					bar.getGlobalVisibleRect(rect);
+					//mSwipeRefreshLayout.setPadding(0,rect.top,0,0);
+					recyclerview.setPadding(0,rect.bottom,0,0);
+					int offset=mSwipeRefreshLayout.getProgressCircleDiameter();
+					mSwipeRefreshLayout.setProgressViewOffset(false,-offset,rect.bottom+offset);
+					
+					return false;
+				}
+			});
+			//recyclerview.setLayoutManager(new LinearLayoutManager(getContext()));
 		//recyclerview.setAdapter(mIndexAdapter=new IndexAdapter(data=new JSONArray()));
 	}
 

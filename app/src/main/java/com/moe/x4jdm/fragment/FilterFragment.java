@@ -1,23 +1,26 @@
 package com.moe.x4jdm.fragment;
+import android.graphics.Rect;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.moe.x4jdm.R;
+import com.moe.x4jdm.adapter.FilterAdapter;
 import com.moe.x4jdm.adapter.IndexAdapter;
 import com.moe.x4jdm.model.Index;
 import com.moe.x4jdm.util.Space;
 import com.moe.x4jdm.widget.IndexGridLayoutManager;
-import com.moe.x4jdm.adapter.FilterAdapter;
-import android.os.Handler;
-import android.os.Message;
 
 public class FilterFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener,FilterAdapter.OnChangeListener
 {
@@ -36,7 +39,7 @@ public class FilterFragment extends Fragment implements SwipeRefreshLayout.OnRef
 	}
 
 	@Override
-	public void onViewCreated(View view, Bundle savedInstanceState)
+	public void onViewCreated(final View view, Bundle savedInstanceState)
 	{
 		super.onViewCreated(view, savedInstanceState);
 		mSwipeRefreshLayout=view.findViewById(R.id.swiperefreshlayout);
@@ -60,6 +63,21 @@ public class FilterFragment extends Fragment implements SwipeRefreshLayout.OnRef
 		mRecyclerView.setLayoutManager(new IndexGridLayoutManager(getContext(),pa));
 		//((SimpleItemAnimator)mRecyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
 		mRecyclerView.setAdapter(pa);
+		final Toolbar bar=getActivity().findViewById(R.id.toolbar);
+		bar.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener(){
+
+				@Override
+				public boolean onPreDraw()
+				{
+					bar.getViewTreeObserver().removeOnPreDrawListener(this);
+					Rect rect=new Rect();
+					bar.getGlobalVisibleRect(rect);
+					//mSwipeRefreshLayout.setPadding(0,rect.top,0,0);
+					view.setPadding(0,rect.bottom,0,0);
+					
+					return false;
+				}
+			});
 	}
 
 	@Override

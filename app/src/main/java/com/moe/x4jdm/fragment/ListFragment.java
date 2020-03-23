@@ -15,6 +15,9 @@ import com.moe.x4jdm.adapter.IndexAdapter;
 import com.moe.x4jdm.model.Index;
 import com.moe.x4jdm.util.Space;
 import com.moe.x4jdm.widget.IndexGridLayoutManager;
+import android.support.v7.widget.Toolbar;
+import android.view.ViewTreeObserver;
+import android.graphics.Rect;
 
 public class ListFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener
 {
@@ -50,6 +53,27 @@ public class ListFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 		mRecyclerView.addItemDecoration(new Space((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,8,getResources().getDisplayMetrics())));
 		mRecyclerView.setAdapter(pa);
 		mRecyclerView.addOnScrollListener(new Scroll());
+		final Toolbar bar=getActivity().findViewById(R.id.toolbar);
+		if(bar!=null)
+		bar.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener(){
+
+				@Override
+				public boolean onPreDraw()
+				{
+					bar.getViewTreeObserver().removeOnPreDrawListener(this);
+					Rect rect=new Rect();
+					bar.getGlobalVisibleRect(rect);
+					mRecyclerView.setPadding(0,rect.bottom,0,0);
+					//view.setPadding(0,rect.bottom,0,0);
+					int offset=mSwipeRefreshLayout.getProgressCircleDiameter();
+					mSwipeRefreshLayout.setProgressViewOffset(false,-offset,rect.bottom+offset);
+
+					return false;
+				}
+			});else{
+				mRecyclerView.setFitsSystemWindows(true);
+				mRecyclerView.requestApplyInsets();
+			}
 	}
 
 	@Override
