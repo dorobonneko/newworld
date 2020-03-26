@@ -52,6 +52,7 @@ public class RoundTransformer implements Transformer
 		paint.setFilterBitmap(true);
 		paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
 		canvas.drawBitmap(source, 0, 0, paint);
+		
 		if(bitmap!=source)
 		bp.recycle(source);//释放
 

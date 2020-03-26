@@ -16,6 +16,7 @@ public class Loader implements Runnable,HandleThread.Callback,BitmapLoader.Callb
 	private Pussy pussy;
 	private Request request;
 	private Bitmap source;
+	private Object locked=new Object();
 	//loader绑定一个target，多个loader可绑定一个handler
 	public Loader(Content content)
 	{
@@ -36,7 +37,7 @@ public class Loader implements Runnable,HandleThread.Callback,BitmapLoader.Callb
 			request.getPussy().getDiskCache().invalidate(content.getKey());
 			Target target=content.getTarget();
 			if (target != null)
-				target.onSucccess(new PussyDrawable(res.bitmap, content.getRefresh()));
+				target.onSucccess(new PussyDrawable(res.bitmap,target, content.getRefresh()));
 			return;
 		}
 		Bitmap bitmap=request.getPussy().getMemoryCache().remove(content.getKey());
@@ -48,7 +49,7 @@ public class Loader implements Runnable,HandleThread.Callback,BitmapLoader.Callb
 			request.getPussy().getDiskCache().invalidate(content.getKey());
 			Target target=content.getTarget();
 			if (target != null)
-				target.onSucccess(new PussyDrawable(bitmap, content.getRefresh()));
+				target.onSucccess(new PussyDrawable(bitmap,target, content.getRefresh()));
 			return;
 		}
 		pussy.mThreadPoolExecutor.execute(this);
@@ -57,6 +58,7 @@ public class Loader implements Runnable,HandleThread.Callback,BitmapLoader.Callb
 	@Override
 	public void onSizeReady(int w, int h)
 	{
+		synchronized(locked){
 		if (isCancel() || source == null)return;
 		Target t=content.getTarget();
 		if (t == null)return;
@@ -76,6 +78,7 @@ public class Loader implements Runnable,HandleThread.Callback,BitmapLoader.Callb
 		{}
 		success(source,null);
 		source=null;
+		}
 	}
 
 
@@ -144,9 +147,7 @@ public class Loader implements Runnable,HandleThread.Callback,BitmapLoader.Callb
 				source = response.getBitmap();
 				content.getTarget().onResourceReady(response.getBitmap(), content.getTransformer());
 			}
-		}
-		else
-		if (response.get() == null)
+		}else if (response.get() == null)
 			success(null, null);
 		else
 		{
@@ -162,10 +163,11 @@ public class Loader implements Runnable,HandleThread.Callback,BitmapLoader.Callb
 
 
 
-	private void success(Bitmap bitmap, Throwable e)
+	private void success(final Bitmap bitmap, Throwable e)
 	{
 		if (isCancel())
 		{
+			if(bitmap!=null)
 			BitmapPool.recycle(bitmap);
 			return;
 		}
@@ -187,12 +189,11 @@ public class Loader implements Runnable,HandleThread.Callback,BitmapLoader.Callb
 			res.acquire();
 			pussy.getActiveResource().add(res);
 			//content.getRequest().getPussy().getMemoryCache().put(content.getKey(), bitmap);
-			final PussyDrawable pd=new PussyDrawable(bitmap, content.getRefresh());
 			pussy.post(new Runnable(){
 					public void run()
 					{
 						Target t=content.getTarget();
-						if (t != null)t.onSucccess(pd);
+						if (t != null)t.onSucccess(new PussyDrawable(bitmap,content.getTarget(), content.getRefresh()));
 					}
 				});}
 	}

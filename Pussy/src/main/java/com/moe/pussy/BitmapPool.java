@@ -11,8 +11,12 @@ public class BitmapPool
 	private volatile static Map<String,List<Bitmap>> map=new HashMap<String,List<Bitmap>>();
 	private volatile static int maxSize=8;
 	private volatile static BitmapPool bp;
+	private volatile static Map<Integer,String> log=new HashMap<>();
 	private BitmapPool()
 	{
+	}
+	public String get(int code){
+		return log.get(code);
 	}
 	public static BitmapPool get()
 	{
@@ -41,6 +45,16 @@ public class BitmapPool
 	}
 	public static void recycle(Bitmap bitmap)
 	{
+		/*StringBuilder sb=new StringBuilder();
+		for(StackTraceElement e:Thread.currentThread().getStackTrace()){
+			sb.append(e.toString()).append("\n");
+		}
+		if(bitmap==null){
+			sb.toString();
+		}
+		log.put(bitmap.hashCode(),sb.toString());*/
+		/*synchronized(bitmap){
+		if(bitmap!=null)bitmap.recycle();}*/
 		if (bitmap == null || bitmap.isRecycled())return;
 		int w=bitmap.getWidth();
 		int h=bitmap.getHeight();
@@ -59,8 +73,8 @@ public class BitmapPool
 				if (list.size() >= maxSize||!bitmap.isMutable())
 					bitmap.recycle();
 				else
-				{
-					bitmap.eraseColor(0);//清除颜色
+				{//bitmap.recycle();
+					//bitmap.eraseColor(0);//清除颜色
 					list.add(bitmap);
 				}
 			}

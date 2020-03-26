@@ -10,6 +10,9 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import java.lang.ref.WeakReference;
 import com.moe.pussy.handle.HandleThread;
+import com.moe.pussy.target.ViewBackgroundTarget;
+import android.view.View;
+import com.moe.pussy.target.DrawableTarget;
 
 public class Content implements SizeReady
 {
@@ -99,6 +102,12 @@ public class Content implements SizeReady
 		this.cache=cache;
 		return this;
 	}
+	boolean refresh(Target t){
+		
+		target=t;
+		loader.begin();
+		return true;
+	}
 	public void into(Target t){
 		if(t==null)return;
 		this.target=t;
@@ -106,7 +115,7 @@ public class Content implements SizeReady
 		if(c!=null&&getRequest().getKey().equals(c.getRequest().getKey())){
 			return;
 		}
-		request.getPussy().cancel(t,getRequest().getKey());
+		request.getPussy().cancel(t,getRequest());
 		t.onAttachContent(this);
 		t.placeHolder(placeHolder);
 		
@@ -121,6 +130,19 @@ public class Content implements SizeReady
 			view.setTag(ivt=new ImageViewTarget(view));
 			//ivt.placeHolder(placeHolder);
 			into(ivt);
+	}
+	public void into(View view){
+		//view.setImageDrawable(null);
+		ViewBackgroundTarget ivt=(ViewBackgroundTarget) view.getTag();
+		if(ivt==null)
+			view.setTag(ivt=new ViewBackgroundTarget(view));
+		//ivt.placeHolder(placeHolder);
+		into(ivt);
+	}
+	public DrawableTarget intoPlaceHolder(){
+		DrawableTarget dt=new DrawableTarget();
+		into(dt);
+		return dt;
 	}
 	synchronized String getKey(){
 		if(key==null){

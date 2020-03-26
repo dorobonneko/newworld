@@ -33,6 +33,7 @@ import android.view.animation.LinearInterpolator;
 import com.moe.pussy.transformer.RoundTransformer;
 import com.youth.banner.Banner;
 import com.moe.pussy.transformer.EmbossTransFormer;
+import com.moe.pussy.Target;
 
 public class IndexAdapter extends RecyclerView.Adapter
 {
@@ -64,6 +65,16 @@ public class IndexAdapter extends RecyclerView.Adapter
 	public long getItemId(int position)
 	{
 		return position;
+	}
+
+	@Override
+	public void onViewRecycled(RecyclerView.ViewHolder holder)
+	{
+		super.onViewRecycled(holder);
+		if(holder instanceof PostViewHolder){
+			Target t=(Target) ((PostViewHolder)holder).icon.getTag();
+			Pussy.$(holder.itemView.getContext()).cancel(t,null);
+		}
 	}
 
 	
@@ -153,6 +164,8 @@ public class IndexAdapter extends RecyclerView.Adapter
 				if(pvh.score!=null)
 				pvh.score.setText(jo.getString("score"));
 				Pussy.$(pvh.icon.getContext()).load(jo.getString("src")).execute().tag(jo.getString("title")).transformer(new CropTransformer(Gravity.CENTER),new RoundTransformer(pvh.itemView.getResources().getDisplayMetrics(),5)).anime(Anim.fade(500)).into(pvh.icon);
+			//pvh.icon.setImageDrawable(Pussy.$(pvh.icon.getContext()).load(jo.getString("src")).execute().tag(jo.getString("title")).transformer(new CropTransformer(Gravity.CENTER),new RoundTransformer(pvh.itemView.getResources().getDisplayMetrics(),5)).anime(Anim.fade(500)).intoPlaceHolder());
+			
 				//Glide.with(pvh.itemView.getContext()).load(jo.getString("src")).centerCrop().crossFade(500).into(pvh.icon);
 			}else if(vh instanceof PostLineViewHolder){
 				PostLineViewHolder plvh=(IndexAdapter.PostLineViewHolder) vh;

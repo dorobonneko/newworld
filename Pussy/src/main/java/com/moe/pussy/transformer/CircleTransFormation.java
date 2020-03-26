@@ -18,6 +18,7 @@ public class CircleTransFormation implements Transformer
 	@Override
 	public Bitmap onTransformer(BitmapPool mBitmapPool, Bitmap bitmap, int w, int h)
 	{
+		if(bitmap==null)return null;
 		int size=Math.min(bitmap.getWidth(),bitmap.getHeight());
 		if(w>0)
 			size=Math.min(size,w);

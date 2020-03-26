@@ -8,14 +8,29 @@ import com.moe.pussy.Target;
 import com.moe.pussy.Transformer;
 import com.moe.pussy.Content;
 
-public abstract class ViewTarget  implements Target,ViewTreeObserver.OnPreDrawListener
+public abstract class ViewTarget  implements Target,ViewTreeObserver.OnPreDrawListener,View.OnAttachStateChangeListener
 {
 	private Content content;
 	private View view;
 	public ViewTarget(View view)
 	{
 		this.view = view;
+		view.addOnAttachStateChangeListener(this);
 	}
+
+	@Override
+	public void onViewAttachedToWindow(View p1)
+	{
+		content.getRefresh().refresh(this);
+	}
+
+	@Override
+	public void onViewDetachedFromWindow(View p1)
+	{
+		content.getRefresh().cancel();
+	}
+
+
 
 	@Override
 	public void onAttachContent(Content c)

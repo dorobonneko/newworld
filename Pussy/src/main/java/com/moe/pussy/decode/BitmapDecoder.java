@@ -14,7 +14,7 @@ public class BitmapDecoder implements Decoder
 	public Bitmap decode(File input)
 	{
 		BitmapFactory.Options options=new BitmapFactory.Options();
-		
+		options.inDither=true;
 		options.inPreferredConfig=Bitmap.Config.ARGB_8888;
 		options.inJustDecodeBounds=true;
 		BitmapFactory.decodeFile(input.getAbsolutePath(),options);
@@ -23,7 +23,7 @@ public class BitmapDecoder implements Decoder
 		options.inBitmap=BitmapPool.getBitmap(options.outWidth,options.outHeight,options.inPreferredConfig);
 		options.inMutable=true;
 		Bitmap bitmap=BitmapFactory.decodeFile(input.getAbsolutePath(),options);
-		if(options.outMimeType==null||options.outWidth<=0||options.outHeight<=0){
+		if(options.outMimeType==null||options.outWidth!=bitmap.getWidth()||options.outHeight!=bitmap.getHeight()){
 				BitmapPool.recycle(bitmap);
 				bitmap=null;
 			}else if(bitmap.getWidth()<=0||bitmap.getHeight()<=0){

@@ -15,9 +15,15 @@ public class MemoryCache extends LruCache<String,Bitmap>
 	@Override
 	protected void entryRemoved(boolean evicted, String key, Bitmap oldValue, Bitmap newValue)
 	{
-		if(evicted&&oldValue!=null){
+		if(evicted){
 			synchronized(oldValue){
 				BitmapPool.recycle(oldValue);
+			}
+		}else{
+			if(newValue!=null){
+				synchronized(oldValue){
+					BitmapPool.recycle(oldValue);
+				}
 			}
 		}
 	}

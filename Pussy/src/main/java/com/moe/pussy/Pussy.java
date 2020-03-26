@@ -36,14 +36,15 @@ public class Pussy
 	protected DiskCache mDiskCache;
 
 	//Map<Target,Loader> loader_queue=new HashMap<>();
-	static Map<String,HandleThread> request_handler=new ConcurrentHashMap<>();
-	ThreadPoolExecutor mThreadPoolExecutor;
-	Decoder decoder;
+	protected static Map<String,HandleThread> request_handler=new ConcurrentHashMap<>();
+	protected ThreadPoolExecutor mThreadPoolExecutor;
+	protected Decoder decoder;
 	private Dispatcher mDispatcher;
 	private static android.os.Handler mainHandler;
 	private MemoryCache mMemoryCache;
 	private ActiveResource mActiveResource;
 	protected ThreadPoolExecutor netThreadPool,fileThreadPool;
+	
 	static{
 		//初始化数据
 		mainHandler = new android.os.Handler(Looper.getMainLooper());
@@ -170,14 +171,14 @@ public class Pussy
 	}
 
 
-	public void cancel(Target t, String key)
+	public void cancel(Target t, Request request)
 	{
 		if (t == null)return;
 		Content content=t.getContent();
 		if (content != null)
 		{
 			content.cancel();
-			if (!key.equals(content.getRequest().getKey()))
+			if (request!=null&&!request.getKey().equals(content.getRequest().getKey()))
 			{
 				HandleThread ht=request_handler.remove(content.getRequest().getKey());
 				if (ht != null)
@@ -390,13 +391,18 @@ public class Pussy
 			this.l = l;
 		}
 
+		public void cancel()
+		{
+			l.getRequest().getPussy().cancel(l.getTarget(),l.getRequest());
+		}
+
 		public boolean isCancel()
 		{
 			return l.getTarget()==null;
 		}
-		public void refresh()
+		public boolean refresh(Target t)
 		{
-			l.into(l.getTarget());
+			return l.refresh(t);
 		}
 	}
 }
