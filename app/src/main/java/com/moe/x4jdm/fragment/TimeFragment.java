@@ -88,7 +88,7 @@ public class TimeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 		}.start();
 	}
 private void load(String data){
-	Copy.copy(getContext(),data);
+	//Copy.copy(getContext(),data);
 	time_data.clear();
 	try{
 	Iterator<JSONArray> iterator=(Iterator<JSONArray>) JSONArray.parseArray(data).iterator();
