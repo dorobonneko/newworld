@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 import com.moe.pussy.RequestHandler.Response;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.lang.ref.WeakReference;
 
 public class HandleThread implements Runnable,RequestHandler.Callback
 {
@@ -13,11 +14,11 @@ public class HandleThread implements Runnable,RequestHandler.Callback
 	private Request request;
 	private List<Callback> calls=new CopyOnWriteArrayList<>();
 	private boolean success;
-	private ThreadPoolExecutor pool;
+	private WeakReference<ThreadPoolExecutor> pool;
 	private int error;
 	public HandleThread(Request request,ThreadPoolExecutor pool){
 		this.request=request;
-		this.pool=pool;
+		this.pool=new WeakReference<ThreadPoolExecutor>( pool);
 		pool.execute(this);
 	}
 
@@ -40,7 +41,7 @@ public class HandleThread implements Runnable,RequestHandler.Callback
 		if(success)return;
 		RequestHandler h=request.getPussy().getDispatcher().getHandler(request);
 		if(h!=null)
-			h.onHandle(pool,request,this);
+			h.onHandle(pool.get(),request,this);
 		
 	}
 
@@ -59,7 +60,7 @@ public class HandleThread implements Runnable,RequestHandler.Callback
 	{
 		error++;
 		if(error<3)
-			pool.execute(this);
+			try{pool.get().execute(this);}catch(Exception ee){}
 	}
 
 

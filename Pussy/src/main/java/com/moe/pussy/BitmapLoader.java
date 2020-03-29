@@ -18,6 +18,10 @@ public class BitmapLoader implements Runnable
 	public void run()
 	{
 		call.onSuccess(key,decoder.decode(file),file);
+		key=null;
+		decoder=null;
+		file=null;
+		call=null;
 	}
 
 	

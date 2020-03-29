@@ -1,6 +1,5 @@
 package com.moe.pussy;
 import android.app.Activity;
-import android.app.Application;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.ComponentCallbacks;
@@ -22,6 +21,9 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import javax.net.ssl.SSLSocketFactory;
+import android.app.Application;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Pussy
 {
@@ -44,7 +46,7 @@ public class Pussy
 	private MemoryCache mMemoryCache;
 	private ActiveResource mActiveResource;
 	protected ThreadPoolExecutor netThreadPool,fileThreadPool;
-	
+	private static List<WeakReference> test=new ArrayList<>();
 	static{
 		//初始化数据
 		mainHandler = new android.os.Handler(Looper.getMainLooper());
@@ -70,14 +72,14 @@ public class Pussy
 
 		};
 		fileThreadPool = new ThreadPoolExecutor(64, 128, 1, TimeUnit.SECONDS, new LinkedBlockingDeque<Runnable>(), tf);//先进后出
-		netThreadPool = new ThreadPoolExecutor(32, 64, 10, TimeUnit.SECONDS, new LinkedBlockingDeque<Runnable>(), tf);//先进后出
+		netThreadPool = new ThreadPoolExecutor(128, 512, 10, TimeUnit.SECONDS, new LinkedBlockingDeque<Runnable>(), tf);//先进后出
 		mThreadPoolExecutor = new ThreadPoolExecutor(32, 128, 3, TimeUnit.SECONDS, new LinkedBlockingDeque<Runnable>(), tf);//先进后出
 
 	}
 	private void init(Context context)
 	{
-		this.mContext = new WeakReference<Context>(context);
-		mDispatcher = Dispatcher.getDefault(context);
+		this.mContext = new WeakReference<Context>(context.getApplicationContext());
+		mDispatcher = Dispatcher.getDefault(context.getApplicationContext());
 		mDiskCache = DiskCache.get(this);
 		if (mComponentCallbacks == null)
 		{
@@ -103,6 +105,8 @@ public class Pussy
 			{
 				context_pussy.put(context, p = new Pussy());
 				p.init(context);
+				test.add(new WeakReference<>(p));
+				Object c=test;
 			}
 			return p;
 		}
@@ -215,9 +219,15 @@ public class Pussy
 	}
 	public void release()
 	{
+		mActiveResource.clear();
 		clearMemory();
 		trimCache();
 		mThreadPoolExecutor.shutdownNow();
+		netThreadPool.shutdownNow();
+		fileThreadPool.shutdownNow();
+		mContext.get().unregisterComponentCallbacks(mComponentCallbacks);
+		((Application)mContext.get().getApplicationContext()).unregisterActivityLifecycleCallbacks(mActivityLifecycle);
+		
 
 	}
 	int[] getScreenSize()
@@ -345,7 +355,7 @@ public class Pussy
 				if (p != null)
 					p.release();
 			}
-		}
+			}
 	}
 	static class FragmentLifecycle extends FragmentManager.FragmentLifecycleCallbacks
 	{

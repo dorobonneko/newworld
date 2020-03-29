@@ -14,14 +14,14 @@ public class PussyDrawable extends Drawable implements Animatable
 {
 	public WeakReference<Bitmap> bitmap;
 	private boolean recycle;
-	private Pussy.Refresh refresh;
+	private WeakReference<Pussy.Refresh> refresh;
 	private DrawableAnimator da;
 	private WeakReference<Target> t;
 	public PussyDrawable(Bitmap bitmap,Target t,Pussy.Refresh r)
 	{
 		this.bitmap =new WeakReference<Bitmap>(bitmap);
 		this.t=new WeakReference<Target>(t);
-		refresh=r;
+		refresh=new WeakReference<>(r);
 	}
 	
 	public void setAnimator(DrawableAnimator da)
@@ -55,7 +55,7 @@ public class PussyDrawable extends Drawable implements Animatable
 
 	public Pussy.Refresh getRefresh()
 	{
-		return refresh;
+		return refresh.get();
 	}
 	@Override
 	public void draw(Canvas p1)
@@ -66,7 +66,7 @@ public class PussyDrawable extends Drawable implements Animatable
 			{
 				if (bitmap.isRecycled()||BitmapPool.isRecycled(bitmap)){
 					if(refresh!=null)
-						refresh.refresh(t.get());
+						getRefresh().refresh(t.get());
 				}else
 				{
 					p1.setDrawFilter(new PaintFlagsDrawFilter(0, Paint.DITHER_FLAG|Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG));
@@ -78,7 +78,7 @@ public class PussyDrawable extends Drawable implements Animatable
 				
 			}
 			}else if(refresh!=null){
-				refresh.refresh(t.get());
+				getRefresh().refresh(t.get());
 			}
 	}
 

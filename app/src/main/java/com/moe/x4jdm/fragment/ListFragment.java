@@ -18,6 +18,7 @@ import com.moe.x4jdm.widget.IndexGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.view.ViewTreeObserver;
 import android.graphics.Rect;
+import com.moe.x4jdm.app.Application;
 
 public class ListFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener
 {
@@ -88,7 +89,7 @@ public class ListFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 		}
 		mSwipeRefreshLayout.setRefreshing(true);
 		onRefresh();
-	}
+			}
 
 	@Override
 	public void onRefresh()

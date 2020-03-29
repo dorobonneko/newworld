@@ -61,6 +61,7 @@ public class Indexhh extends Index
 					item.put("href",a_item.absUrl("href"));
 					item.put("title",a_item.parent().selectFirst(".like_title").text());
 					item.put("src",a_item.child(0).absUrl("src"));
+					item.put("viewtype","poster");
 				}
 			}
 		}
@@ -113,7 +114,7 @@ public class Indexhh extends Index
 				item.put("href",div_item.selectFirst("a.brick-title").absUrl("href"));
 				item.put("src",div_item.selectFirst("img").absUrl("src"));
 				item.put("desc",div_item.selectFirst(".social-info").child(0).text());
-				
+				item.put("viewtype","poster");
 			}
 		}
 		catch (IOException e)

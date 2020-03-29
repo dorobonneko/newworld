@@ -9,7 +9,7 @@ public class MemoryCache extends LruCache<String,Bitmap>
 {
 	//private Map<String,WeakReference> cache=new HashMap<>();
 	public MemoryCache(){
-		super((int)Runtime.getRuntime().maxMemory()/4);
+		super((int)Runtime.getRuntime().maxMemory()/8);
 	}
 	
 	@Override

@@ -31,7 +31,9 @@ public class BitmapPool
 
 	public static Bitmap getBitmap(int w, int h, Bitmap.Config config)
 	{
-		synchronized (map)
+		return Bitmap.createBitmap(w, h, config);
+		
+		/*synchronized (map)
 		{
 			List<Bitmap> list=map.get(w * h + config.name());
 			if (list == null)
@@ -41,10 +43,12 @@ public class BitmapPool
 			Bitmap b= list.remove(0);
 			b.reconfigure(w,h,config);
 			return b;
-		}
+		}*/
 	}
 	public static void recycle(Bitmap bitmap)
 	{
+		if(bitmap!=null)
+		bitmap.recycle();
 		/*StringBuilder sb=new StringBuilder();
 		for(StackTraceElement e:Thread.currentThread().getStackTrace()){
 			sb.append(e.toString()).append("\n");
@@ -55,7 +59,7 @@ public class BitmapPool
 		log.put(bitmap.hashCode(),sb.toString());*/
 		/*synchronized(bitmap){
 		if(bitmap!=null)bitmap.recycle();}*/
-		if (bitmap == null || bitmap.isRecycled())return;
+		/*if (bitmap == null || bitmap.isRecycled())return;
 		int w=bitmap.getWidth();
 		int h=bitmap.getHeight();
 		synchronized (map)
@@ -78,7 +82,7 @@ public class BitmapPool
 					list.add(bitmap);
 				}
 			}
-		}
+		}*/
 	}
 	public static boolean isRecycled(Bitmap bitmap)
 	{

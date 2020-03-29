@@ -12,6 +12,7 @@ import javax.net.ssl.X509TrustManager;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import com.umeng.commonsdk.UMConfigure;
+import android.content.Context;
 
 public class Application extends android.app.Application implements Thread.UncaughtExceptionHandler
 {
@@ -45,9 +46,7 @@ public class Application extends android.app.Application implements Thread.Uncau
 		{}
 		android.os.Process.killProcess(android.os.Process.myPid());
 	}
-
-
-	@Override
+@Override
 	public void onCreate()
 	{
 		super.onCreate();
@@ -58,6 +57,7 @@ public class Application extends android.app.Application implements Thread.Uncau
 		//Fresco.initialize(this);
 		//LeakCanary.install(this);
 	}
+	
 	public static void trustEveryone() {
         try {
             HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {

@@ -2,21 +2,22 @@ package com.moe.pussy;
 import java.util.Map;
 import java.util.HashMap;
 import android.net.Uri;
+import java.lang.ref.WeakReference;
 
 public class Request
 {
-	private Pussy p;
+	private WeakReference<Pussy> p;
 	private String url,key,location;
 	private Map<String,String> header=new HashMap<>();
 	private String body;
 	private boolean cancel;
 	public Request(Pussy p,String url){
-		this.p=p;
+		this.p=new WeakReference<>( p);
 		this.url=url;
 		userAgent(p.userAgent);
 	}
 	public Request(Pussy p,int res){
-		this.p=p;
+		this.p=new WeakReference<>( p);
 		this.url=Uri.fromParts("drawable",String.valueOf(res),null).toString();
 	}
 
@@ -53,7 +54,7 @@ public class Request
 		return body;
 	}
 	public Pussy getPussy(){
-		return p;
+		return p.get();
 	}
 	public Request userAgent(String useragent){
 		if(useragent==null)

@@ -31,7 +31,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.view.animation.RotateAnimation;
 import android.view.animation.LinearInterpolator;
 import com.moe.pussy.transformer.RoundTransformer;
-import com.youth.banner.Banner;
 import com.moe.pussy.transformer.EmbossTransFormer;
 import com.moe.pussy.Target;
 

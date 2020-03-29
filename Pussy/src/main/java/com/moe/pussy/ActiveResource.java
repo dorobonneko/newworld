@@ -1,6 +1,7 @@
 package com.moe.pussy;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Iterator;
 
 public class ActiveResource implements Resource.OnResourceListener
 {
@@ -8,6 +9,16 @@ public class ActiveResource implements Resource.OnResourceListener
 	private Pussy pussy;
 	public ActiveResource(Pussy pussy){
 		this.pussy=pussy;
+	}
+
+	public void clear()
+	{
+		Iterator iterator=list.entrySet().iterator();
+		while(iterator.hasNext()){
+			Map.Entry<String,Resource> item=(Map.Entry<String, Resource>) iterator.next();
+			item.getValue().bitmap.recycle();
+			iterator.remove();
+		}
 	}
 	public void add(Resource res){
 		res.setOnResourceListener(this);

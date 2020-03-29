@@ -3,6 +3,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import com.moe.x4jdm.fragment.ListFragment;
 import android.view.View;
+import com.moe.x4jdm.app.Application;
+import com.moe.pussy.Pussy;
 
 public class ListActivity extends AppCompatActivity
 {
@@ -17,6 +19,6 @@ public class ListActivity extends AppCompatActivity
 			list.setArguments(getIntent().getExtras());
 		getSupportFragmentManager().beginTransaction().add(android.R.id.content,list).commit();
 		}
-	}
+		}
 	
 }

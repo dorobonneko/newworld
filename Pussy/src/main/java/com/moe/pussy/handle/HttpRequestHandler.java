@@ -22,6 +22,7 @@ import java.io.FileOutputStream;
 import java.util.concurrent.CancellationException;
 import com.moe.pussy.net.ChunkedInputStream;
 import java.net.SocketTimeoutException;
+import com.moe.pussy.Uid;
 
 public class HttpRequestHandler implements RequestHandler
 {
@@ -46,10 +47,12 @@ public class HttpRequestHandler implements RequestHandler
 				{
 					try
 					{
+						//synchronized(Uid.getLock(request.getKey())){
 						Response res=onHandle(request);
 						if (res == null)
 							throw new NullPointerException();
 						call.onSuccess(res);
+						//}
 					}
 					catch (Exception e)
 					{
@@ -67,6 +70,11 @@ public class HttpRequestHandler implements RequestHandler
 		InputStream input=null;
 		DiskCache dc=request.getPussy().getDiskCache();
 		File tmp=dc.getDirty(request.getKey());
+		File cache=dc.getCache(request.getKey(),true);
+		if(cache.exists()){
+			hrs.set(cache);
+			return hrs;
+		}
 		boolean chunked=false;
 		try
 		{
@@ -94,12 +102,13 @@ public class HttpRequestHandler implements RequestHandler
 			if (range != null)
 				length = Long.parseLong(range.substring(range.indexOf("/") + 1));
 
-			if (code == 416 && (huc.getContentLengthLong() == 0 || tmp.length() == length))
+			if (code == 416)
 			{
 				//huc.disconnect();
-				tmp.renameTo(dc.getCache(request.getKey(), true));
-				hrs.set(dc.getCache(request.getKey()));
-				return hrs;
+				tmp.delete();
+				//tmp.renameTo(dc.getCache(request.getKey(), true));
+				//hrs.set(dc.getCache(request.getKey()));
+				return onHandle(request);
 			}
 			if (code == 301 || code == 302)
 			{
@@ -142,7 +151,7 @@ public class HttpRequestHandler implements RequestHandler
 			output.close();
 			input.close();
 			if (tmp.length() == length || chunked)
-				tmp.renameTo(dc.getCache(request.getKey(), true));
+				tmp.renameTo(cache);
 			if (request.isCancel())
 				throw new CancellationException();
 			hrs.set(dc.getCache(request.getKey()));
@@ -161,6 +170,10 @@ public class HttpRequestHandler implements RequestHandler
 		{
 			if (huc != null)
 				huc.disconnect();
+				if(output!=null){
+					output.flush();
+					output.close();
+					}
 		}
 		return hrs;
 	}

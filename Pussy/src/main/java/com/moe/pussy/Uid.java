@@ -1,9 +1,12 @@
 package com.moe.pussy;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Map;
+import java.util.HashMap;
 
 public class Uid
 {
+	private static volatile Map<String,Object> lockMap=new HashMap<>();
 	public static String fromString(String str){
 		try
 		{
@@ -23,4 +26,10 @@ public class Uid
         }
         return sb.toString().trim();
     }
+	public static synchronized Object getLock(String key){
+		Object lock=lockMap.get(key);
+		if(lock==null)
+			lockMap.put(key,lock=new Object());
+			return lock;
+	}
 }

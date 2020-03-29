@@ -7,14 +7,15 @@ import com.moe.pussy.Pussy;
 import com.moe.pussy.Target;
 import com.moe.pussy.Transformer;
 import com.moe.pussy.Content;
+import java.lang.ref.WeakReference;
 
 public abstract class ViewTarget  implements Target,ViewTreeObserver.OnPreDrawListener,View.OnAttachStateChangeListener
 {
-	private Content content;
-	private View view;
+	private  Content content;
+	private WeakReference<View> view;
 	public ViewTarget(View view)
 	{
-		this.view = view;
+		this.view =new WeakReference<View>( view);
 		view.addOnAttachStateChangeListener(this);
 	}
 
@@ -41,36 +42,36 @@ public abstract class ViewTarget  implements Target,ViewTreeObserver.OnPreDrawLi
 	
 	public View getView()
 	{
-		return view;
+		return view.get();
 	}
 	@Override
 	public final void onResourceReady(Bitmap bitmap, Transformer[] trans)
 	{
 		
-		if (view.getWidth() == 0 || view.getHeight() == 0)
+		if (getView().getWidth() == 0 || getView().getHeight() == 0)
 		{
-			view.post(new Runnable(){
+			getView().post(new Runnable(){
 					public void run()
 					{
-						view.getViewTreeObserver().addOnPreDrawListener(ViewTarget.this);
+						getView().getViewTreeObserver().addOnPreDrawListener(ViewTarget.this);
 					}
 				});
 			//view.requestLayout();
 		}
 		else
 		{
-			onSizeReady(view.getWidth(),view.getHeight());
+			onSizeReady(getView().getWidth(),getView().getHeight());
 		}
 	}
 
 	@Override
 	public boolean onPreDraw()
 	{
-		view.getViewTreeObserver().removeOnPreDrawListener(this);
+		getView().getViewTreeObserver().removeOnPreDrawListener(this);
 		new Thread(){
 			public void run()
 			{
-				onSizeReady(view.getWidth(),view.getHeight());
+				onSizeReady(getView().getWidth(),getView().getHeight());
 			}
 		}.start();
 		return false;

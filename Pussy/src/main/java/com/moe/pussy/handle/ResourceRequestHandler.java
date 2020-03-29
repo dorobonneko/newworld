@@ -13,12 +13,13 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import com.moe.pussy.BitmapPool;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.lang.ref.WeakReference;
 
 public class ResourceRequestHandler implements RequestHandler
 {
-	private Resources res;
+	private WeakReference<Resources> res;
 	public ResourceRequestHandler(Context context){
-		res=context.getResources();
+		res=new WeakReference<>(context.getResources());
 	}
 	@Override
 	public boolean canHandle(Request request)
@@ -43,11 +44,11 @@ public class ResourceRequestHandler implements RequestHandler
 		options.inScaled = false ;
 		options.inPreferredConfig=Bitmap.Config.ARGB_8888;
 		options.inJustDecodeBounds=true;
-		BitmapFactory.decodeResource(res,id,options);
+		BitmapFactory.decodeResource(res.get(),id,options);
 		options.inJustDecodeBounds=false;
 		options.inBitmap=BitmapPool.getBitmap(options.outWidth,options.outHeight,options.inPreferredConfig);
 		options.inMutable=true;
-		call.onSuccess(new ResResponse(BitmapFactory.decodeResource(res,id,options)));
+		call.onSuccess(new ResResponse(BitmapFactory.decodeResource(res.get(),id,options)));
 		}};
 		pool.execute(run);
 	}
