@@ -29,7 +29,7 @@ public class Indexjn extends Index
 17，泡面
 */
 	@Override
-	public String getIndex()
+	public String getIndex(int page)
 	{
 		JSONArray index=new JSONArray();
 		try

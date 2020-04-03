@@ -32,6 +32,9 @@ import com.moe.pussy.target.ViewBackgroundTarget;
 import com.moe.pussy.transformer.CropTransformer;
 import android.util.TypedValue;
 import android.app.ActionBar;
+import com.moe.pussy.transformer.SprayTransFormer;
+import android.os.Handler;
+import android.os.Message;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,SharedPreferences.OnSharedPreferenceChangeListener,DrawerLayout.DrawerListener,View.OnClickListener{
 
@@ -39,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private ActionBarDrawerToggle abdt;
     private NavigationView mNavigationView;
     private String cursor;
+	private int count;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 		View v= getWindow().getDecorView();
@@ -62,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 		ImageView icon=mNavigationView.getHeaderView(0).findViewById(R.id.icon);
 		Pussy.$(this).load(R.drawable.logo).transformer(new CircleTransFormation((int)Math.ceil(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,2,getResources().getDisplayMetrics())))).into(icon);
 		ViewBackgroundTarget vbt=new ViewBackgroundTarget((View)icon.getParent());
-		Pussy.$(this).load(R.drawable.background).transformer(new CropTransformer(Gravity.CENTER)).into(vbt);
+		Pussy.$(this).load(R.drawable.timg).transformer(new CropTransformer(Gravity.CENTER),new SprayTransFormer(50)).into(vbt);
 		//vbt.getView().setBackgroundResource(R.raw.background);
 		icon.setOnClickListener(this);
         if(cursor==null){
@@ -108,20 +112,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 				show("filter");
 				break;
 			case R.id.redpacket:
-				String qrcode="c1x04252qlecmighcngswb99hq";
-				try
-				{startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("alipayqr://platformapi/startapp?saId=10000007&qrcode=" +qrcode)));
-				}
-				catch (Exception e)
-				{
-					Toast.makeText(getApplicationContext(), "未安装支付宝！", Toast.LENGTH_SHORT).show();
-				}
+				count++;
+				mHandler.removeMessages(0);
+				mHandler.sendEmptyMessageDelayed(0,150);
+				
 				break;
         }
-        mDrawerLayout.closeDrawer(Gravity.START,true);
-        return true;
+         return true;
     }
     private void show(String cursor){
+		mDrawerLayout.closeDrawer(Gravity.START,true);
         if(cursor.equals(this.cursor))
 			return;
 		switch(cursor){
@@ -266,7 +266,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 					}
 				}).show();
 		}else if("favorite".equals(cursor)){
-			final String[] keys=new String[]{"adh","hh","xyg","msiv","hhr","ppc","ahv","llias","jyk"};
+			final String[] keys=new String[]{"adh","hh","xyg","msiv","hhr","ppc","ahv","llias","jyk","hb","3atv"};
 			new AlertDialog.Builder(this).setItems(keys, new DialogInterface.OnClickListener(){
 
 					@Override
@@ -288,7 +288,44 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 		outState.putString("cursor",cursor);
 	}
 
+	private Handler mHandler=new Handler(){
 
+		@Override
+		public void handleMessage(Message msg)
+		{
+			switch(msg.what){
+				case 0:
+					if(count==1){
+						String qrcode="HTTPS://QR.ALIPAY.COM/FKX04316NDQAI5DTRD9P20";
+						try
+						{startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("alipayqr://platformapi/startapp?saId=10000007&qrcode=" +qrcode)));
+						}
+						catch (Exception e)
+						{
+							Toast.makeText(getApplicationContext(), "未安装支付宝！", Toast.LENGTH_SHORT).show();
+						}
+					}else if(count==2){
+						final String[] keys=new String[]{"moeero"};
+						new AlertDialog.Builder(MainActivity.this).setItems(keys, new DialogInterface.OnClickListener(){
+
+								@Override
+								public void onClick(DialogInterface p1, int p2)
+								{
+									getSharedPreferences("web",0).edit().putString("web",keys[p2]).commit();
+									mDrawerLayout.closeDrawer(Gravity.START);
+									show("index");
+
+								}
+							}).show();
+					}
+					count=0;
+					break;
+			}
+		}
+
+		
+	
+};
 
 	
 }

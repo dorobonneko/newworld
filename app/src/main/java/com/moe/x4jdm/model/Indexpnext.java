@@ -76,7 +76,7 @@ public class Indexpnext extends Index
 	}
 	
 	@Override
-	public String getIndex()
+	public String getIndex(int page)
 	{
 		JSONArray index=new JSONArray();
 		try
@@ -94,7 +94,7 @@ public class Indexpnext extends Index
 					item.put("src",item.remove("picUrl"));
 					//item.put("desc",item.remove("newTag"));
 					//item.put("title",item.remove("name"));
-					item.put("list","outUrl".equals(item.getString("type")));
+					item.put("click","outUrl".equals(item.getString("type"))?"list":"post");
 				}
 				index.add(banner);
 				//番源新增

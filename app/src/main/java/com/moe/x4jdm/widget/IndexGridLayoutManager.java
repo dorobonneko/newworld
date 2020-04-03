@@ -18,6 +18,7 @@ public class IndexGridLayoutManager extends GridLayoutManager
 				{
 					switch (adaptet.getItemViewType(p1))
 					{
+						case 0:
 						case 1://header
 						case 2://tab
 						case 3://header_title
@@ -25,6 +26,9 @@ public class IndexGridLayoutManager extends GridLayoutManager
 						case 8:
 						case 7://load_more
 						case 9:
+						case 10:
+						case 11://imagepreview
+						case 12://commemnt
 						case 100:
 							return 3;
 						case 4:

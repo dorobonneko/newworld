@@ -19,7 +19,7 @@ public class IndexHentaiHavenRed extends Index
 {
 
 	@Override
-	public String getIndex()
+	public String getIndex(int page)
 	{
 		JSONArray index=new JSONArray();
 		try
@@ -75,7 +75,7 @@ public class IndexHentaiHavenRed extends Index
 					post.put("title", e.selectFirst("a").text());
 					post.put("href", e.selectFirst("a").absUrl("href")+"page/%d/");
 					post.put("desc", e.selectFirst("i").text());
-					post.put("list",true);
+					post.put("click","list");
 					index.add(post);
 				}
 				//main.put("item", item_json);

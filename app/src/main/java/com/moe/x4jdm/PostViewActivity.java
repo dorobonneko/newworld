@@ -45,8 +45,14 @@ import com.moe.x4jdm.adapter.PlayAdapter;
 import android.support.design.widget.BottomSheetDialog;
 import android.widget.ProgressBar;
 import android.widget.FrameLayout;
+import com.moe.pussy.Listener;
+import android.graphics.drawable.Drawable;
+import android.support.design.widget.AppBarLayout;
+import android.view.ViewTreeObserver;
+import android.text.Spanned;
+import android.text.Layout;
 
-public class PostViewActivity extends AppCompatActivity implements View.OnApplyWindowInsetsListener,PlayViewPagerAdapter.OnClickListener,View.OnClickListener
+public class PostViewActivity extends AppCompatActivity implements View.OnApplyWindowInsetsListener,PlayViewPagerAdapter.OnClickListener,View.OnClickListener,Listener,ViewTreeObserver.OnPreDrawListener
 {
 	private ImageView icon,backicon;
 	private TextView title,summary,profile;
@@ -61,6 +67,10 @@ public class PostViewActivity extends AppCompatActivity implements View.OnApplyW
 	private RecyclerView recyclerview;
 	private BottomSheetDialog sheet;
 	private View progress;
+	private AppBarLayout.LayoutParams params;
+	private Spanned profileText;
+	private int lineCount;
+	private CollapsingToolbarLayout ctl;
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -86,12 +96,14 @@ public class PostViewActivity extends AppCompatActivity implements View.OnApplyW
 					summary =p1. findViewById(R.id.summary);
 					summary.setMovementMethod(LinkMovementMethod.getInstance());
 					profile = p1.findViewById(R.id.profile);
-					profile.setMovementMethod(ScrollingMovementMethod.getInstance());
+					//profile.setMovementMethod(ScrollingMovementMethod.getInstance());
 					backicon = p1.findViewById(R.id.backicon);
 					retry=p1.findViewById(R.id.retry);
 					retry.setOnClickListener(PostViewActivity.this);
-					CollapsingToolbarLayout ctl=p1.findViewById(R.id.collapsing);
+					ctl=p1.findViewById(R.id.collapsing);
 					ctl.setTitleEnabled(false);
+					params=(AppBarLayout.LayoutParams) ctl.getLayoutParams();
+					params.setScrollFlags(0);
 					getSupportActionBar().setTitle(null);
 					//AppBarLayout abl=findViewById(R.id.appbarlayout);
 					//abl.setFitsSystemWindows(true);
@@ -181,8 +193,6 @@ public class PostViewActivity extends AppCompatActivity implements View.OnApplyW
 									retry.setVisibility(View.VISIBLE);
 									return;
 								}
-								View v= getWindow().getDecorView();
-								v.setSystemUiVisibility(v.getSystemUiVisibility()&(~v.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR));
 								
 								PostViewActivity.this.jo=jo;
 								title.setText(jo.getString("title"));
@@ -196,11 +206,14 @@ public class PostViewActivity extends AppCompatActivity implements View.OnApplyW
 															}
 														}));
 								String profile=jo.getString("profile");
-								if(profile!=null)
-								PostViewActivity.this.profile.setText(Html.fromHtml(profile.replaceAll("\n","<br/>")));
+								if(profile!=null){
+								TextView profiledesc=PostViewActivity.this.profile;
+								profiledesc.setText(profileText=Html.fromHtml(profile.replaceAll("\n","<br/>")));
+								profiledesc.getViewTreeObserver().addOnPreDrawListener(PostViewActivity.this);
+								}
 								if(jo.getString("src")!=null){
 								Pussy.$(PostViewActivity.this).load(jo.getString("src")).execute().transformer(new CropTransformer(Gravity.CENTER), new RoundTransformer(getResources().getDisplayMetrics(),5)).anime(Anim.cicle(300)).into(icon);
-								Pussy.$(PostViewActivity.this).load(jo.getString("src")).execute().transformer(new CropTransformer(Gravity.CENTER), new BlurTransformer(getApplicationContext(), 20)).into(backicon);
+								Pussy.$(PostViewActivity.this).load(jo.getString("src")).execute().transformer(new CropTransformer(Gravity.CENTER), new BlurTransformer(getApplicationContext(), 75)).listener(PostViewActivity.this).into(backicon);
 								}play_data.clear();
 								JSONArray data=jo.getJSONArray("video");
 								if (data != null)
@@ -274,8 +287,47 @@ public class PostViewActivity extends AppCompatActivity implements View.OnApplyW
 				progress.setVisibility(View.VISIBLE);
 				p1.setVisibility(View.INVISIBLE);
 				break;
+			case R.id.profile:
+				if(profile.getMaxLines()==3)
+					profile.setMaxLines(lineCount);
+					else
+					profile.setMaxLines(3);
+				break;
 		}
 	}
+
+	@Override
+	public void onSuccess(Drawable d)
+	{
+		View v= getWindow().getDecorView();
+		v.setSystemUiVisibility(v.getSystemUiVisibility()&(~v.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR));
+		
+	}
+
+	@Override
+	public void onError(Drawable d)
+	{
+	}
+
+	@Override
+	public void onPlaceHolder(Drawable d)
+	{
+	}
+
+	@Override
+	public boolean onPreDraw()
+	{
+		profile.getViewTreeObserver().removeOnPreDrawListener(this);
+		if((lineCount=profile.getLineCount())>3){
+			profile.setMaxLines(3);
+			profile.setOnClickListener(this);
+		}
+		return false;
+	}
+
+
+
+
 
 
 

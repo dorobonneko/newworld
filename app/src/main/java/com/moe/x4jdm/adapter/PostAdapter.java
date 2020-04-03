@@ -31,7 +31,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ItemViewHolder
 	private boolean foot;
 	private OnItemClickListener l;
 	private Animation rotate;
-	public PostAdapter(JSONArray ja, boolean foot)
+	private PostAdapter(JSONArray ja, boolean foot)
 	{
 		this.ja = ja;
 		this.foot = foot;

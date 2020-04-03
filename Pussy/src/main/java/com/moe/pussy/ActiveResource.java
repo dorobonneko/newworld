@@ -2,10 +2,11 @@ package com.moe.pussy;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ActiveResource implements Resource.OnResourceListener
 {
-	private Map<String,Resource> list=new HashMap<>();
+	private Map<String,Resource> list=new ConcurrentHashMap<>();
 	private Pussy pussy;
 	public ActiveResource(Pussy pussy){
 		this.pussy=pussy;
@@ -16,8 +17,9 @@ public class ActiveResource implements Resource.OnResourceListener
 		Iterator iterator=list.entrySet().iterator();
 		while(iterator.hasNext()){
 			Map.Entry<String,Resource> item=(Map.Entry<String, Resource>) iterator.next();
-			item.getValue().bitmap.recycle();
 			iterator.remove();
+			pussy.getMemoryCache().put(item.getKey(),item.getValue().bitmap);
+
 		}
 	}
 	public void add(Resource res){
@@ -25,9 +27,11 @@ public class ActiveResource implements Resource.OnResourceListener
 		list.put(res.key,res);
 	}
 	public Resource get(String key){
+		if(key==null)return null;
 		return list.get(key);
 	}
 	public Resource remove(String key){
+		if(key==null)return null;
 		return list.remove(key);
 	}
 	@Override

@@ -32,7 +32,7 @@ public class Indexdm530 extends Index
 	}
 
 	@Override
-	public String getIndex()
+	public String getIndex(int page)
 	{
 		JSONArray index=new JSONArray();
 		try
@@ -105,7 +105,7 @@ public class Indexdm530 extends Index
 			time.add(0,time.remove(time.size()-1));
 			this.time=time.toJSONString();
 		}
-		catch (IOException e)
+		catch (Exception e)
 		{}
 		return index.toJSONString();
 	}

@@ -8,20 +8,23 @@ public class BitmapLoader implements Runnable
 	private File file;
 	private Decoder decoder;
 	private Callback call;
-	public BitmapLoader(Decoder decoder,String key,File file,Callback call){
+	private BitmapPool bp;
+	public BitmapLoader(BitmapPool bp,Decoder decoder,String key,File file,Callback call){
 		this.key=key;
 		this.file=file;
 		this.decoder=decoder;
 		this.call=call;
+		this.bp=bp;
 	}
 	@Override
 	public void run()
 	{
-		call.onSuccess(key,decoder.decode(file),file);
+		call.onSuccess(key,decoder.decode(bp,file),file);
 		key=null;
 		decoder=null;
 		file=null;
 		call=null;
+		bp=null;
 	}
 
 	

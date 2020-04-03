@@ -74,6 +74,7 @@ public class DiskCache
 		return getCache(key,false);
 	}
 	public File getCache(String key,boolean outFile){
+		if(key==null)return null;
 		File cache=new File(cachePath,key);
 		if(cache.exists()){
 			cache.setLastModified(System.currentTimeMillis());

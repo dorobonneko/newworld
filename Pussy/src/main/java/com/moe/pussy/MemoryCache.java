@@ -8,22 +8,20 @@ import java.util.HashMap;
 public class MemoryCache extends LruCache<String,Bitmap>
 {
 	//private Map<String,WeakReference> cache=new HashMap<>();
-	public MemoryCache(){
-		super((int)Runtime.getRuntime().maxMemory()/8);
+	private BitmapPool bp;
+	public MemoryCache(BitmapPool bp){
+		super((int)Runtime.getRuntime().maxMemory()/4);
+		this.bp=bp;
 	}
 	
 	@Override
 	protected void entryRemoved(boolean evicted, String key, Bitmap oldValue, Bitmap newValue)
 	{
 		if(evicted){
-			synchronized(oldValue){
-				BitmapPool.recycle(oldValue);
-			}
+			bp.recycle(oldValue);
 		}else{
 			if(newValue!=null){
-				synchronized(oldValue){
-					BitmapPool.recycle(oldValue);
-				}
+				bp.recycle(oldValue);
 			}
 		}
 	}

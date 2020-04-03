@@ -5,7 +5,7 @@
 		<item>飞极速</item>
 		<item>天乐动漫</item>
 		<item>樱花动漫</item>
-		<item>花瓣动漫</item>
+		<!--<item>花瓣动漫</item>-->
 		<item>胶囊二次元</item>
 		<item>Nico动漫</item>
 		<item>风车动漫(dm530)</item>
@@ -15,13 +15,14 @@
 		<item>天马动漫</item>
 		<item>奇奇动漫</item>
 		<item>pnext</item>
+		<item>迪虎电影</item>
 	</string-array>
 	<string-array name="site_key">
 		<item>x4j</item>
 		<item>fjs</item>
 		<item>tl</item>
 		<item>sakura</item>
-		<item>hb</item>
+		<!--<item>hb</item>-->
 		<item>jn</item>
 		<item>nico</item>
 		<item>dm530</item>
@@ -31,5 +32,6 @@
 		<item>tm</item>
 		<item>qqdm</item>
 		<item>pnext</item>
+		<item>dh</item>
 	</string-array>
 </resources>

@@ -10,7 +10,7 @@ public interface Target extends SizeReady
 	public Content getContent();
 	//原始资源准备完毕，等待回调onSizeReady
 	public abstract void onResourceReady(Bitmap bitmap,Transformer... trans);
-	public abstract void onSucccess(PussyDrawable pd);
+	public abstract void onSuccess(PussyDrawable pd);
 	public abstract void error(Throwable e,Drawable d);
 	/*public PussyDrawable putCache(Bitmap pd){
 		if(pd==null)return null;
@@ -33,6 +33,6 @@ public interface Target extends SizeReady
 		return new PussyDrawable(pd,getRefresh());
 	}*/
 	public abstract void onAttachContent(Content c);
-	
+	public abstract Listener getListener();
 	
 }

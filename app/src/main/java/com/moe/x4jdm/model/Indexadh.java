@@ -23,7 +23,7 @@ public class Indexadh extends Index
 	}
 
 	@Override
-	public String getIndex()
+	public String getIndex(int page)
 	{
 		JSONArray index=new JSONArray();
 		try

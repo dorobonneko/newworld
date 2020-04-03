@@ -9,6 +9,7 @@ import com.moe.pussy.DrawableAnimator;
 import android.graphics.drawable.Drawable;
 import com.moe.pussy.BitmapPool;
 import java.util.ArrayList;
+import com.moe.pussy.Listener;
 
 public class ImageViewTarget extends ViewTarget implements ViewTreeObserver.OnPreDrawListener
 {
@@ -19,13 +20,17 @@ public class ImageViewTarget extends ViewTarget implements ViewTreeObserver.OnPr
 	
 	
 	@Override
-	public void onSucccess(PussyDrawable pd)
+	public void onSuccess(PussyDrawable pd)
 	{
 		if(pd!=null){
 		pd.stop();
 		((ImageView)getView()).setImageDrawable(pd);
 		pd.setAnimator(getAnim());
-		pd.start();}else{
+		pd.start();
+			Listener l=getListener();
+			if(l!=null)l.onSuccess(pd);
+			
+		}else{
 			error(null,null);
 		}
 	}
@@ -35,6 +40,9 @@ public class ImageViewTarget extends ViewTarget implements ViewTreeObserver.OnPr
 	{
 		if(getAnim()!=null)getAnim().stop();
 		((ImageView)getView()).setImageDrawable(d);
+		Listener l=getListener();
+		if(l!=null)l.onError(d);
+		
 	}
 
 	@Override
@@ -42,6 +50,9 @@ public class ImageViewTarget extends ViewTarget implements ViewTreeObserver.OnPr
 	{
 		if(getAnim()!=null)getAnim().stop();
 		((ImageView)getView()).setImageDrawable(placeHolder);
+		Listener l=getListener();
+		if(l!=null)l.onPlaceHolder(placeHolder);
+		
 	}
 	
 	

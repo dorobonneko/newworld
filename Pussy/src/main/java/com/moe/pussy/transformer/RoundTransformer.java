@@ -35,9 +35,10 @@ public class RoundTransformer implements Transformer
 		int width = source.getWidth();
 		int height = source.getHeight();
 		float scale=Math.min(w/(float)width,h/(float)height);
+		if(scale==0)scale=1;
 		float radius=this.radius/scale;
 		//画板
-		Bitmap bitmap = BitmapPool.getBitmap(width, height,Bitmap.Config.ARGB_8888);
+		Bitmap bitmap = bp.getBitmap(width, height,Bitmap.Config.ARGB_8888);
 		Paint paint = new Paint();
 		Canvas canvas = new Canvas(bitmap);//创建同尺寸的画布
 		//canvas.drawColor(0,PorterDuff.Mode.CLEAR);

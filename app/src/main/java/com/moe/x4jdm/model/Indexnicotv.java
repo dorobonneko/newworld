@@ -28,7 +28,7 @@ public class Indexnicotv extends Index
 	}
 
 	@Override
-	public String getIndex()
+	public String getIndex(int page)
 	{
 		JSONArray index=new JSONArray();
 		try
@@ -142,7 +142,7 @@ public class Indexnicotv extends Index
 	public String getTime()
 	{
 		if (time == null)
-			getIndex();
+			getIndex(1);
 		return time;
 	}
 

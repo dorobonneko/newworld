@@ -80,10 +80,19 @@ public class HeaderAdapter extends PagerAdapter
 		@Override
 		public void onClick(View p1)
 		{
-			if(getObject().getBooleanValue("list"))
-				p1.getContext().startActivity(new Intent(p1.getContext(), ListActivity.class).putExtra("url", getObject().getString("href")).putExtra("key",getObject().getString("key")==null?Index.getKey(p1.getContext()):getObject().getString("key")));
-			else
+			String click=getObject().getString("click");
+			if(click==null){
 				p1.getContext().startActivity(new Intent(p1.getContext(), PostViewActivity.class).putExtra("url", getObject().getString("href")).putExtra("key",getObject().getString("key")==null?Index.getKey(p1.getContext()):getObject().getString("key")));
+			}else{
+				switch(click){
+					case "list":
+						p1.getContext().startActivity(new Intent(p1.getContext(), ListActivity.class).putExtra("url", getObject().getString("href")).putExtra("key",getObject().getString("key")==null?Index.getKey(p1.getContext()):getObject().getString("key")));
+						break;
+					case "post":
+						p1.getContext().startActivity(new Intent(p1.getContext(), PostViewActivity.class).putExtra("url", getObject().getString("href")).putExtra("key",getObject().getString("key")==null?Index.getKey(p1.getContext()):getObject().getString("key")));
+						break;
+				}
+			}
 		}
 		public JSONObject getObject(){
 			return ja.getJSONObject(position);

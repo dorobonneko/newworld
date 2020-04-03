@@ -34,7 +34,7 @@ public class IndexJs extends Index
 	}
 
 	@Override
-	public String getIndex()
+	public String getIndex(int page)
 	{
 		return null;
 	}

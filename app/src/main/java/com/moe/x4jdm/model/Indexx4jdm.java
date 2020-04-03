@@ -173,8 +173,8 @@ class Indexx4jdm extends Index
 		return true;
 	}
 
-	
-	public String getIndex()
+	@Override
+	public String getIndex(int page)
 	{
 		if(index==null)
 			refresh();

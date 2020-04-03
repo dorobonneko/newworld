@@ -10,6 +10,7 @@ import android.graphics.Rect;
 import com.moe.pussy.Anim;
 import android.animation.Animator;
 import com.moe.pussy.DrawableAnimator;
+import com.moe.pussy.Listener;
 
 public class DrawableTarget extends LevelListDrawable implements Target
 {
@@ -18,41 +19,51 @@ public class DrawableTarget extends LevelListDrawable implements Target
 	@Override
 	public void onSizeReady(int w, int h)
 	{
-		content.onSizeReady(w,h);
+		content.onSizeReady(w, h);
 	}
+
+	@Override
+	public Listener getListener()
+	{
+		return content.getListener();
+	}
+
 
 	@Override
 	public void placeHolder(Drawable placeHolder)
 	{
-		addLevel(1,1,placeHolder);
+		addLevel(1, 1, placeHolder);
 		setLevel(1);
-		level=1;
+		level = 1;
+		Listener l=getListener();
+		if (l != null)l.onPlaceHolder(placeHolder);
 	}
 
 	@Override
 	public boolean setVisible(boolean visible, boolean restart)
 	{
 		boolean f= super.setVisible(visible, restart);
-		if(getLevel()==0){
+		if (getLevel() == 0)
+		{
 			setLevel(level);
 		}
 		/*if(restart)
-		{
-			PussyDrawable pd=(PussyDrawable) getCurrent();
-			if(pd!=null)
-				pd.start();
-		}*/
+		 {
+		 PussyDrawable pd=(PussyDrawable) getCurrent();
+		 if(pd!=null)
+		 pd.start();
+		 }*/
 		return f;
 	}
 	@Override
 	public void setBounds(int left, int top, int right, int bottom)
 	{
 		super.setBounds(left, top, right, bottom);
-		onSizeReady(right-left,bottom-top);
+		onSizeReady(right - left, bottom - top);
 	}
 
-	
-	
+
+
 	@Override
 	public Content getContent()
 	{
@@ -62,43 +73,52 @@ public class DrawableTarget extends LevelListDrawable implements Target
 	public void onResourceReady(Bitmap bitmap, Transformer[] trans)
 	{
 		Rect bounds= getBounds();
-		if(bounds.width()>0&&bounds.height()>0)
-			onSizeReady(bounds.width(),bounds.height());
+		if (bounds.width() > 0 && bounds.height() > 0)
+			onSizeReady(bounds.width(), bounds.height());
 	}
 
 	@Override
-	public void onSucccess(PussyDrawable pd)
+	public void onSuccess(PussyDrawable pd)
 	{
-		level=2;
-		if(pd!=null){
-		pd.stop();
-		DrawableAnimator anim= content.getAnim();
-		if(anim!=null)
-			anim.stop();
+		level = 2;
+		if (pd != null)
+		{
+			pd.stop();
+			DrawableAnimator anim= content.getAnim();
+			if (anim != null)
+				anim.stop();
 			pd.setAnimator(anim);
-			addLevel(2,2,pd);
+			addLevel(2, 2, pd);
 			setLevel(2);
+			Listener l=getListener();
+			if (l != null)l.onSuccess(pd);
+			
 			//pd.start();
-			}else{
-				error(null,null);
-			}
+		}
+		else
+		{
+			error(null, null);
+		}
 	}
 
 	@Override
 	public void error(Throwable e, Drawable d)
 	{
-		level=3;
+		level = 3;
 		DrawableAnimator anim= content.getAnim();
-		if(anim!=null)
+		if (anim != null)
 			anim.stop();
-		addLevel(3,3,d);
+		addLevel(3, 3, d);
 		setLevel(3);
+		Listener l=getListener();
+		if(l!=null)l.onError(d);
+		
 	}
 
 	@Override
 	public void onAttachContent(Content c)
 	{
-		content=c;
+		content = c;
 	}
-	
+
 }

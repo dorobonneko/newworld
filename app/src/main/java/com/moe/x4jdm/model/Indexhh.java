@@ -30,7 +30,7 @@ public class Indexhh extends Index
 	}
 
 	@Override
-	public String getIndex()
+	public String getIndex(int page)
 	{
 		JSONArray index=new JSONArray();
 		JSONArray tabs=new JSONArray();

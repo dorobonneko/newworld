@@ -64,8 +64,8 @@ public class PussyDrawable extends Drawable implements Animatable
 		if (bitmap != null){
 			synchronized (bitmap)
 			{
-				if (bitmap.isRecycled()||BitmapPool.isRecycled(bitmap)){
-					if(refresh!=null)
+				if (bitmap.isRecycled()){
+					if(getRefresh()!=null)
 						getRefresh().refresh(t.get());
 				}else
 				{
@@ -77,7 +77,7 @@ public class PussyDrawable extends Drawable implements Animatable
 				}
 				
 			}
-			}else if(refresh!=null){
+			}else if(getRefresh()!=null){
 				getRefresh().refresh(t.get());
 			}
 	}
@@ -104,7 +104,7 @@ public class PussyDrawable extends Drawable implements Animatable
 			return bitmap.getByteCount();
 		return 0;
 	}
-	public void recycle()
+	/*public void recycle()
 	{
 		Bitmap bitmap=this.bitmap.get();
 		if (bitmap != null)
@@ -112,7 +112,7 @@ public class PussyDrawable extends Drawable implements Animatable
 			{
 				bitmap.recycle();}
 		recycle = true;
-	}
+	}*/
 	public boolean isRecycled()
 	{
 		return recycle;

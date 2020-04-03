@@ -82,7 +82,15 @@ public abstract class Index
 			case "pnext":
 				models.put(web,index=new Indexpnext());
 				break;
-			
+			case "3atv":
+				models.put(web,index=new Index3atv());
+				break;
+			case "dh":
+				models.put(web,index=new Indexdhdy());
+				break;
+			case "moeero":
+				models.put(web,index=new Indexmoeero());
+				break;
 			default:
 			models.put(web,index=new None());
 			break;
@@ -95,7 +103,8 @@ public abstract class Index
 	}
 	
 	public void clearCache(){}
-	public abstract String getIndex();
+	public abstract String getIndex(int page);
+	public boolean indexHasMore(){return false;}
 	public String getTime(){
 		return null;
 	}

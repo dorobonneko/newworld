@@ -10,12 +10,12 @@ import com.moe.pussy.RequestHandler.Response;
 import java.io.FileNotFoundException;
 import android.widget.Toast;
 import java.lang.ref.WeakReference;
+import java.util.concurrent.RejectedExecutionException;
 
 public class Loader implements Runnable,HandleThread.Callback,BitmapLoader.Callback,SizeReady
 {
 	private WeakReference<Content> content;
 	private Bitmap source;
-	private Object locked=new Object();
 	//loader绑定一个target，多个loader可绑定一个handler
 	public Loader(Content content)
 	{
@@ -38,6 +38,8 @@ public class Loader implements Runnable,HandleThread.Callback,BitmapLoader.Callb
 	}
 	public void begin()
 	{
+		Pussy.checkThread(true);
+		try{
 		Resource res=content.get().getRequest().getPussy().getActiveResource().get(content.get().getKey());
 		if (res != null)
 		{
@@ -45,9 +47,8 @@ public class Loader implements Runnable,HandleThread.Callback,BitmapLoader.Callb
 			getPussy().getDiskCache().invalidate(content.get().getKey());
 			Target target=getTarget();
 			if (target != null)
-				target.onSucccess(new PussyDrawable(res.bitmap,target, content.get().getRefresh()));
-			return;
-		}
+				target.onSuccess(new PussyDrawable(res.bitmap,target, content.get().getRefresh()));
+		}else{
 		Bitmap bitmap=getPussy().getMemoryCache().remove(content.get().getKey());
 		if (bitmap != null)
 		{
@@ -57,22 +58,27 @@ public class Loader implements Runnable,HandleThread.Callback,BitmapLoader.Callb
 			getPussy().getDiskCache().invalidate(content.get().getKey());
 			Target target=getTarget();
 			if (target != null)
-				target.onSucccess(new PussyDrawable(bitmap,target, content.get().getRefresh()));
-			return;
+				target.onSuccess(new PussyDrawable(bitmap,target, content.get().getRefresh()));
 		}
+		
 		getPussy().mThreadPoolExecutor.execute(this);
+		}}catch(Exception e){
+			success(null,e);
+		}
 	}
 
 	@Override
 	public void onSizeReady(int w, int h)
 	{
-		synchronized(locked){
+		Pussy.checkThread(false);
 		if (isCancel() || source == null)return;
 		Target t=getTarget();
 		if (t == null)return;
+		synchronized(getTarget()){
 		for (Transformer transformer:content.get().getTransformer())
 		{
-			source = transformer.onTransformer(BitmapPool.get(), source, w, h);
+			source = transformer.onTransformer(getPussy().mBitmapPool, source, w, h);
+		}
 		}
 		if(source==null){
 			success(null,new NullPointerException("possible bitmap transformer error"));
@@ -86,7 +92,6 @@ public class Loader implements Runnable,HandleThread.Callback,BitmapLoader.Callb
 		{}
 		success(source,null);
 		source=null;
-		}
 	}
 
 
@@ -95,6 +100,7 @@ public class Loader implements Runnable,HandleThread.Callback,BitmapLoader.Callb
 	{
 		try
 		{
+			Pussy.checkThread(false);
 			DiskCache dc=getPussy().getDiskCache();
 			//查询内存缓存
 			File cache_file=dc.getCache(content.get().getKey());
@@ -102,7 +108,7 @@ public class Loader implements Runnable,HandleThread.Callback,BitmapLoader.Callb
 			{
 				if (isCancel())return;
 				//解码
-				getPussy().fileThreadPool.execute(new BitmapLoader(getPussy().decoder, content.get().getKey(), cache_file, this));
+				getPussy().fileThreadPool.execute(new BitmapLoader(getPussy().getBitmapPool(),getPussy().decoder, content.get().getKey(), cache_file, this));
 
 			}
 			else
@@ -112,18 +118,16 @@ public class Loader implements Runnable,HandleThread.Callback,BitmapLoader.Callb
 				{
 					//原始缓存
 					if (isCancel())return;
-					getPussy().fileThreadPool.execute(new BitmapLoader(getPussy().decoder, getRequest().getKey(), cache_file, this));
+					getPussy().fileThreadPool.execute(new BitmapLoader(getPussy().getBitmapPool(),getPussy().decoder, getRequest().getKey(), cache_file, this));
 				}
 				else
 				{
 					//加载数据
 					if (isCancel())return;
-					synchronized(Uid.getLock(getRequest().getKey())){
 					HandleThread ht=getPussy().request_handler.get(getRequest().getKey());
 					if (ht == null)
 						getPussy().request_handler.put(getRequest().getKey(), ht = new HandleThread(getRequest(), getPussy().netThreadPool));
 					ht.addCallback(this);
-					}
 				}
 
 			}
@@ -147,10 +151,11 @@ public class Loader implements Runnable,HandleThread.Callback,BitmapLoader.Callb
 	@Override
 	public void onResponse(RequestHandler.Response response)
 	{
+		Pussy.checkThread(false);
 		if (response.getBitmap() != null)
 		{
 			if (isCancel())
-				BitmapPool.recycle(response.getBitmap());
+				getPussy().getBitmapPool().recycle(response.getBitmap());
 			else
 			{
 				//来自软件内部，直接显示
@@ -164,7 +169,11 @@ public class Loader implements Runnable,HandleThread.Callback,BitmapLoader.Callb
 			File input=response.get();
 
 			//加入缓存
-			getPussy().fileThreadPool.execute(new BitmapLoader(getPussy().decoder, getRequest().getKey(), input, this));
+			try{
+			getPussy().fileThreadPool.execute(new BitmapLoader(getPussy().getBitmapPool(),getPussy().decoder, getRequest().getKey(), input, this));
+			}catch(RejectedExecutionException e){
+				success(null,e);
+			}
 
 		}
 	}
@@ -175,10 +184,11 @@ public class Loader implements Runnable,HandleThread.Callback,BitmapLoader.Callb
 
 	private void success(final Bitmap bitmap, Throwable e)
 	{
+		//Pussy.checkThread(false);
 		if (isCancel())
 		{
 			if(bitmap!=null)
-			BitmapPool.recycle(bitmap);
+				getPussy().getMemoryCache().put(content.get().getKey(), bitmap);
 			return;
 		}
 		if (bitmap == null)
@@ -194,16 +204,18 @@ public class Loader implements Runnable,HandleThread.Callback,BitmapLoader.Callb
 		}
 		else
 		{
-			getPussy().getDiskCache().invalidate(content.get().getKey());
-			Resource res=new Resource(content.get().getKey(), bitmap);
-			res.acquire();
-			getPussy().getActiveResource().add(res);
 			//content.getRequest().getPussy().getMemoryCache().put(content.getKey(), bitmap);
 			getPussy().post(new Runnable(){
 					public void run()
 					{
 						Target t=getTarget();
-						if (t != null)t.onSucccess(new PussyDrawable(bitmap,getTarget(), content.get().getRefresh()));
+						if (t != null){
+							getPussy().getDiskCache().invalidate(content.get().getKey());
+							Resource res=new Resource(content.get().getKey(), bitmap);
+							res.acquire();
+							getPussy().getActiveResource().add(res);
+							t.onSuccess(new PussyDrawable(bitmap,getTarget(), content.get().getRefresh()));
+							}
 					}
 				});}
 	}
@@ -211,9 +223,10 @@ public class Loader implements Runnable,HandleThread.Callback,BitmapLoader.Callb
 	@Override
 	public void onSuccess(String key, Bitmap bitmap, File file)
 	{
+		Pussy.checkThread(false);
 		if (isCancel())
 		{
-			BitmapPool.recycle(bitmap);
+			getPussy().getBitmapPool().recycle(bitmap);
 			return;
 		}
 		source = bitmap;
@@ -225,7 +238,7 @@ public class Loader implements Runnable,HandleThread.Callback,BitmapLoader.Callb
 				File cache_file = getPussy().getDiskCache().getCache(getRequest().getKey());
 				if (cache_file.exists())
 				//原始缓存
-					getPussy().fileThreadPool.execute(new BitmapLoader(getPussy().decoder, content.get().getKey(), cache_file, this));
+					getPussy().fileThreadPool.execute(new BitmapLoader(getPussy().getBitmapPool(),getPussy().decoder, content.get().getKey(), cache_file, this));
 			}
 			else
 			{
@@ -237,12 +250,10 @@ public class Loader implements Runnable,HandleThread.Callback,BitmapLoader.Callb
 			if (bitmap == null)
 			{
 				file.delete();
-				synchronized(Uid.getLock(getRequest().getKey())){
 				HandleThread ht=getPussy().request_handler.get(getRequest().getKey());
 				if (ht == null)
 					getPussy().request_handler.put(getRequest().getKey(), ht = new HandleThread(getRequest(), getPussy().netThreadPool));
 				ht.addCallback(this);
-				}
 			}
 			else
 			{
@@ -261,7 +272,7 @@ public class Loader implements Runnable,HandleThread.Callback,BitmapLoader.Callb
 				}
 				else
 				{
-					BitmapPool.recycle(bitmap);
+					getPussy().getBitmapPool().recycle(bitmap);
 				}
 			}
 		}

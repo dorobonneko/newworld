@@ -44,8 +44,8 @@ public class ListFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 		mSwipeRefreshLayout.setOnRefreshListener(this);
 		mRecyclerView=view.findViewById(R.id.recyclerview);
 		mRecyclerView.setItemViewCacheSize(20);
-		mRecyclerView.setDrawingCacheEnabled(true);
-		mRecyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+		//mRecyclerView.setDrawingCacheEnabled(true);
+		//mRecyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
 		mRecyclerView.setHasFixedSize(true);
 		pa=new IndexAdapter(post_data=new JSONArray());
 		mRecyclerView.setLayoutManager(new IndexGridLayoutManager(getContext(),pa));
@@ -123,16 +123,16 @@ public class ListFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 								
 							}
 							JSONArray items=jo.getJSONArray("item");
-							int count=post_data.size();
+							int count=pa.getItemCount();
 							if(page==2){
 								post_data.clear();
 								mRecyclerView.getAdapter().notifyItemRangeRemoved(0,count);
-								count=0;
 							}
+							count=post_data.size();
 							if(items!=null)
 							post_data.addAll(items);
 							//pa.notifyDataSetChanged();
-							pa.notifyItemRangeInserted(count+1,post_data.size()-count);
+							pa.notifyItemRangeInserted(count,items.size()+(count==0?1:0));
 							
 							
 						}

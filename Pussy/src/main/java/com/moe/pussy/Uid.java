@@ -8,6 +8,7 @@ public class Uid
 {
 	private static volatile Map<String,Object> lockMap=new HashMap<>();
 	public static String fromString(String str){
+		if(str==null)return null;
 		try
 		{
 			MessageDigest md=MessageDigest.getInstance("MD5");
@@ -27,6 +28,7 @@ public class Uid
         return sb.toString().trim();
     }
 	public static synchronized Object getLock(String key){
+		if(key==null)return null;
 		Object lock=lockMap.get(key);
 		if(lock==null)
 			lockMap.put(key,lock=new Object());

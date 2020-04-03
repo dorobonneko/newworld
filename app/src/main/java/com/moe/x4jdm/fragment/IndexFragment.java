@@ -41,9 +41,10 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 	private IndexAdapter mIndexAdapter;
 	private Thread mThread;
 	private String key;
-
+	private int page=1;
 	public void setRefreshing(boolean p0)
 	{
+		key=Index.getKey(getContext());
 		if(mSwipeRefreshLayout!=null)
 			mSwipeRefreshLayout.setRefreshing(p0);
 	}
@@ -92,6 +93,7 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 	public void onActivityCreated(Bundle savedInstanceState)
 	{
 		super.onActivityCreated(savedInstanceState);
+		key=Index.getKey(getContext());
 		setHasOptionsMenu(true);
 		onRefresh();
 	}
@@ -158,9 +160,9 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 		(mThread=new Thread(){
 			public void run()
 			{
-				Index.getModel(getContext()).clearCache();
+				Index.getModel(key).clearCache();
 				if(interrupted())return;
-				final String data=Index.getModel(getContext()).getIndex();
+				final String data=Index.getModel(key).getIndex(page);
 				if(interrupted())return;
 				mSwipeRefreshLayout.post(new Runnable(){
 

@@ -26,6 +26,7 @@ public class Content implements SizeReady
 	private Drawable placeHolder;
 	protected Drawable error;
 	protected Loader loader;
+	private Listener listener;
 	public Content(Request r){
 		this.request=r;
 	}
@@ -33,19 +34,26 @@ public class Content implements SizeReady
 	@Override
 	public void onSizeReady(int w, int h)
 	{
+		if(target!=null)
 		loader.onSizeReady(w,h);
 	}
-
-
+	public Content listener(Listener l){
+		listener=l;
+		return this;
+	}
+	public Listener getListener(){
+		return listener;
+	}
 	void cancel()
 	{
-		synchronized(this){
+		Pussy.checkThread(true);
+		if(target==null)return;
 		target=null;
+		if(request.getKey()!=null){
 			HandleThread ht=request.getPussy().request_handler.get(request.getKey());
 			if (ht != null)
 				ht.removeCallback(loader);
-			
-		}
+			}
 	}
 	
 	public Content tag(String tag){
@@ -91,9 +99,7 @@ public class Content implements SizeReady
 		return request;
 	}
 	Target getTarget(){
-		synchronized(this){
 		return  target;
-		}
 	}
 	DiskCache.Cache getCache(){
 		return cache;
@@ -103,16 +109,18 @@ public class Content implements SizeReady
 		return this;
 	}
 	boolean refresh(Target t){
-		
+		Pussy.checkThread(true);
+		if(target==null){
 		target=t;
 		loader.begin();
+		}
 		return true;
 	}
 	public void into(Target t){
 		if(t==null)return;
 		this.target=t;
 		Content c=t.getContent();
-		if(c!=null&&getRequest().getKey().equals(c.getRequest().getKey())){
+		if(c!=null&&request.getKey()!=null&&getRequest().getKey().equals(c.getRequest().getKey())){
 			return;
 		}
 		request.getPussy().cancel(t,getRequest());
@@ -144,8 +152,9 @@ public class Content implements SizeReady
 		into(dt);
 		return dt;
 	}
-	synchronized String getKey(){
+	String getKey(){
 		if(key==null){
+			if(request.getKey()==null)return null;
 			StringBuilder sb=new StringBuilder();
 			sb.append(request.getKey());
 			for(Transformer t:mTransformers)

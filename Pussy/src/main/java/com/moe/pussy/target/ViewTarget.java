@@ -8,6 +8,7 @@ import com.moe.pussy.Target;
 import com.moe.pussy.Transformer;
 import com.moe.pussy.Content;
 import java.lang.ref.WeakReference;
+import com.moe.pussy.Listener;
 
 public abstract class ViewTarget  implements Target,ViewTreeObserver.OnPreDrawListener,View.OnAttachStateChangeListener
 {
@@ -31,6 +32,13 @@ public abstract class ViewTarget  implements Target,ViewTreeObserver.OnPreDrawLi
 		content.getRefresh().cancel();
 	}
 
+	@Override
+	public Listener getListener()
+	{
+		return content.getListener();
+	}
+
+
 
 
 	@Override
@@ -47,8 +55,8 @@ public abstract class ViewTarget  implements Target,ViewTreeObserver.OnPreDrawLi
 	@Override
 	public final void onResourceReady(Bitmap bitmap, Transformer[] trans)
 	{
-		
-		if (getView().getWidth() == 0 || getView().getHeight() == 0)
+		Pussy.checkThread(false);
+		if (getView().getMeasuredWidth()==0&&getView().getMeasuredHeight()==0)
 		{
 			getView().post(new Runnable(){
 					public void run()
@@ -60,18 +68,20 @@ public abstract class ViewTarget  implements Target,ViewTreeObserver.OnPreDrawLi
 		}
 		else
 		{
-			onSizeReady(getView().getWidth(),getView().getHeight());
+			onSizeReady(getView().getMeasuredWidth(),getView().getMeasuredHeight());
 		}
 	}
 
 	@Override
 	public boolean onPreDraw()
 	{
-		getView().getViewTreeObserver().removeOnPreDrawListener(this);
+		final View v=getView();
+		if(v==null)return false;
+		v.getViewTreeObserver().removeOnPreDrawListener(this);
 		new Thread(){
 			public void run()
 			{
-				onSizeReady(getView().getWidth(),getView().getHeight());
+				onSizeReady(v.getWidth(),v.getHeight());
 			}
 		}.start();
 		return false;
@@ -95,6 +105,7 @@ public abstract class ViewTarget  implements Target,ViewTreeObserver.OnPreDrawLi
 	@Override
 	public final void onSizeReady(int w, int h)
 	{
+		
 		content.onSizeReady(w,h);
 	}
 

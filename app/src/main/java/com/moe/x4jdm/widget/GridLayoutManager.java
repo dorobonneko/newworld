@@ -6,7 +6,7 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 
 public class GridLayoutManager extends GridLayoutManager
 {
-	public GridLayoutManager(Context c,final RecyclerView.Adapter a){
+	private GridLayoutManager(Context c,final RecyclerView.Adapter a){
 		super(c,3);
 		//setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_NONE);
 		setSpanSizeLookup(new SpanSizeLookup(){

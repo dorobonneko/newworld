@@ -20,7 +20,7 @@ public class Indexllias extends Index
 	}
 
 	@Override
-	public String getIndex()
+	public String getIndex(int page)
 	{
 		JSONArray index=new JSONArray();
 		try
@@ -36,7 +36,7 @@ public class Indexllias extends Index
 				for(Element i:e.nextElementSibling().select("a")){
 					JSONObject i_j=new JSONObject();
 					index.add(i_j);
-					i_j.put("list",true);//点击是列表
+					i_j.put("click","list");//点击是列表
 					i_j.put("title",i.text());
 					i_j.put("href",i.absUrl("href")+"/%d");
 				}

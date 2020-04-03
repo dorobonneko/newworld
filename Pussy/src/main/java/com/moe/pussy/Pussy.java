@@ -27,9 +27,9 @@ import java.util.List;
 
 public class Pussy
 {
-	private static Map<Context,Pussy> context_pussy=new HashMap<>();
-	private static Map<Fragment,Pussy> fragment_pussy=new HashMap<>();
-	private static Map<View,Pussy> view_pussy=new HashMap<>();
+	private static Map<Context,Pussy> context_pussy=new ConcurrentHashMap<>();
+	private static Map<Fragment,Pussy> fragment_pussy=new ConcurrentHashMap<>();
+	private static Map<View,Pussy> view_pussy=new ConcurrentHashMap<>();
 	protected String userAgent="Pussy_1.0";
 	private SSLSocketFactory SSLSocketFactory;
 	private ComponentCallbacks mComponentCallbacks;
@@ -46,17 +46,18 @@ public class Pussy
 	private MemoryCache mMemoryCache;
 	private ActiveResource mActiveResource;
 	protected ThreadPoolExecutor netThreadPool,fileThreadPool;
-	private static List<WeakReference> test=new ArrayList<>();
+	protected static BitmapPool mBitmapPool;
 	static{
 		//初始化数据
 		mainHandler = new android.os.Handler(Looper.getMainLooper());
+		mBitmapPool = new BitmapPool(Runtime.getRuntime().maxMemory() / 8);
 	}
 	private Pussy()
 	{
 		userAgent = PussyConfig.userAgent;
 		SSLSocketFactory = PussyConfig.mSSLSocketFactory;
 		decoder = PussyConfig.mDecoder;
-		mMemoryCache = new MemoryCache();
+		mMemoryCache = new MemoryCache(mBitmapPool);
 		mActiveResource = new ActiveResource(this);
 		final ThreadGroup group=new ThreadGroup("image load");
 		ThreadFactory tf=new ThreadFactory(){
@@ -98,6 +99,7 @@ public class Pussy
 	}
 	public static Pussy $(Context context)
 	{
+		Pussy.checkThread(true);
 		synchronized (context_pussy)
 		{
 			Pussy p=context_pussy.get(context);
@@ -105,14 +107,13 @@ public class Pussy
 			{
 				context_pussy.put(context, p = new Pussy());
 				p.init(context);
-				test.add(new WeakReference<>(p));
-				Object c=test;
 			}
 			return p;
 		}
 	}
 	public static Pussy $(Fragment fragment)
 	{
+		Pussy.checkThread(true);
 		synchronized (fragment_pussy)
 		{
 			Pussy p=fragment_pussy.get(fragment);
@@ -127,6 +128,7 @@ public class Pussy
 	}
 	public static Pussy $(View v)
 	{
+		Pussy.checkThread(true);
 		synchronized (view_pussy)
 		{
 			Pussy p=view_pussy.get(v);
@@ -139,9 +141,24 @@ public class Pussy
 			return p;
 		}
 	}
+	public BitmapPool getBitmapPool()
+	{
+		return mBitmapPool;
+	}
 	public Dispatcher getDispatcher()
 	{
 		return mDispatcher;
+	}
+	public static void checkThread(boolean main)
+	{
+		if (main && !Thread.currentThread().getName().equalsIgnoreCase("main"))
+		{
+			throw new RuntimeException("not main thread");
+		}
+		else if (!main && Thread.currentThread().getName().equalsIgnoreCase("main"))
+		{
+			throw new RuntimeException("not third thread");
+		}
 	}
 	public static void post(Runnable run)
 	{
@@ -182,7 +199,7 @@ public class Pussy
 		if (content != null)
 		{
 			content.cancel();
-			if (request!=null&&!request.getKey().equals(content.getRequest().getKey()))
+			if (request != null&&request.getKey()!=null && !request.getKey().equals(content.getRequest().getKey()))
 			{
 				HandleThread ht=request_handler.remove(content.getRequest().getKey());
 				if (ht != null)
@@ -191,8 +208,8 @@ public class Pussy
 			Resource res=getActiveResource().get(content.getKey());
 			if (res != null)
 				res.release();
-			t.onResourceReady(null,null);
-			
+			//t.onResourceReady(null,null);
+
 		}
 
 	}
@@ -203,7 +220,7 @@ public class Pussy
 	}
 	public void trimMemory()
 	{
-		mMemoryCache.trimToSize(10 * 1024 * 1024);
+		mMemoryCache.trimToSize(2 * 1024 * 1024);
 	}
 	public void trimCache()
 	{
@@ -227,7 +244,7 @@ public class Pussy
 		fileThreadPool.shutdownNow();
 		mContext.get().unregisterComponentCallbacks(mComponentCallbacks);
 		((Application)mContext.get().getApplicationContext()).unregisterActivityLifecycleCallbacks(mActivityLifecycle);
-		
+
 
 	}
 	int[] getScreenSize()
@@ -246,71 +263,14 @@ public class Pussy
 		@Override
 		public void onLowMemory()
 		{
-			synchronized (view_pussy)
-			{
-				Iterator<Pussy> p_i=view_pussy.values().iterator();
-				while (p_i.hasNext())
-				{
-					Pussy p=p_i.next();
-					if (p != null)
-						p.clearMemory();
-				}
-			}
-			synchronized (fragment_pussy)
-			{
-				Iterator<Pussy> p_i=fragment_pussy.values().iterator();
-				while (p_i.hasNext())
-				{
-					Pussy p=p_i.next();
-					if (p != null)
-						p.clearMemory();
-				}
-			}
-			synchronized (context_pussy)
-			{
-				Iterator<Pussy> p_i=context_pussy.values().iterator();
-				while (p_i.hasNext())
-				{
-					Pussy p=p_i.next();
-					if (p != null)
-						p.clearMemory();
-				}
-			}
+			clearMemory();
 		}
 
 		@Override
 		public void onTrimMemory(int p1)
 		{
-			synchronized (view_pussy)
-			{
-				Iterator<Pussy> p_i=view_pussy.values().iterator();
-				while (p_i.hasNext())
-				{
-					Pussy p=p_i.next();
-					if (p != null)
-						p.trimMemory();
-				}
-			}
-			synchronized (fragment_pussy)
-			{
-				Iterator<Pussy> p_i=fragment_pussy.values().iterator();
-				while (p_i.hasNext())
-				{
-					Pussy p=p_i.next();
-					if (p != null)
-						p.trimMemory();
-				}
-			}
-			synchronized (context_pussy)
-			{
-				Iterator<Pussy> p_i=context_pussy.values().iterator();
-				while (p_i.hasNext())
-				{
-					Pussy p=p_i.next();
-					if (p != null)
-						p.trimMemory();
-				}
-			}
+			if (p1 == Application.TRIM_MEMORY_BACKGROUND)
+				trimMemory();
 		}
 	}
 	class ActivityLifecycle implements Application.ActivityLifecycleCallbacks
@@ -349,27 +309,21 @@ public class Pussy
 		@Override
 		public void onActivityDestroyed(Activity p1)
 		{
-			synchronized (context_pussy)
-			{
-				Pussy p=context_pussy.remove(p1);
-				if (p != null)
-					p.release();
-			}
-			}
+			Pussy p=context_pussy.remove(p1);
+			if (p != null)
+				p.release();
+		}
 	}
-	static class FragmentLifecycle extends FragmentManager.FragmentLifecycleCallbacks
+	static	class FragmentLifecycle extends FragmentManager.FragmentLifecycleCallbacks
 	{
 
 		@Override
 		public void onFragmentDestroyed(FragmentManager fm, Fragment f)
 		{
-			synchronized (fragment_pussy)
-			{
-				fm.unregisterFragmentLifecycleCallbacks(this);
-				Pussy p=fragment_pussy.remove(f);
-				if (p != null)
-					p.release();
-			}
+			fm.unregisterFragmentLifecycleCallbacks(this);
+			Pussy p=fragment_pussy.remove(f);
+			if (p != null)
+				p.release();
 		}
 
 	}
@@ -384,13 +338,10 @@ public class Pussy
 		@Override
 		public void onViewDetachedFromWindow(View p1)
 		{
-			synchronized (view_pussy)
-			{
-				p1.removeOnAttachStateChangeListener(this);
-				Pussy p=view_pussy.remove(p1);
-				if (p != null)
-					p.release();
-			}
+			p1.removeOnAttachStateChangeListener(this);
+			Pussy p=view_pussy.remove(p1);
+			if (p != null)
+				p.release();
 		}
 	}
 	public static class Refresh
@@ -403,12 +354,12 @@ public class Pussy
 
 		public void cancel()
 		{
-			l.getRequest().getPussy().cancel(l.getTarget(),l.getRequest());
+			l.getRequest().getPussy().cancel(l.getTarget(), l.getRequest());
 		}
 
 		public boolean isCancel()
 		{
-			return l.getTarget()==null;
+			return l.getTarget() == null;
 		}
 		public boolean refresh(Target t)
 		{
