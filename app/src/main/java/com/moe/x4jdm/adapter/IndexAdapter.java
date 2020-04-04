@@ -36,25 +36,23 @@ import com.moe.pussy.Target;
 import com.moe.pussy.transformer.SprayTransFormer;
 import com.moe.x4jdm.widget.WaterFallLayout;
 import android.content.Context;
+import android.animation.Animator;
+import android.animation.ObjectAnimator;
 
 public class IndexAdapter extends RecyclerView.Adapter
 {
 	private JSONArray index;
-	private LoadMoreViewHolder vh;
 	private int icon;
 	private String text;
-	private RotateAnimation rotate;
-	private boolean loadmore;
+	private ObjectAnimator rotate;
+	private boolean loadmore,anime;
+	private View loadView;
 	public IndexAdapter(JSONArray index, boolean loadmore)
 	{
 		this.loadmore = loadmore;
 		this.index = index;
 		text = "已到底";
 		icon = R.drawable.check;
-		rotate = new RotateAnimation(0, 360, RotateAnimation.RELATIVE_TO_SELF, 0.5f, RotateAnimation.RELATIVE_TO_SELF, 0.5f);
-		rotate.setRepeatCount(-1);
-		rotate.setDuration(500);
-		rotate.setInterpolator(new LinearInterpolator());
 		setHasStableIds(true);
 	}
 
@@ -70,6 +68,19 @@ public class IndexAdapter extends RecyclerView.Adapter
 	}
 
 	@Override
+	public void onAttachedToRecyclerView(RecyclerView recyclerView)
+	{
+		super.onAttachedToRecyclerView(recyclerView);
+		loadView=(LayoutInflater.from(recyclerView.getContext()).inflate(R.layout.loadmore, recyclerView, false));
+		rotate =ObjectAnimator.ofFloat(loadView.findViewById(R.id.icon),"Rotation",0,360);
+		rotate.setDuration(500);
+		rotate.setInterpolator(new LinearInterpolator());
+		rotate.setRepeatMode(rotate.RESTART);
+		rotate.setRepeatCount(rotate.INFINITE);
+		setFoot(icon,text,anime);
+	}
+
+	/*@Override
 	public void onViewRecycled(RecyclerView.ViewHolder holder)
 	{
 		super.onViewRecycled(holder);
@@ -78,7 +89,7 @@ public class IndexAdapter extends RecyclerView.Adapter
 			Target t=(Target) ((PostViewHolder)holder).icon.getTag();
 			Pussy.$(holder.itemView.getContext()).cancel(t, null);
 		}
-	}
+	}*/
 
 
 
@@ -105,7 +116,8 @@ public class IndexAdapter extends RecyclerView.Adapter
 				return new TextItemViewHolder(new Button(p1.getContext()));
 				//return new PostLineViewHolder(LayoutInflater.from(p1.getContext()).inflate(R.layout.post_line_item, p1, false));
 			case 7:
-				return vh = new LoadMoreViewHolder(LayoutInflater.from(p1.getContext()).inflate(R.layout.loadmore, p1, false));
+				return new LoadMoreViewHolder(loadView);
+				//return vh==null?(vh = new LoadMoreViewHolder(LayoutInflater.from(p1.getContext()).inflate(R.layout.loadmore, p1, false))):vh;
 			case 8:
 				return new PostViewHolder(LayoutInflater.from(p1.getContext()).inflate(R.layout.post_line_item, p1, false));
 			case 9:
@@ -123,17 +135,18 @@ public class IndexAdapter extends RecyclerView.Adapter
 	{
 		this.icon = icon;
 		this.text = text;
-		if (vh != null)
+		this.anime=anim;
+		if (loadView != null)
 		{
-			vh.icon.setImageResource(icon);
-			vh.title.setText(text);
+			ImageView iconview=((ImageView)loadView.findViewById(R.id.icon));
+			iconview.setImageResource(icon);
+			((TextView)loadView.findViewById(R.id.title)).setText(text);
 			if (anim)
 			{
-				vh.icon.startAnimation(rotate);
 				rotate.start();
 			}
 			else
-				vh.icon.clearAnimation();
+				rotate.cancel();
 		}
 	}
 	@Override
@@ -199,10 +212,13 @@ public class IndexAdapter extends RecyclerView.Adapter
 		else if (vh instanceof LoadMoreViewHolder)
 		{
 			LoadMoreViewHolder lmvh=(IndexAdapter.LoadMoreViewHolder) vh;
-			lmvh.icon.setImageResource(icon);
+			/*lmvh.icon.setImageResource(icon);
 			lmvh.title.setText(text);
-			if (rotate.hasStarted())
-				lmvh.icon.startAnimation(rotate);
+			lmvh.icon.clearAnimation();*/
+			//if (anime)
+				//lmvh.icon.startAnimation(rotate);
+				//else
+				//lmvh.icon.clearAnimation();*/
 		}
 		else if (vh instanceof PostPosterViewHolder)
 		{
@@ -328,6 +344,7 @@ public class IndexAdapter extends RecyclerView.Adapter
 	}
 	private void performClick(Context context, int position)
 	{
+		if(position==-1)return;
 		JSONObject object=(JSONObject)getItem(position);
 		String click=object.getString("click");
 		if (click == null)

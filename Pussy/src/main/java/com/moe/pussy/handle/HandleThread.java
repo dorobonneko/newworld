@@ -7,6 +7,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import com.moe.pussy.RequestHandler.Response;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.lang.ref.WeakReference;
+import com.moe.pussy.Pussy;
 
 public class HandleThread implements Runnable,RequestHandler.Callback
 {
@@ -16,9 +17,10 @@ public class HandleThread implements Runnable,RequestHandler.Callback
 	private boolean success;
 	private WeakReference<ThreadPoolExecutor> pool;
 	private int error;
-	public HandleThread(Request request,ThreadPoolExecutor pool){
-		this.request=request;
-		this.pool=new WeakReference<ThreadPoolExecutor>( pool);
+	public HandleThread(Request request, ThreadPoolExecutor pool)
+	{
+		this.request = request;
+		this.pool = new WeakReference<ThreadPoolExecutor>(pool);
 		pool.execute(this);
 	}
 
@@ -26,32 +28,39 @@ public class HandleThread implements Runnable,RequestHandler.Callback
 	{
 		request.cancel();
 	}
-	public void addCallback(Callback call){
-		if(!success)
-		calls.add(call);
+	public void addCallback(Callback call)
+	{
+		if (!success)
+			calls.add(call);
 		else
 			call.onResponse(response);
 	}
-	public void removeCallback(Callback call){
+	public void removeCallback(Callback call)
+	{
 		calls.remove(call);
 	}
 	@Override
 	public void run()
 	{
-		if(success)return;
+		if (success)return;
 		RequestHandler h=request.getPussy().getDispatcher().getHandler(request);
-		if(h!=null)
-			h.onHandle(pool.get(),request,this);
-		
+		if (h != null)
+			h.onHandle(pool.get(), request, this);
+
 	}
 
 	@Override
-	public void onSuccess(RequestHandler.Response response)
+	public void onSuccess(final RequestHandler.Response response)
 	{
-		this.response=response;
-		success=true;
-		for(Callback call:calls){
-			call.onResponse(response);
+		this.response = response;
+		success = true;
+		for (final Callback call:calls)
+		{
+			Pussy.post(new Runnable(){
+					public void run()
+					{
+						call.onResponse(response);
+					}});
 		}
 	}
 
@@ -59,13 +68,19 @@ public class HandleThread implements Runnable,RequestHandler.Callback
 	public void onError(Throwable e)
 	{
 		error++;
-		if(error<3)
-			try{pool.get().execute(this);}catch(Exception ee){}
+		if (error < 3)
+			try
+			{
+				Thread.sleep(3000);
+				pool.get().execute(this);}
+			catch (Exception ee)
+			{}
 	}
 
 
-	
-	public interface Callback{
+
+	public interface Callback
+	{
 		void onResponse(RequestHandler.Response response);
 	}
 }

@@ -132,7 +132,7 @@ public class ListFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 							if(items!=null)
 							post_data.addAll(items);
 							//pa.notifyDataSetChanged();
-							pa.notifyItemRangeInserted(count,items.size()+(count==0?1:0));
+							pa.notifyItemRangeInserted(count,(items==null?0:items.size())+(count==0?1:0));
 							
 							
 						}

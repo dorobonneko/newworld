@@ -66,8 +66,9 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 		recyclerview.setItemViewCacheSize(20);
 		recyclerview.setHasFixedSize(true);
 		recyclerview.addItemDecoration(new Space((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,8,getResources().getDisplayMetrics())));
-		recyclerview.setAdapter(mIndexAdapter=new IndexAdapter(data=new JSONArray()));
+		mIndexAdapter=new IndexAdapter(data=new JSONArray());
 		recyclerview.setLayoutManager(new IndexGridLayoutManager(view.getContext(),mIndexAdapter));
+		recyclerview.setAdapter(mIndexAdapter);
 		final Toolbar bar=getActivity().findViewById(R.id.toolbar);
 		bar.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener(){
 

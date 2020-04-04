@@ -7,6 +7,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import com.alibaba.fastjson.JSONObject;
 import android.net.Uri;
+import org.jsoup.HttpStatusException;
 
 public class Indexmoeero extends Index
 {
@@ -73,15 +74,16 @@ public class Indexmoeero extends Index
 		JSONObject list=new JSONObject();
 		try
 		{
+			list.put("page", Integer.parseInt(Uri.parse(url).getLastPathSegment()));
+		}
+		catch (NumberFormatException e)
+		{
+			list.put("page",1);
+		}
+		try
+		{
 			Document doc=Jsoup.connect(url.replace("/taglist","/tagcloud")).get();
-			try
-			{
-				list.put("page", Integer.parseInt(Uri.parse(url).getLastPathSegment()));
-			}
-			catch (NumberFormatException e)
-			{
-				list.put("page",1);
-			}
+			
 			list.put("count", list.getIntValue("page") + (doc.selectFirst(".pagenation") != null ?1: 0));
 			JSONArray item=new JSONArray();
 			list.put("item",item);
@@ -92,7 +94,7 @@ public class Indexmoeero extends Index
 						item.add(post);
 						post.put("click","list");
 						post.put("title",e.selectFirst("a").text());
-						post.put("href",e.selectFirst("a").absUrl("href"));
+						post.put("href",makeUrl(e.selectFirst("a").absUrl("href")));
 						post.put("desc",e.attr("title"));
 					}
 			else
@@ -125,6 +127,10 @@ public class Indexmoeero extends Index
 				}
 			}
 			
+		}catch(HttpStatusException e){
+			if(e.getStatusCode()==404){
+				list.put("count",list.getIntValue("page"));
+			}
 		}
 		catch (IOException e)
 		{}

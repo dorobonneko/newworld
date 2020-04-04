@@ -45,7 +45,6 @@ public class Pussy
 	private static android.os.Handler mainHandler;
 	private MemoryCache mMemoryCache;
 	private ActiveResource mActiveResource;
-	protected ThreadPoolExecutor netThreadPool,fileThreadPool;
 	protected static BitmapPool mBitmapPool;
 	static{
 		//初始化数据
@@ -72,8 +71,8 @@ public class Pussy
 			}
 
 		};
-		fileThreadPool = new ThreadPoolExecutor(64, 128, 1, TimeUnit.SECONDS, new LinkedBlockingDeque<Runnable>(), tf);//先进后出
-		netThreadPool = new ThreadPoolExecutor(128, 512, 10, TimeUnit.SECONDS, new LinkedBlockingDeque<Runnable>(), tf);//先进后出
+		//fileThreadPool = new ThreadPoolExecutor(64, 128, 1, TimeUnit.SECONDS, new LinkedBlockingDeque<Runnable>(), tf);//先进后出
+		//netThreadPool = new ThreadPoolExecutor(128, 512, 10, TimeUnit.SECONDS, new LinkedBlockingDeque<Runnable>(), tf);//先进后出
 		mThreadPoolExecutor = new ThreadPoolExecutor(32, 128, 3, TimeUnit.SECONDS, new LinkedBlockingDeque<Runnable>(), tf);//先进后出
 
 	}
@@ -240,8 +239,8 @@ public class Pussy
 		clearMemory();
 		trimCache();
 		mThreadPoolExecutor.shutdownNow();
-		netThreadPool.shutdownNow();
-		fileThreadPool.shutdownNow();
+		//netThreadPool.shutdownNow();
+		//fileThreadPool.shutdownNow();
 		mContext.get().unregisterComponentCallbacks(mComponentCallbacks);
 		((Application)mContext.get().getApplicationContext()).unregisterActivityLifecycleCallbacks(mActivityLifecycle);
 

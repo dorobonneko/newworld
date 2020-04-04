@@ -213,7 +213,7 @@ public class PostViewActivity extends AppCompatActivity implements View.OnApplyW
 								}
 								if(jo.getString("src")!=null){
 								Pussy.$(PostViewActivity.this).load(jo.getString("src")).execute().transformer(new CropTransformer(Gravity.CENTER), new RoundTransformer(getResources().getDisplayMetrics(),5)).anime(Anim.cicle(300)).into(icon);
-								Pussy.$(PostViewActivity.this).load(jo.getString("src")).execute().transformer(new CropTransformer(Gravity.CENTER), new BlurTransformer(getApplicationContext(), 75)).listener(PostViewActivity.this).into(backicon);
+								Pussy.$(PostViewActivity.this).load(jo.getString("src")).execute().transformer(new CropTransformer(Gravity.CENTER), new BlurTransformer(getApplicationContext(), 75)).listener(PostViewActivity.this).anime(Anim.fade(150)).into(backicon);
 								}play_data.clear();
 								JSONArray data=jo.getJSONArray("video");
 								if (data != null)

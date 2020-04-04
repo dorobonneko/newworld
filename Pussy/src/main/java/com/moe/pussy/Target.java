@@ -3,13 +3,14 @@ import android.graphics.Bitmap;
 import java.io.FileOutputStream;
 import java.io.FileNotFoundException;
 import android.graphics.drawable.Drawable;
+import java.io.File;
 
 public interface Target extends SizeReady
 {
 	public abstract void placeHolder(Drawable placeHolder);
 	public Content getContent();
 	//原始资源准备完毕，等待回调onSizeReady
-	public abstract void onResourceReady(Bitmap bitmap,Transformer... trans);
+	public abstract void onResourceReady(File cache);
 	public abstract void onSuccess(PussyDrawable pd);
 	public abstract void error(Throwable e,Drawable d);
 	/*public PussyDrawable putCache(Bitmap pd){

@@ -5,5 +5,5 @@ import android.graphics.Bitmap;
 
 public interface Decoder
 {
-	public Bitmap decode(BitmapPool mBitmapPool,File input);
+	public Bitmap decode(BitmapPool mBitmapPool,File input,int w,int h);
 }

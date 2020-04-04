@@ -11,7 +11,7 @@ public class BitmapDecoder implements Decoder
 {
 	//byte[] buff=new byte[32*1024];
 	@Override
-	public Bitmap decode(BitmapPool mBitmapPool,File input)
+	public Bitmap decode(BitmapPool mBitmapPool,File input,int w,int h)
 	{
 		BitmapFactory.Options options=new BitmapFactory.Options();
 		options.inDither=true;
@@ -20,6 +20,7 @@ public class BitmapDecoder implements Decoder
 		BitmapFactory.decodeFile(input.getAbsolutePath(),options);
 		if(options.outWidth<=0||options.outHeight<=0)return null;
 		options.inJustDecodeBounds=false;
+		options.inSampleSize=inSampleSize(options.outWidth,options.outHeight,w,h);
 		options.inBitmap=mBitmapPool.getBitmap(options.outWidth,options.outHeight,options.inPreferredConfig);
 		options.inMutable=true;
 		Bitmap bitmap=BitmapFactory.decodeFile(input.getAbsolutePath(),options);

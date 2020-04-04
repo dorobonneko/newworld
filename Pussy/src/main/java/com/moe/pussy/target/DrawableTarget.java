@@ -11,6 +11,7 @@ import com.moe.pussy.Anim;
 import android.animation.Animator;
 import com.moe.pussy.DrawableAnimator;
 import com.moe.pussy.Listener;
+import java.io.File;
 
 public class DrawableTarget extends LevelListDrawable implements Target
 {
@@ -70,10 +71,10 @@ public class DrawableTarget extends LevelListDrawable implements Target
 		return content;
 	}
 	@Override
-	public void onResourceReady(Bitmap bitmap, Transformer[] trans)
+	public void onResourceReady(File cache)
 	{
 		Rect bounds= getBounds();
-		if (bounds.width() > 0 && bounds.height() > 0)
+		if (bounds.width() > 0 || bounds.height() > 0)
 			onSizeReady(bounds.width(), bounds.height());
 	}
 
