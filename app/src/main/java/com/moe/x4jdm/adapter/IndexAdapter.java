@@ -228,7 +228,7 @@ public class IndexAdapter extends RecyclerView.Adapter
 			ppvh.msg.setText(post.getString("msg"));
 			ppvh.desc.setText(post.getString("desc"));
 			ppvh.score.setText(post.getString("score"));
-			Pussy.$(ppvh.itemView.getContext()).load(post.getString("src")).userAgent("x4jdm" + Math.random()).execute().transformer(new CropTransformer(Gravity.TOP), new RoundTransformer(ppvh.itemView.getResources().getDisplayMetrics(), 5)).anime(Anim.fade(300)).into(ppvh.icon);
+			Pussy.$(ppvh.itemView.getContext()).load(post.getString("src")).userAgent("x4jdm" + Math.random()).execute().transformer(new CropTransformer(Gravity.CENTER), new RoundTransformer(ppvh.itemView.getResources().getDisplayMetrics(), 5)).anime(Anim.fade(300)).into(ppvh.icon);
 			WaterFallLayout mWaterFallLayout=ppvh.tag;
 			JSONArray tag=post.getJSONArray("tag");
 			if(tag==null)

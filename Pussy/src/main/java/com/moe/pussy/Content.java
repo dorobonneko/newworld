@@ -110,10 +110,8 @@ public class Content implements SizeReady
 	}
 	boolean refresh(Target t){
 		Pussy.checkThread(true);
-		if(target==null){
 		target=t;
 		loader.begin();
-		}
 		return true;
 	}
 	public void into(Target t){

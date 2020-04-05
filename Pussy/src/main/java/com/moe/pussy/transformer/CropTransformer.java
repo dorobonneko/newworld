@@ -23,84 +23,64 @@ public class CropTransformer implements Transformer
 	@Override
 	public Bitmap onTransformer(BitmapPool bp, Bitmap source, int w, int h)
 	{
-		if (source == null)return null;
+		if (source == null)throw new NullPointerException("source bitmap is null");
+		if(w==0&&h==0)
+			return source;
 		float scale=1;
-		int displayWidth=0,displayHeight=0,image_width=source.getWidth(),image_height=source.getHeight();
-		if (w == -2)
+		int displayWidth=w,displayHeight=h,image_width=source.getWidth(),image_height=source.getHeight();
+		float dx=0,dy=0;
+		if (w == 0)
 		{
 			//用高度计算
-			scale = (float) h / (float) source.getHeight();
-			displayHeight = h;
-			displayWidth = (int)(source.getWidth() * scale);
+			scale = (float) h / (float) image_height;
+			displayWidth = (int)(image_width* scale);
 		}
-		else if (h == -2)
+		else if (h == 0)
 		{
 			//用宽度计算
-			scale = (float) w / (float) source.getWidth();
-			displayWidth = w;
-			displayHeight = (int) (source.getHeight() * scale);
-		}
-		else if (w == -2 && h == -2)
-		{
-			return source;
+			scale = (float) w / (float) image_width;
+			displayHeight = (int) (image_height * scale);
 		}
 		else
 		{
-			if (source.getWidth() * h > w * source.getHeight())
-			{
-				scale = (float) h / (float) source.getHeight();
-			}
-			else
-			{
-				scale = (float) w / (float) source.getWidth();
-			}
-			displayWidth = w;
-			displayHeight = h;
+			if (image_width * h > w * image_height) {
+				scale = (float) h / (float) image_height;
+				} else {
+				scale = (float) w / (float) image_width;
+				}
+			
 		}
-
-		Rect rect=new Rect(0, 0, (int)(displayWidth / scale), (int)Math.round(displayHeight / scale));
-		if ((gravity & Gravity.RIGHT) == Gravity.RIGHT || (gravity & Gravity.END) == Gravity.END)
+		if(Gravity.isVertical(gravity)){
+			dx = (w - image_width * scale) * 0.5f;
+		}
+		if(Gravity.isHorizontal(gravity)){
+			dy = (h - image_height * scale) * 0.5f;
+			}
+		if ((gravity & Gravity.START) == Gravity.START || (gravity & Gravity.LEFT) == Gravity.LEFT)
 		{
-			if (image_width > rect.width())
-			{
-				rect.set(image_width - rect.width(), rect.top, image_width, rect.bottom);
-			}
+			dx=0;
 		}
-		if ((gravity & Gravity.BOTTOM) == Gravity.BOTTOM)
+		else if ((gravity & Gravity.RIGHT) == Gravity.RIGHT || (gravity & Gravity.END) == Gravity.END)
 		{
-			if (image_height > rect.height())
-			{
-				rect.set(rect.left, image_height - rect.height(), rect.right, image_height);
-			}
+			dx=displayWidth-image_width*scale;
 		}
-		if (Gravity.isVertical(gravity))
+		if ((gravity & Gravity.TOP) == Gravity.TOP)
 		{
-			if (image_width > rect.width())
-			{
-				rect.offset((image_width - rect.width()) / 2, 0);
-			}
+			dy=0;
 		}
-		if (Gravity.isHorizontal(gravity))
+		else if ((gravity & Gravity.BOTTOM) == Gravity.BOTTOM)
 		{
-			if (image_height > rect.height())
-			{
-				rect.offset(0, (image_height - rect.height()) / 2);
-			}
+			dy=displayHeight-image_height*scale;
 		}
-		if (rect.width() <= 0 || rect.height() <= 0)
-		{
-			bp.recycle(source);
-			return null;
-		}
+		
 		if (displayWidth == source.getWidth() && displayHeight == source.getHeight())
 			return source;
 		Bitmap buff=bp.getBitmap(displayWidth, displayHeight, Bitmap.Config.ARGB_8888);
 		Canvas canvas=new Canvas(buff);
 		canvas.setDrawFilter(new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG | Paint.DITHER_FLAG | Paint.FILTER_BITMAP_FLAG));
 		Matrix m=new Matrix();
-		m.preTranslate(-rect.left * scale, -rect.top * scale);
-		m.preScale(scale, scale);
-
+		m.setScale(scale, scale);
+        m.postTranslate((int) (dx + 0.5f), (int) (dy + 0.5f));
 		//canvas.scale(scale,scale);
 		canvas.drawBitmap(source, m, null);
 		//Bitmap buff=source.createBitmap(source,rect.left,rect.top,rect.width(),rect.height());

@@ -22,7 +22,7 @@
 				android:layout_height="wrap_content"
 				android:id="@+id/icon"
 				app:percent="161.8%"
-				android:scaleType="centerCrop"/>
+				/>
 
 			<TextView
 				android:id="@+id/summary"

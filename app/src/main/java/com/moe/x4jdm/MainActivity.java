@@ -35,6 +35,7 @@ import android.app.ActionBar;
 import com.moe.pussy.transformer.SprayTransFormer;
 import android.os.Handler;
 import android.os.Message;
+import android.graphics.Bitmap;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,SharedPreferences.OnSharedPreferenceChangeListener,DrawerLayout.DrawerListener,View.OnClickListener{
 

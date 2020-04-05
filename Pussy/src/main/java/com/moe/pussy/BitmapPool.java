@@ -14,8 +14,13 @@ import java.util.Collections;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Stack;
+import java.util.Vector;
+import android.graphics.Color;
 
-public class BitmapPool extends LinkedHashMap<Integer,List<Bitmap>>
+public class BitmapPool extends LinkedHashMap<Integer,Stack<Bitmap>>
 {
 	private  long maxSize,currentSize;
 	private Lock lock=new ReentrantLock();
@@ -27,10 +32,11 @@ public class BitmapPool extends LinkedHashMap<Integer,List<Bitmap>>
 	{
 		lock.lock();
 		try{int size=getBitmapByteSize(w,h,config);
-		List<Bitmap> list=remove(size);
+		Stack<Bitmap> list=remove(size);
 		if(list!=null&&!list.isEmpty()){
 			put(size,list);
-			Bitmap bitmap=list.remove(0);
+			Bitmap bitmap=list.pop();
+			bitmap.eraseColor(Color.TRANSPARENT);
 			bitmap.reconfigure(w,h,config);
 			currentSize-=size;
 			return bitmap;
@@ -42,33 +48,40 @@ public class BitmapPool extends LinkedHashMap<Integer,List<Bitmap>>
 	}
 	public void recycle(Bitmap bitmap)
 	{
+		if(bitmap==null||bitmap.isRecycled())return;
+		if(!bitmap.isMutable()){
+			bitmap.recycle();
+			return;
+			}
+		
 		lock.lock();
 		try{
-		if(bitmap==null||bitmap.isRecycled())return;
-		if(!bitmap.isMutable()){bitmap.recycle();return;}
 		int size=getBitmapByteSize(bitmap);
-		List<Bitmap> list=get(size);
+		Stack<Bitmap> list=get(size);
 		if(list==null){
-			put(size,list=new ArrayList<>());
+			put(size,list=new Stack<>());
 		}
-		list.add(bitmap);
+		if(list.search(bitmap)==-1){
+		list.push(bitmap);
 		currentSize+=size;
 		trimToSize(maxSize);
+		}
 		}finally{
 			lock.unlock();
 		}
 	}
 	public void trimToSize(long size){
 		if(currentSize>size){
-			Iterator<Map.Entry<Integer,List<Bitmap>>> iterator_map=entrySet().iterator();
+			Iterator<Map.Entry<Integer,Stack<Bitmap>>> iterator_map=entrySet().iterator();
 			while(iterator_map.hasNext()){
-				Map.Entry<Integer,List<Bitmap>> list=iterator_map.next();
+				Map.Entry<Integer,Stack<Bitmap>> list=iterator_map.next();
 				Iterator<Bitmap> iterator=list.getValue().iterator();
 				while(iterator.hasNext()){
 					Bitmap bitmap=iterator.next();
 					iterator.remove();
 					currentSize-=getBitmapByteSize(bitmap);
 					synchronized(bitmap){
+						if(!bitmap.isRecycled())
 					bitmap.recycle();
 					}
 					if(currentSize<size)return;

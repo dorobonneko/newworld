@@ -40,6 +40,7 @@ public class Indexqqdm extends Index
 					item.put("href",item.remove("id"));
 					item.put("src",makeUrl(item.remove("pic").toString()));
 					item.put("desc",item.remove("status"));
+					item.remove("click");
 					index.add(item);
 				}
 			}
@@ -72,6 +73,7 @@ public class Indexqqdm extends Index
 				item.put("href",item.remove("id"));
 				item.put("src",makeUrl(item.remove("pic").toString()));
 				item.put("desc",item.remove("status"));
+				item.remove("click");
 			}
 			return data.toJSONString();
 		}

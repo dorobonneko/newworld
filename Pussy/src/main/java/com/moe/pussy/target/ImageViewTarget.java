@@ -11,7 +11,7 @@ import com.moe.pussy.BitmapPool;
 import java.util.ArrayList;
 import com.moe.pussy.Listener;
 
-public class ImageViewTarget extends ViewTarget implements ViewTreeObserver.OnPreDrawListener
+public class ImageViewTarget extends ViewTarget
 {
 	public ImageViewTarget(ImageView view){
 		super(view);

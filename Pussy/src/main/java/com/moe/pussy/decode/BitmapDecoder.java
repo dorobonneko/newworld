@@ -20,7 +20,7 @@ public class BitmapDecoder implements Decoder
 		BitmapFactory.decodeFile(input.getAbsolutePath(),options);
 		if(options.outWidth<=0||options.outHeight<=0)return null;
 		options.inJustDecodeBounds=false;
-		options.inSampleSize=inSampleSize(options.outWidth,options.outHeight,w,h);
+		options.inSampleSize=computeSampleSize(options,-1,w*h);
 		options.inBitmap=mBitmapPool.getBitmap(options.outWidth,options.outHeight,options.inPreferredConfig);
 		options.inMutable=true;
 		Bitmap bitmap=BitmapFactory.decodeFile(input.getAbsolutePath(),options);
@@ -36,17 +36,107 @@ public class BitmapDecoder implements Decoder
 	}
 	public static int inSampleSize(int width,int height,int reqWidth,int reqHeight){
 	int inSampleSize = 1;
-
-	//如果当前图片的高或者宽大于所需的高或宽，
-	// 就进行inSampleSize的2倍增加处理，直到图片宽高符合所需要求。
 	if (height > reqHeight || width > reqWidth) {
 		int halfHeight = height / 2;
 		int halfWidth = width / 2;
-		while ((halfHeight / inSampleSize >= reqHeight)
-			   && (halfWidth / inSampleSize) >= reqWidth) {
-			inSampleSize *= 2;
+		try{
+			while ((halfHeight / inSampleSize) >= reqHeight&& (halfWidth / inSampleSize) >= reqWidth) {
+				if(inSampleSize==0)
+					throw new NullPointerException();
+				int now =inSampleSize*2;
+				inSampleSize=now;
+				if(now==0)
+					throw new NullPointerException("inSampleSize"+inSampleSize);
+				
+			}
+		}catch(ArithmeticException e){
+			throw new ArithmeticException("inSampleSize"+inSampleSize+"/halfWidth"+halfWidth+"/halfHeight"+halfHeight);
 		}
 	}
 	return inSampleSize;
 	}
+	public static int computeSampleSize(BitmapFactory.Options options,
+
+										int minSideLength, int maxNumOfPixels) {
+
+		int initialSize = computeInitialSampleSize(options, minSideLength,
+
+												   maxNumOfPixels);
+
+
+
+		int roundedSize;
+
+		if (initialSize <= 8) {
+
+			roundedSize = 1;
+
+			while (roundedSize < initialSize) {
+
+				roundedSize <<= 1;
+
+			}
+
+		} else {
+
+			roundedSize = (initialSize + 7) / 8 * 8;
+
+		}
+
+
+
+		return roundedSize;
+
+	}
+
+	private static int computeInitialSampleSize(BitmapFactory.Options options,
+
+												int minSideLength, int maxNumOfPixels) {
+
+		double w = options.outWidth;
+
+		double h = options.outHeight;
+
+
+
+		int lowerBound = (maxNumOfPixels == -1) ? 1 :
+
+            (int) Math.ceil(Math.sqrt(w * h / maxNumOfPixels));
+
+		int upperBound = (minSideLength == -1) ? 128 :
+
+            (int) Math.min(Math.floor(w / minSideLength),
+
+						   Math.floor(h / minSideLength));
+
+
+
+		if (upperBound < lowerBound) {
+
+			// return the larger one when there is no overlapping zone.
+
+			return lowerBound;
+
+		}
+
+
+
+		if ((maxNumOfPixels == -1) &&
+
+            (minSideLength == -1)) {
+
+			return 1;
+
+		} else if (minSideLength == -1) {
+
+			return lowerBound;
+
+		} else {
+
+			return upperBound;
+
+		}
+
+	}
+
 }

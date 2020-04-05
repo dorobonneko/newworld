@@ -12,7 +12,7 @@ import com.moe.pussy.Listener;
 import android.graphics.Rect;
 import java.io.File;
 
-public abstract class ViewTarget  implements Target,ViewTreeObserver.OnPreDrawListener,View.OnAttachStateChangeListener
+public abstract class ViewTarget  implements Target,View.OnAttachStateChangeListener
 {
 	private  Content content;
 	private WeakReference<View> view;
@@ -25,7 +25,7 @@ public abstract class ViewTarget  implements Target,ViewTreeObserver.OnPreDrawLi
 	@Override
 	public void onViewAttachedToWindow(View p1)
 	{
-		content.getRefresh().refresh(this);
+		//content.getRefresh().refresh(this);
 	}
 
 	@Override
@@ -63,8 +63,16 @@ public abstract class ViewTarget  implements Target,ViewTreeObserver.OnPreDrawLi
 		Pussy.checkThread(true);
 		if (getView().getMeasuredWidth()==0&&getView().getMeasuredHeight()==0)
 		{
-			getView().getViewTreeObserver().addOnPreDrawListener(ViewTarget.this);
-			//view.requestLayout();
+			getView().post(new Runnable(){
+
+					@Override
+					public void run()
+					{
+						onSizeReady(getView().getMeasuredWidth(),getView().getMeasuredHeight());
+					}
+					
+				
+			});
 		}
 		else
 		{
@@ -72,7 +80,7 @@ public abstract class ViewTarget  implements Target,ViewTreeObserver.OnPreDrawLi
 		}
 	}
 
-	@Override
+	/*@Override
 	public boolean onPreDraw()
 	{
 		final View v=getView();
@@ -80,7 +88,7 @@ public abstract class ViewTarget  implements Target,ViewTreeObserver.OnPreDrawLi
 		v.getViewTreeObserver().removeOnPreDrawListener(this);
 		onSizeReady(v.getWidth(),v.getHeight());
 		return false;
-	}
+	}*/
 
 	protected DrawableAnimator getAnim(){
 		if(content!=null)

@@ -28,12 +28,11 @@ public class SprayTransFormer implements Transformer
 		bitmap.getPixels(pix,0,bitmap.getWidth(),0,0,bitmap.getWidth(),bitmap.getHeight());
 		for(int x=0;x<bitmap.getWidth();x++){
 			for(int y=0;y<bitmap.getHeight();y++){
-				for(int m=0;m<3;m++){
+				for(int m=0;m<6;m+=2){
 					if(m+x>=bitmap.getWidth())continue;
-					for(int n=0;n<3;n++){
+					for(int n=0;n<6;n+=2){
 						if(y+n>=bitmap.getHeight())continue;
-						int pixel=pix[x+m+(y+n)*bitmap.getWidth()];
-						//计算偏移坐标点
+							//计算偏移坐标点
 						//int radius=random.nextInt(this.radius);
 //						if(m%2==0){
 //							if(n%2==0){
@@ -52,50 +51,50 @@ public class SprayTransFormer implements Transformer
 //								ry=y+radius;
 //							}
 //						}
-						switch(m%3){
+						switch(m%6){
 							case 0:
-								switch(n%3){
+								switch(n%6){
 									case 0:
 										rx=x-random(random,this.radius);
 										ry=y-random(random,this.radius);
 										break;
-									case 1:
+									case 2:
 										rx=x-random(random,this.radius);
 										ry=y;
 										break;
-									case 2:
+									case 4:
 										rx=x-random(random,this.radius);
-										ry=y+random(random,this.radius);
-										break;
-								}
-								break;
-							case 1:
-								switch(n%3){
-									case 0:
-										rx=x;
-										ry=y-random(random,this.radius);
-										break;
-									case 1:
-										rx=x;
-										ry=y;
-										break;
-									case 2:
-										rx=x;
 										ry=y+random(random,this.radius);
 										break;
 								}
 								break;
 							case 2:
-								switch(n%3){
+								switch(n%6){
+									case 0:
+										rx=x;
+										ry=y-random(random,this.radius);
+										break;
+									case 2:
+										rx=x;
+										ry=y;
+										break;
+									case 4:
+										rx=x;
+										ry=y+random(random,this.radius);
+										break;
+								}
+								break;
+							case 4:
+								switch(n%6){
 									case 0:
 										rx=x+random(random,this.radius);
 										ry=y-random(random,this.radius);
 										break;
-									case 1:
+									case 2:
 										rx=x+random(random,this.radius);
 										ry=y;
 										break;
-									case 2:
+									case 4:
 										rx=x+random(random,this.radius);
 										ry=y+random(random,this.radius);
 										break;
@@ -121,8 +120,9 @@ public class SprayTransFormer implements Transformer
 						}*/
 						//rx=x+(random.nextInt(radius)*(random.nextBoolean()?1:-1));
 						//ry=y+(random.nextInt(radius)*(random.nextBoolean()?1:-1));
-						if(rx>=0&&ry>=0&&rx<bitmap.getWidth()&&ry<bitmap.getHeight())
-						newpix[rx+ry*bitmap.getWidth()]=pixel;
+						if(rx>=0&&ry>=0&&rx<bitmap.getWidth()&&ry<bitmap.getHeight()){
+							newpix[rx+ry*bitmap.getWidth()]=pix[x+m+(y+n)*bitmap.getWidth()];
+						}
 					}
 				}
 			}
@@ -131,7 +131,7 @@ public class SprayTransFormer implements Transformer
 		for(int i=0;i<pix.length;i++)
 		if(newpix[i]==0)newpix[i]=pix[i];
 		bitmap.setPixels(newpix,0,bitmap.getWidth(),0,0,bitmap.getWidth(),bitmap.getHeight());
-		BlurTransformer.fastblur(bitmap,1);
+		//BlurTransformer.fastblur(bitmap,1);
 		return bitmap;
 	}
 

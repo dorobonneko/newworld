@@ -125,8 +125,7 @@ public class Loader implements Runnable,HandleThread.Callback,SizeReady
 
 	@Override
 	public void onSizeReady(int w, int h)
-	{
-		this.w=w;this.h=h;
+	{this.w=w;this.h=h;
 		Pussy.checkThread(true);
 		if (isCancel())return;
 		try{getPussy().mThreadPoolExecutor.execute(this);}catch(RejectedExecutionException e){}
@@ -145,15 +144,16 @@ public class Loader implements Runnable,HandleThread.Callback,SizeReady
 				source = getPussy().decoder.decode(getPussy().getBitmapPool(), cache, w, h);
 			else
 				source = resource;
+				if(source==null){
+					if(cache!=null)
+				cache.delete();
+				success(null, new NullPointerException("possible bitmap decoder error"));
+			return;}
 			for (Transformer transformer:content.get().getTransformer())
 			{
 				source = transformer.onTransformer(getPussy().mBitmapPool, source, w, h);
 			}
-			if (source == null)
-			{
-				success(null, new NullPointerException("possible bitmap transformer error"));
-				return;
-			}
+			success(source,null);
 			try
 			{
 				if (content.get().getCache() == DiskCache.Cache.MASK)
@@ -161,7 +161,6 @@ public class Loader implements Runnable,HandleThread.Callback,SizeReady
 			}
 			catch (FileNotFoundException e)
 			{}
-			success(source, null);
 			source = null;
 			resource = null;
 		}
@@ -178,8 +177,11 @@ public class Loader implements Runnable,HandleThread.Callback,SizeReady
 				getPussy().getBitmapPool().recycle(response.getBitmap());
 			else
 			{
-				//来自软件内部，直接显示
-				resource = response.getBitmap();
+				resource=response.getBitmap();
+				//resource=getPussy().getBitmapPool().getBitmap(response.getBitmap().getWidth(),response.getBitmap().getHeight(),response.getBitmap().getConfig());
+				//int[] pix=new int[response.getBitmap().getWidth()*response.getBitmap().getHeight()];
+				//response.getBitmap().getPixels(pix,0,resource.getWidth(),0,0,resource.getWidth(),resource.getHeight());
+				//resource.setPixels(pix,0,resource.getWidth(),0,0,resource.getWidth(),resource.getHeight());
 				getTarget().onResourceReady(null);
 			}
 		}
@@ -201,7 +203,7 @@ public class Loader implements Runnable,HandleThread.Callback,SizeReady
 
 
 
-	private void success(final Bitmap bitmap, Throwable e)
+	private void success(final Bitmap bitmap, final Throwable e)
 	{
 		//Pussy.checkThread(false);
 		if (isCancel())
@@ -212,12 +214,11 @@ public class Loader implements Runnable,HandleThread.Callback,SizeReady
 		}
 		if (bitmap == null)
 		{
-			//Toast.makeText(pussy.getContext(), content.tag(), Toast.LENGTH_SHORT).show();
 			getPussy().post(new Runnable(){
 					public void run()
 					{
 						Target t=getTarget();
-						if (t != null)t.error(new NullPointerException("decoder error"), content.get().error);
+						if (t != null)t.error(e, content.get().error);
 					}
 				});
 		}

@@ -8,12 +8,14 @@ import com.moe.pussy.RequestHandler.Response;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.lang.ref.WeakReference;
 import com.moe.pussy.Pussy;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 public class HandleThread implements Runnable,RequestHandler.Callback
 {
 	private RequestHandler.Response response;
 	private Request request;
-	private List<Callback> calls=new CopyOnWriteArrayList<>();
+	private Set<Callback> calls=new CopyOnWriteArraySet<>();
 	private boolean success;
 	private WeakReference<ThreadPoolExecutor> pool;
 	private int error;
@@ -62,6 +64,7 @@ public class HandleThread implements Runnable,RequestHandler.Callback
 						call.onResponse(response);
 					}});
 		}
+		calls.clear();
 	}
 
 	@Override

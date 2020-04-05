@@ -99,23 +99,18 @@ public class Pussy
 	public static Pussy $(Context context)
 	{
 		Pussy.checkThread(true);
-		synchronized (context_pussy)
-		{
-			Pussy p=context_pussy.get(context);
+		Pussy p=context_pussy.get(context);
 			if (p == null)
 			{
 				context_pussy.put(context, p = new Pussy());
 				p.init(context);
-			}
+				}
 			return p;
-		}
 	}
 	public static Pussy $(Fragment fragment)
 	{
 		Pussy.checkThread(true);
-		synchronized (fragment_pussy)
-		{
-			Pussy p=fragment_pussy.get(fragment);
+		Pussy p=fragment_pussy.get(fragment);
 			if (p == null)
 			{
 				fragment_pussy.put(fragment, p = new Pussy());
@@ -123,14 +118,11 @@ public class Pussy
 				fragment.getFragmentManager().registerFragmentLifecycleCallbacks(new Pussy.FragmentLifecycle(), false);
 			}
 			return p;
-		}
 	}
 	public static Pussy $(View v)
 	{
 		Pussy.checkThread(true);
-		synchronized (view_pussy)
-		{
-			Pussy p=view_pussy.get(v);
+		Pussy p=view_pussy.get(v);
 			if (p == null)
 			{
 				view_pussy.put(v, p = new Pussy());
@@ -138,7 +130,6 @@ public class Pussy
 				v.addOnAttachStateChangeListener(new ViewLifecycle());
 			}
 			return p;
-		}
 	}
 	public BitmapPool getBitmapPool()
 	{

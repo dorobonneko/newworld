@@ -77,7 +77,9 @@ public class DiskCache
 		if(key==null)return null;
 		File cache=new File(cachePath,key);
 		if(cache.exists()){
-			cache.setLastModified(System.currentTimeMillis());
+			boolean success=cache.setLastModified(System.currentTimeMillis());
+			if(!success)
+				throw new RuntimeException(cache.getAbsolutePath()+" change modified fail");
 			return cache;
 		}
 		if(outFile)
