@@ -89,9 +89,9 @@ public class Indexsakura extends Index
 					}
 				}
 			}
-			JSONArray time=new JSONArray();
 			Elements uls=doc.select("div.tlist > ul");
-			if(uls!=null){
+			if(!uls.isEmpty()){
+				JSONArray time=new JSONArray();
 				Iterator<Element> uls_i=uls.iterator();
 				while(uls_i.hasNext()){
 					Elements ul=uls_i.next().select("li");
@@ -108,9 +108,9 @@ public class Indexsakura extends Index
 					}
 				}
 				time.add(0,time.remove(time.size()-1));
+				this.time=time.toJSONString();
+				}
 			}
-			this.time=time.toJSONString();
-		}
 		catch (IOException e)
 		{}
 		return index.toJSONString();

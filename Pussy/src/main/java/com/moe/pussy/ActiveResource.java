@@ -3,6 +3,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
+import android.graphics.Bitmap;
 
 public class ActiveResource implements Resource.OnResourceListener
 {
@@ -10,6 +11,14 @@ public class ActiveResource implements Resource.OnResourceListener
 	private Pussy pussy;
 	public ActiveResource(Pussy pussy){
 		this.pussy=pussy;
+	}
+
+	public Resource create(String key, Bitmap bitmap)
+	{
+		if(key==null||bitmap==null||bitmap.isRecycled())throw new RuntimeException("create resource error, key android bitmap must not null and not recycle");
+		Resource res=new Resource(key,bitmap);
+		add(res);
+		return res;
 	}
 
 	public void clear()
@@ -22,7 +31,7 @@ public class ActiveResource implements Resource.OnResourceListener
 
 		}
 	}
-	public void add(Resource res){
+	protected void add(Resource res){
 		res.setOnResourceListener(this);
 		list.put(res.key,res);
 	}
@@ -30,7 +39,7 @@ public class ActiveResource implements Resource.OnResourceListener
 		if(key==null)return null;
 		return list.get(key);
 	}
-	public Resource remove(String key){
+	protected Resource remove(String key){
 		if(key==null)return null;
 		return list.remove(key);
 	}

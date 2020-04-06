@@ -7,7 +7,7 @@ public class Resource
 	Bitmap bitmap;
 	int count;
 	private OnResourceListener listener;
-	public Resource(String key,Bitmap bitmap){
+	protected Resource(String key,Bitmap bitmap){
 		this.key=key;
 		this.bitmap=bitmap;
 	}

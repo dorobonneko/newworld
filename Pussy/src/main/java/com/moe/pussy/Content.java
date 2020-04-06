@@ -47,6 +47,7 @@ public class Content implements SizeReady
 	void cancel()
 	{
 		Pussy.checkThread(true);
+		loader.pause();
 		if(target==null)return;
 		target=null;
 		if(request.getKey()!=null){

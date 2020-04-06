@@ -24,6 +24,8 @@ import javax.net.ssl.SSLSocketFactory;
 import android.app.Application;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.Stack;
 
 public class Pussy
 {
@@ -46,6 +48,8 @@ public class Pussy
 	private MemoryCache mMemoryCache;
 	private ActiveResource mActiveResource;
 	protected static BitmapPool mBitmapPool;
+	private AtomicBoolean pause=new AtomicBoolean();
+	private Object pauseLock=new Object();
 	static{
 		//初始化数据
 		mainHandler = new android.os.Handler(Looper.getMainLooper());
@@ -73,12 +77,26 @@ public class Pussy
 		};
 		//fileThreadPool = new ThreadPoolExecutor(64, 128, 1, TimeUnit.SECONDS, new LinkedBlockingDeque<Runnable>(), tf);//先进后出
 		//netThreadPool = new ThreadPoolExecutor(128, 512, 10, TimeUnit.SECONDS, new LinkedBlockingDeque<Runnable>(), tf);//先进后出
-		mThreadPoolExecutor = new ThreadPoolExecutor(32, 128, 3, TimeUnit.SECONDS, new LinkedBlockingDeque<Runnable>(), tf);//先进后出
+		mThreadPoolExecutor = new ThreadPoolExecutor(8, 16, 3, TimeUnit.SECONDS, new LinkedBlockingDeque<Runnable>(){
+			public Runnable take()
+				{
+					try
+					{
+						return takeLast();
+					}
+					catch (InterruptedException e)
+					{}
+					return null;
+				}
+			public Runnable poll(){
+						return pollLast();
+					}
+				}, tf);//先进后出
 
 	}
 	private void init(Context context)
 	{
-		this.mContext = new WeakReference<Context>(context.getApplicationContext());
+		this.mContext = new WeakReference<Context>(context);
 		mDispatcher = Dispatcher.getDefault(context.getApplicationContext());
 		mDiskCache = DiskCache.get(this);
 		if (mComponentCallbacks == null)
@@ -180,8 +198,38 @@ public class Pussy
 	{
 		return SSLSocketFactory;
 	}
-
-
+	protected void waitForPaused(){
+		if(pause.get())
+			synchronized(pauseLock){
+				try
+				{
+					pauseLock.wait();
+				}
+				catch (InterruptedException e)
+				{}
+			}
+	}
+	public void pause(){
+		pause.set(true);
+	}
+	public void pause(Target t){
+		Content c=t.getContent();
+		if(c!=null){
+			c.loader.pause();
+		}
+	}
+	public void resume(){
+		pause.set(false);
+		synchronized(pauseLock){
+			pauseLock.notifyAll();
+		}
+	}
+	public void resume(Target t){
+		Content c=t.getContent();
+		if(c!=null){
+			c.loader.resume();
+		}
+	}
 	public void cancel(Target t, Request request)
 	{
 		if (t == null)return;
@@ -274,6 +322,8 @@ public class Pussy
 		@Override
 		public void onActivityStarted(Activity p1)
 		{
+			if(p1==mContext.get())
+			resume();
 		}
 
 		@Override
@@ -289,6 +339,8 @@ public class Pussy
 		@Override
 		public void onActivityStopped(Activity p1)
 		{
+			if(p1==mContext.get())
+			pause();
 		}
 
 		@Override
@@ -342,11 +394,13 @@ public class Pussy
 			this.l = l;
 		}
 
-		public void cancel()
+		public void pause()
 		{
-			l.getRequest().getPussy().cancel(l.getTarget(), l.getRequest());
+			l.getRequest().getPussy().pause(l.getTarget());
 		}
-
+		public void resume(){
+			l.getRequest().getPussy().resume(l.getTarget());
+		}
 		public boolean isCancel()
 		{
 			return l.getTarget() == null;

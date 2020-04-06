@@ -42,10 +42,7 @@ public class HttpRequestHandler implements RequestHandler
 	@Override
 	public void onHandle(ThreadPoolExecutor pool, final Request request, final Callback call)
 	{
-		pool.execute(new Runnable(){
-				public void run()
-				{
-					try
+		try
 					{
 						//synchronized(Uid.getLock(request.getKey())){
 						Response res=onHandle(request);
@@ -60,7 +57,6 @@ public class HttpRequestHandler implements RequestHandler
 					}
 
 					{}
-				}});
 	}
 	private Response onHandle(Request request) throws IOException
 	{
