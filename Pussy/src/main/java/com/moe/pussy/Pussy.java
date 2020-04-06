@@ -249,7 +249,7 @@ public class Pussy
 			//t.onResourceReady(null,null);
 
 		}
-
+		t.onAttachContent(null);
 	}
 
 	public Context getContext()
@@ -403,11 +403,14 @@ public class Pussy
 		}
 		public boolean isCancel()
 		{
-			return l.getTarget() == null;
+			return l.loader.isCancel();
 		}
 		public boolean refresh(Target t)
 		{
 			return l.refresh(t);
+		}
+		public void cancel(){
+			l.cancel();
 		}
 	}
 }

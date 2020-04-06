@@ -47,7 +47,7 @@ public class Content implements SizeReady
 	void cancel()
 	{
 		Pussy.checkThread(true);
-		loader.pause();
+		//loader.pause();
 		if(target==null)return;
 		target=null;
 		if(request.getKey()!=null){
@@ -111,17 +111,23 @@ public class Content implements SizeReady
 	}
 	boolean refresh(Target t){
 		Pussy.checkThread(true);
+		if(loader.isCancel()){
 		target=t;
+		if(!loader.resume())
 		loader.begin();
+		}
 		return true;
 	}
 	public void into(Target t){
 		if(t==null)return;
-		this.target=t;
 		Content c=t.getContent();
-		if(c!=null&&request.getKey()!=null&&getRequest().getKey().equals(c.getRequest().getKey())){
-			return;
+		if(c!=null){
+			if(getKey().equals(c.getKey())){
+				//c.getRefresh().refresh(t);
+				return;
+			}
 		}
+		this.target=t;
 		request.getPussy().cancel(t,getRequest());
 		t.onAttachContent(this);
 		t.placeHolder(placeHolder);

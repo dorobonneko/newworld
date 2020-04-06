@@ -34,11 +34,13 @@ public class Loader implements Runnable,HandleThread.Callback,SizeReady
 	{
 		pause.set(true);
 	}
-	public void resume(){
+	public boolean resume(){
+		boolean e=pause.get();
 		pause.set(false);
 		synchronized(pauseLock){
-			pauseLock.notifyAll();
+			pauseLock.notify();
 		}
+		return e;
 		//begin();
 	}
 	void waitForPause(){
@@ -52,7 +54,7 @@ public class Loader implements Runnable,HandleThread.Callback,SizeReady
 				{}
 			}
 	}
-	private boolean isCancel()
+	boolean isCancel()
 	{
 		return content.get()==null||content.get().getTarget() == null||getPussy().mThreadPoolExecutor.isShutdown();
 	}
@@ -209,9 +211,10 @@ public class Loader implements Runnable,HandleThread.Callback,SizeReady
 				getTarget().onResourceReady(null);
 			}
 		}
-		else if (response.get() == null)
-			success(null, null);
-		else
+		else if (response.get() == null){
+			getPussy().request_handler.remove(getRequest().getKey());
+			success(null, new IOException("newwork load error"));
+		}else
 		{
 			File input=response.get();
 
