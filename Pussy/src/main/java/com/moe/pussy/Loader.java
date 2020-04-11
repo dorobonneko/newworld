@@ -12,6 +12,7 @@ import android.widget.Toast;
 import java.lang.ref.WeakReference;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
+import android.os.Looper;
 
 public class Loader implements Runnable,HandleThread.Callback,SizeReady
 {
@@ -72,10 +73,10 @@ public class Loader implements Runnable,HandleThread.Callback,SizeReady
 	}
 	public void begin()
 	{
-		Pussy.checkThread(true);
 		Resource res=content.get().getRequest().getPussy().getActiveResource().get(key);
 			if (res != null)
 			{
+				//throw new RuntimeException("resource not cancel");
 				success(res,null);
 				}
 			else
@@ -89,7 +90,6 @@ public class Loader implements Runnable,HandleThread.Callback,SizeReady
 				else{
 					try
 					{
-						Pussy.checkThread(true);
 						DiskCache dc=getPussy().getDiskCache();
 						//查询内存缓存
 						File cache_file=dc.getCache(key);
@@ -150,7 +150,9 @@ public class Loader implements Runnable,HandleThread.Callback,SizeReady
 	{this.w=w;this.h=h;
 		Pussy.checkThread(true);
 		if (isCancel())return;
-		new Thread(this).start();
+		Thread t=new Thread(this);
+		t.setPriority(t.MAX_PRIORITY);
+		t.start();
 }
 
 
@@ -253,6 +255,16 @@ public class Loader implements Runnable,HandleThread.Callback,SizeReady
 		else
 		{
 			//content.getRequest().getPussy().getMemoryCache().put(content.getKey(), bitmap);
+			if(Looper.myLooper()==Looper.getMainLooper()){
+				Target t=getTarget();
+				if (t != null)
+				{
+					getPussy().getDiskCache().invalidate(key);
+					getPussy().getDiskCache().invalidate(getRequest().getKey());
+					res.acquire();
+					t.onSuccess(new PussyDrawable(res.bitmap, getTarget(), content.get().getRefresh()));
+				}
+			}else
 			getPussy().post(new Runnable(){
 					public void run()
 					{

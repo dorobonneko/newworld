@@ -25,6 +25,8 @@ public abstract class ViewTarget  implements Target,View.OnAttachStateChangeList
 	@Override
 	public void onViewAttachedToWindow(View p1)
 	{
+		if(content==null)return;
+		if(content.getRefresh().isCancel())
 		content.getRefresh().refresh(this);
 	}
 
@@ -32,7 +34,7 @@ public abstract class ViewTarget  implements Target,View.OnAttachStateChangeList
 	public void onViewDetachedFromWindow(View p1)
 	{
 		boolean v=p1.getGlobalVisibleRect(new Rect());
-		if(!v)
+		if(!v&&content!=null)
 		content.getRefresh().cancel();
 		//getView().removeOnAttachStateChangeListener(this);
 	}

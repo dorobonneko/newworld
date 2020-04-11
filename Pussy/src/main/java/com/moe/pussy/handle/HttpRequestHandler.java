@@ -116,9 +116,12 @@ public class HttpRequestHandler implements RequestHandler
 				}
 			}
 			input = huc.getInputStream();
-			if (tmp.length() > 0 && code == 200)
-				huc.getInputStream().skip(tmp.length());
-			output = new FileOutputStream(tmp, true);
+			if (code == 200){
+				tmp.delete();
+				output=new FileOutputStream(tmp);
+				}else{
+				output = new FileOutputStream(tmp, true);
+			}
 			int len=-1;
 			if ("chunked".equalsIgnoreCase(huc.getHeaderField("Transfer-Encoding")))
 			{

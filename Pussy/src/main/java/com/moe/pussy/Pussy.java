@@ -248,8 +248,10 @@ public class Pussy
 				res.release();
 			//t.onResourceReady(null,null);
 
+		}else{
+			//new NullPointerException("content is null");
 		}
-		t.onAttachContent(null);
+		//t.onAttachContent(null);
 	}
 
 	public Context getContext()
@@ -410,7 +412,7 @@ public class Pussy
 			return l.refresh(t);
 		}
 		public void cancel(){
-			l.cancel();
+			l.getRequest().getPussy().cancel(l.getTarget(),null);
 		}
 	}
 }

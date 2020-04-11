@@ -3,6 +3,7 @@ import java.util.Map;
 import java.util.HashMap;
 import android.net.Uri;
 import java.lang.ref.WeakReference;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Request
 {
@@ -10,7 +11,7 @@ public class Request
 	private String url,key,location;
 	private Map<String,String> header=new HashMap<>();
 	private String body;
-	private boolean cancel;
+	private AtomicBoolean cancel=new AtomicBoolean();
 	public Request(Pussy p,String url){
 		this.p=new WeakReference<>( p);
 		this.url=url;
@@ -23,10 +24,10 @@ public class Request
 
 	public boolean isCancel()
 	{
-		return false;
+		return cancel.get();
 	}
-	public void cancel(){
-		cancel=true;
+	public void cancel(boolean cancel){
+		this.cancel.set(cancel);
 	}
 	public void setLocation(String location)
 	{

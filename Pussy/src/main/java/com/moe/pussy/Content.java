@@ -113,26 +113,19 @@ public class Content implements SizeReady
 		Pussy.checkThread(true);
 		if(loader.isCancel()){
 		target=t;
-		if(!loader.resume())
 		loader.begin();
+		}else if(!loader.resume())
+		{
+			loader.begin();
 		}
 		return true;
 	}
 	public void into(Target t){
 		if(t==null)return;
-		Content c=t.getContent();
-		if(c!=null){
-			if(getKey().equals(c.getKey())){
-				//c.getRefresh().refresh(t);
-				return;
-			}
-		}
-		this.target=t;
 		request.getPussy().cancel(t,getRequest());
+		target=t;
 		t.onAttachContent(this);
 		t.placeHolder(placeHolder);
-		
-		//检查是否有缓存
 		loader=new Loader(this);
 		loader.begin();
 		}

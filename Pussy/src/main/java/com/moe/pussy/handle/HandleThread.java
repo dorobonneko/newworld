@@ -22,13 +22,14 @@ public class HandleThread implements Runnable,RequestHandler.Callback
 	public HandleThread(Request request, ThreadPoolExecutor pool)
 	{
 		this.request = request;
+		request.cancel(false);
 		this.pool = new WeakReference<ThreadPoolExecutor>(pool);
 		pool.execute(this);
 	}
 
 	public void cancel()
 	{
-		request.cancel();
+		request.cancel(true);
 	}
 	public void addCallback(Callback call)
 	{
