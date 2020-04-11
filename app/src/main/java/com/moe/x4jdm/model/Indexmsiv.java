@@ -112,7 +112,7 @@ public class Indexmsiv extends Index
 					play_item.put("title","Play");
 					play_item.put("href",post_id);
 					tab_item.put("href",post_jo.toJSONString());
-					
+					tab_item.put("click","video");
 					}
 			}
 		}

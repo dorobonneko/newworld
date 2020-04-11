@@ -38,6 +38,11 @@ import com.moe.x4jdm.widget.WaterFallLayout;
 import android.content.Context;
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
+import android.app.ProgressDialog;
+import java.util.Map;
+import android.support.design.widget.BottomSheetDialog;
+import android.support.v7.widget.LinearLayoutManager;
+import android.os.Looper;
 
 public class IndexAdapter extends RecyclerView.Adapter
 {
@@ -128,6 +133,8 @@ public class IndexAdapter extends RecyclerView.Adapter
 				return new ImagePreviewViewHolder(LayoutInflater.from(p1.getContext()).inflate(R.layout.image_preview,p1,false));
 			case 12:
 				return new CommentViewHolder(LayoutInflater.from(p1.getContext()).inflate(R.layout.comment_item,p1,false));
+			case 13:
+				return new ListComicViewHolder(new ImageView(p1.getContext()));
 		}
 		return new ViewHolder(new View(p1.getContext()));
 	}
@@ -268,6 +275,11 @@ public class IndexAdapter extends RecyclerView.Adapter
 			cvh.name.setText(object.getString("name"));
 			cvh.desc.setText(object.getString("desc"));
 			cvh.comment.setText(Html.fromHtml(object.getString("comment")));
+		}else if(vh instanceof ListComicViewHolder){
+			ListComicViewHolder lcvh=(IndexAdapter.ListComicViewHolder) vh;
+			JSONObject object=index.getJSONObject(position);
+			Pussy.$(lcvh.itemView.getContext()).load(object.getString("src")).userAgent("x4jdm"+Math.random()).execute().into(lcvh.comic);
+			
 		}
 	}
 
@@ -299,6 +311,8 @@ public class IndexAdapter extends RecyclerView.Adapter
 			{
 				switch (type)
 				{
+					case "post":
+						return 4;
 					case "poster":
 						return 9;
 					case "postposter":
@@ -307,6 +321,8 @@ public class IndexAdapter extends RecyclerView.Adapter
 						return 11;
 					case "comment":
 						return 12;
+					case "listcomic":
+						return 13;
 				}
 			}
 			String click=jo.getString("click");
@@ -342,10 +358,10 @@ public class IndexAdapter extends RecyclerView.Adapter
 		}
 		return 0;
 	}
-	private void performClick(Context context, int position)
+	private void performClick(final Context context, int position)
 	{
 		if(position==-1)return;
-		JSONObject object=(JSONObject)getItem(position);
+		final JSONObject object=(JSONObject)getItem(position);
 		String click=object.getString("click");
 		if (click == null)
 		{
@@ -361,7 +377,43 @@ public class IndexAdapter extends RecyclerView.Adapter
 				case "post":
 					context.startActivity(new Intent(context, PostViewActivity.class).putExtra("url", object.getString("href")).putExtra("key", object.getString("key") == null ?Index.getKey(context): object.getString("key")));
 					break;
+				case "video":
+					final ProgressDialog pd=new ProgressDialog(context);
+					pd.setMessage("正在解析");
+					pd.show();
+					new Thread(){
+						public void run()
+						{
+							final Map<String,String> url=Index.getModel(context).getVideoUrl(object.getString("href"));
+							if (url != null&&!url.isEmpty())
+								Pussy.post(new Runnable(){
+
+										@Override
+										public void run()
+										{
+											BottomSheetDialog sheet=new BottomSheetDialog(context);
+											RecyclerView recyclerview=null;
+											sheet.setContentView(recyclerview=new RecyclerView(context),new ViewGroup.LayoutParams(-1,-2));
+											recyclerview.setLayoutManager(new LinearLayoutManager(context));
+											PlayAdapter pa=null;
+											recyclerview.setAdapter(pa=new PlayAdapter());
+											pa.addAll(url);
+											sheet.show();
+										}
+									});
+							pd.dismiss();
+						}
+					}.start();
+					break;
 			}
+		}
+	}
+	class ListComicViewHolder extends RecyclerView.ViewHolder{
+		ImageView comic;
+		ListComicViewHolder(View v){
+			super(v);
+			comic=(ImageView) v;
+			v.setLayoutParams(new ViewGroup.LayoutParams(-1,-2));
 		}
 	}
 	public class CommentViewHolder extends RecyclerView.ViewHolder

@@ -149,7 +149,7 @@ public class HttpRequestHandler implements RequestHandler
 			output.flush();
 			output.close();
 			input.close();
-			if (tmp.length() == length || chunked)
+			if (tmp.length() == length || chunked||length==-1)
 				tmp.renameTo(cache);
 			if (request.isCancel())
 				throw new CancellationException();

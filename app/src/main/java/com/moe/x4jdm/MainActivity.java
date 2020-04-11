@@ -36,6 +36,7 @@ import com.moe.pussy.transformer.SprayTransFormer;
 import android.os.Handler;
 import android.os.Message;
 import android.graphics.Bitmap;
+import com.moe.pussy.transformer.PolygonTransFormer;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,SharedPreferences.OnSharedPreferenceChangeListener,DrawerLayout.DrawerListener,View.OnClickListener{
 
@@ -306,7 +307,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 							Toast.makeText(getApplicationContext(), "未安装支付宝！", Toast.LENGTH_SHORT).show();
 						}
 					}else if(count==2){
-						final String[] keys=new String[]{"moeero"};
+						final String[] keys=new String[]{"moeero","lh"};
 						new AlertDialog.Builder(MainActivity.this).setItems(keys, new DialogInterface.OnClickListener(){
 
 								@Override

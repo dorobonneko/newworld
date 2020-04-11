@@ -91,6 +91,9 @@ public abstract class Index
 			case "moeero":
 				models.put(web,index=new Indexmoeero());
 				break;
+			case "lh":
+				models.put(web,index=new Indexlh());
+				break;
 			default:
 			models.put(web,index=new None());
 			break;

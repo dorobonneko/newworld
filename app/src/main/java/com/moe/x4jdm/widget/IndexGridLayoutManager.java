@@ -29,6 +29,7 @@ public class IndexGridLayoutManager extends GridLayoutManager
 						case 10:
 						case 11://imagepreview
 						case 12://commemnt
+						case 13://listcomic
 						case 100:
 							return 3;
 						case 4:
