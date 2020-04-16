@@ -59,11 +59,7 @@ public class HandleThread implements Runnable,RequestHandler.Callback
 		success = true;
 		for (final Callback call:calls)
 		{
-			Pussy.post(new Runnable(){
-					public void run()
-					{
-						call.onResponse(response);
-					}});
+			call.onResponse(response);
 		}
 		calls.clear();
 	}
@@ -72,13 +68,21 @@ public class HandleThread implements Runnable,RequestHandler.Callback
 	public void onError(Throwable e)
 	{
 		error++;
-		if (error < 3)
+		if (error < 1)
 			try
 			{
 				Thread.sleep(3000);
 				pool.get().execute(this);}
 			catch (Exception ee)
 			{}
+			else{
+				success=true;
+				for (final Callback call:calls)
+				{
+					call.onResponse(response);
+				}
+				calls.clear();
+			}
 	}
 
 

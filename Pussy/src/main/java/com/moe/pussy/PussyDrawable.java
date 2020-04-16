@@ -13,23 +13,25 @@ import android.graphics.PorterDuff;
 public class PussyDrawable extends Drawable implements Animatable
 {
 	public WeakReference<Bitmap> bitmap;
-	private boolean recycle;
-	private WeakReference<Pussy.Refresh> refresh;
+	//private WeakReference<Pussy.Refresh> refresh;
 	private DrawableAnimator da;
-	private WeakReference<Target> t;
-	public PussyDrawable(Bitmap bitmap,Target t,Pussy.Refresh r)
+	//private WeakReference<Target> t;
+	public PussyDrawable(Bitmap bitmap,DrawableAnimator da)
 	{
 		this.bitmap =new WeakReference<Bitmap>(bitmap);
-		this.t=new WeakReference<Target>(t);
-		refresh=new WeakReference<>(r);
+		this.da=da;
+		if(da!=null)
+			da.setCallback(this);
+		//this.t=new WeakReference<Target>(t);
+		//refresh=new WeakReference<>(r);
 	}
 	
-	public void setAnimator(DrawableAnimator da)
+	/*public void setAnimator(DrawableAnimator da)
 	{
 		this.da = da;
 		if(da!=null)
 		da.setCallback(this);
-	}
+	}*/
 
 	@Override
 	public void start()
@@ -53,10 +55,10 @@ public class PussyDrawable extends Drawable implements Animatable
 		return false;
 	}
 
-	public Pussy.Refresh getRefresh()
+	/*public Pussy.Refresh getRefresh()
 	{
 		return refresh.get();
-	}
+	}*/
 	@Override
 	public void draw(Canvas p1)
 	{
@@ -65,8 +67,8 @@ public class PussyDrawable extends Drawable implements Animatable
 			synchronized (bitmap)
 			{
 				if (bitmap.isRecycled()){
-					if(getRefresh()!=null)
-						getRefresh().refresh(t.get());
+					/*if(getRefresh()!=null)
+						getRefresh().refresh(t.get());*/
 				}else
 				{
 					p1.setDrawFilter(new PaintFlagsDrawFilter(0, Paint.DITHER_FLAG|Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG));
@@ -77,9 +79,9 @@ public class PussyDrawable extends Drawable implements Animatable
 				}
 				
 			}
-			}else if(getRefresh()!=null){
+			}/*else if(getRefresh()!=null){
 				getRefresh().refresh(t.get());
-			}
+			}*/
 	}
 
 	@Override
@@ -113,15 +115,6 @@ public class PussyDrawable extends Drawable implements Animatable
 				bitmap.recycle();}
 		recycle = true;
 	}*/
-	public boolean isRecycled()
-	{
-		return recycle;
-	}
-	public Bitmap getBitmap()
-	{
-		Bitmap bitmap=this.bitmap.get();
-		return bitmap;
-	}
 
 	@Override
 	public int getIntrinsicWidth()

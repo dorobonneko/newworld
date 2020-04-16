@@ -16,6 +16,7 @@
 		<item>奇奇动漫</item>
 		<item>pnext</item>
 		<item>迪虎电影</item>
+		<item>樱花动漫</item>
 	</string-array>
 	<string-array name="site_key">
 		<item>x4j</item>
@@ -33,5 +34,6 @@
 		<item>qqdm</item>
 		<item>pnext</item>
 		<item>dh</item>
+		<item>yh</item>
 	</string-array>
 </resources>

@@ -88,7 +88,7 @@ public class DrawableTarget extends LevelListDrawable implements Target
 			DrawableAnimator anim= content.getAnim();
 			if (anim != null)
 				anim.stop();
-			pd.setAnimator(anim);
+			//pd.setAnimator(anim);
 			addLevel(2, 2, pd);
 			setLevel(2);
 			Listener l=getListener();

@@ -25,11 +25,13 @@ public class Anim
 						@Override
 						public void onAnimationUpdate(ValueAnimator p1)
 						{
-							
-							if(drawable!=null){
+							invalidate();
+							/*if(drawable!=null){
+								if(callback==null)
+									callback=drawable.getCallback();
 								if(callback==drawable.getCallback())
 								callback.invalidateDrawable(drawable);
-								}
+								}*/
 						}
 					});
 			}
@@ -48,10 +50,11 @@ public class Anim
 			public void stop()
 			{
 				va.cancel();
-				if(drawable!=null){
+				invalidate();
+				/*if(drawable!=null){
 					if(callback==drawable.getCallback())
 						callback.invalidateDrawable(drawable);
-				}
+				}*/
 			}
 
 			@Override
@@ -65,6 +68,12 @@ public class Anim
 			{
 				paint.setAlpha(va.isRunning()?va.getAnimatedValue():255);
 				canvas.drawBitmap(bitmap,0,0,paint);
+			}
+			private void invalidate(){
+				if(drawable!=null){
+					Drawable.Callback dc=drawable.getCallback();
+					if(dc!=null)dc.invalidateDrawable(drawable);
+					}
 			}
 		};
 	}
@@ -82,11 +91,11 @@ public class Anim
 						@Override
 						public void onAnimationUpdate(ValueAnimator p1)
 						{
-
-							if(drawable!=null){
+							invalidate();
+							/*if(drawable!=null){
 								if(callback==drawable.getCallback())
 									callback.invalidateDrawable(drawable);
-							}
+							}*/
 						}
 					});
 			}
@@ -106,10 +115,11 @@ public class Anim
 			public void stop()
 			{
 				va.cancel();
-				if(drawable!=null){
+				/*if(drawable!=null){
 					if(callback==drawable.getCallback())
 						callback.invalidateDrawable(drawable);
-				}
+				}*/
+				invalidate();
 			}
 
 			@Override
@@ -126,6 +136,12 @@ public class Anim
 				paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
 				canvas.drawBitmap(bitmap,0,0,paint);
 				paint.setXfermode(null);
+			}
+			private void invalidate(){
+				if(drawable!=null){
+					Drawable.Callback dc=drawable.getCallback();
+					if(dc!=null)dc.invalidateDrawable(drawable);
+				}
 			}
 		};
 	}

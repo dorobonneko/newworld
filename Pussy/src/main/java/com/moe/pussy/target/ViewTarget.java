@@ -62,7 +62,6 @@ public abstract class ViewTarget  implements Target,View.OnAttachStateChangeList
 	@Override
 	public final void onResourceReady(File cache)
 	{
-		Pussy.checkThread(true);
 		if (getView().getMeasuredWidth()==0&&getView().getMeasuredHeight()==0)
 		{
 			getView().post(new Runnable(){

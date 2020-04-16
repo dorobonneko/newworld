@@ -31,7 +31,7 @@ public class DiskCache
 		return mDiskCache;
 	}
 	public void trimToSize(){
-		new Thread(){
+		Pussy.execute(new Runnable(){
 			public void run()
 			{
 				synchronized (cachePath)
@@ -59,7 +59,7 @@ public class DiskCache
 
 				}
 			}
-		}.start();
+		});
 	}
 	public void clearCache(){
 		File[] files=new File(cachePath).listFiles();

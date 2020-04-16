@@ -16,7 +16,7 @@ public class ViewBackgroundTarget extends ViewTarget
 		if(pd!=null){
 			pd.stop();
 			getView().setBackground(pd);
-			pd.setAnimator(getAnim());
+			//pd.setAnimator(getAnim());
 			pd.start();
 			Listener l=getListener();
 			if(l!=null)l.onSuccess(pd);

@@ -25,7 +25,7 @@ public class ImageViewTarget extends ViewTarget
 		if(pd!=null){
 		pd.stop();
 		((ImageView)getView()).setImageDrawable(pd);
-		pd.setAnimator(getAnim());
+		//pd.setAnimator(getAnim());
 		pd.start();
 			Listener l=getListener();
 			if(l!=null)l.onSuccess(pd);

@@ -149,6 +149,11 @@ public class Pussy
 			}
 			return p;
 	}
+	public static Thread execute(Runnable run){
+		Thread t=new Thread(run);
+		t.start();
+		return t;
+	}
 	public BitmapPool getBitmapPool()
 	{
 		return mBitmapPool;
