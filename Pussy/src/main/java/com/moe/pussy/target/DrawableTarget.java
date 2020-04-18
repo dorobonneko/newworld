@@ -1,7 +1,7 @@
 package com.moe.pussy.target;
 import android.graphics.drawable.LevelListDrawable;
 import com.moe.pussy.Target;
-import com.moe.pussy.Content;
+import com.moe.pussy.ContentBuilder;
 import android.graphics.Bitmap;
 import com.moe.pussy.PussyDrawable;
 import com.moe.pussy.Transformer;
@@ -15,7 +15,7 @@ import java.io.File;
 
 public class DrawableTarget extends LevelListDrawable implements Target
 {
-	private Content content;
+	private ContentBuilder content;
 	private int level;
 	@Override
 	public void onSizeReady(int w, int h)
@@ -66,12 +66,12 @@ public class DrawableTarget extends LevelListDrawable implements Target
 
 
 	@Override
-	public Content getContent()
+	public ContentBuilder getContent()
 	{
 		return content;
 	}
 	@Override
-	public void onResourceReady(File cache)
+	public void onResourceReady(String cache)
 	{
 		Rect bounds= getBounds();
 		if (bounds.width() > 0 || bounds.height() > 0)
@@ -117,7 +117,7 @@ public class DrawableTarget extends LevelListDrawable implements Target
 	}
 
 	@Override
-	public void onAttachContent(Content c)
+	public void onAttachContent(ContentBuilder c)
 	{
 		content = c;
 	}

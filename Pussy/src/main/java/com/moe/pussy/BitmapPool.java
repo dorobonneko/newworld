@@ -24,84 +24,104 @@ public class BitmapPool extends LinkedHashMap<Integer,Stack<Bitmap>>
 {
 	private  long maxSize,currentSize;
 	private Lock lock=new ReentrantLock();
-	public BitmapPool(long maxSize){
-		this.maxSize=maxSize;
+	public BitmapPool(long maxSize)
+	{
+		this.maxSize = maxSize;
 	}
 
 	public Bitmap getBitmap(int w, int h, Bitmap.Config config)
 	{
 		lock.lock();
-		try{int size=getBitmapByteSize(w,h,config);
-		Stack<Bitmap> list=remove(size);
-		if(list!=null&&!list.isEmpty()){
-			put(size,list);
-			Bitmap bitmap=list.pop();
-			bitmap.eraseColor(Color.TRANSPARENT);
-			bitmap.reconfigure(w,h,config);
-			currentSize-=size;
-			return bitmap;
+		try
+		{
+
+			int size=getBitmapByteSize(w, h, config);
+			Stack<Bitmap> list=remove(size);
+			if (list != null && !list.isEmpty())
+			{
+				put(size, list);
+				Bitmap bitmap=list.pop();
+				bitmap.eraseColor(Color.TRANSPARENT);
+				bitmap.reconfigure(w, h, config);
+				currentSize -= size;
+				return bitmap;
+			}
+			return Bitmap.createBitmap(w, h, config);
 		}
-		return Bitmap.createBitmap(w,h,config);
-		}finally{
+		finally
+		{
 			lock.unlock();
 		}
 	}
 	public void recycle(Bitmap bitmap)
 	{
-		if(bitmap==null||bitmap.isRecycled())return;
-		if(!bitmap.isMutable()){
+		if (bitmap == null || bitmap.isRecycled())return;
+		if (!bitmap.isMutable())
+		{
 			bitmap.recycle();
 			return;
-			}
-		
+		}
+
 		lock.lock();
-		try{
-		int size=getBitmapByteSize(bitmap);
-		Stack<Bitmap> list=get(size);
-		if(list==null){
-			put(size,list=new Stack<>());
+		try
+		{
+			int size=getBitmapByteSize(bitmap);
+			Stack<Bitmap> list=get(size);
+			if (list == null)
+			{
+				put(size, list = new Stack<>());
+			}
+			if (list.search(bitmap) == -1)
+			{
+				list.push(bitmap);
+				currentSize += size;
+				trimToSize(maxSize);
+			}
 		}
-		if(list.search(bitmap)==-1){
-		list.push(bitmap);
-		currentSize+=size;
-		trimToSize(maxSize);
-		}
-		}finally{
+		finally
+		{
 			lock.unlock();
 		}
 	}
-	public void trimToSize(long size){
-		if(currentSize>size){
+	public void trimToSize(long size)
+	{
+		if (currentSize > size)
+		{
 			Iterator<Map.Entry<Integer,Stack<Bitmap>>> iterator_map=entrySet().iterator();
-			while(iterator_map.hasNext()){
+			while (iterator_map.hasNext())
+			{
 				Map.Entry<Integer,Stack<Bitmap>> list=iterator_map.next();
 				Iterator<Bitmap> iterator=list.getValue().iterator();
-				while(iterator.hasNext()){
+				while (iterator.hasNext())
+				{
 					Bitmap bitmap=iterator.next();
 					iterator.remove();
-					currentSize-=getBitmapByteSize(bitmap);
-					synchronized(bitmap){
-						if(!bitmap.isRecycled())
-					bitmap.recycle();
+					currentSize -= getBitmapByteSize(bitmap);
+					synchronized (bitmap)
+					{
+						if (!bitmap.isRecycled())
+							bitmap.recycle();
 					}
-					if(currentSize<size)return;
+					if (currentSize < size)return;
 				}
-				if(list.getValue().isEmpty())
+				if (list.getValue().isEmpty())
 					iterator_map.remove();
 			}
 		}
 	}
 	/*public boolean isRecycled(Bitmap bitmap)
+	 {
+	 List<Bitmap> list=map.get(bitmap.getWidth() * bitmap.getHeight() + bitmap.getConfig().name());
+	 if (list == null)return false;
+	 return list.contains(bitmap);
+	 }*/
+	public static int getBitmapByteSize(Bitmap bitmap)
 	{
-		List<Bitmap> list=map.get(bitmap.getWidth() * bitmap.getHeight() + bitmap.getConfig().name());
-		if (list == null)return false;
-		return list.contains(bitmap);
-	}*/
-	public static int getBitmapByteSize( Bitmap bitmap) {
 		// The return value of getAllocationByteCount silently changes for recycled bitmaps from the
 		// internal buffer size to row bytes * height. To avoid random inconsistencies in caches, we
 		// instead assert here.
-		if (bitmap.isRecycled()) {
+		if (bitmap.isRecycled())
+		{
 			throw new IllegalStateException(
 				"Cannot obtain size for recycled Bitmap: "
 				+ bitmap
@@ -112,12 +132,16 @@ public class BitmapPool extends LinkedHashMap<Integer,Stack<Bitmap>>
 				+ "] "
 				+ bitmap.getConfig());
 		}
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
+		{
 			// Workaround for KitKat initial release NPE in Bitmap, fixed in MR1. See issue #148.
-			try {
+			try
+			{
 				return bitmap.getAllocationByteCount();
-			} catch (
-			NullPointerException e) {
+			}
+			catch (
+			NullPointerException e)
+			{
 				// Do nothing.
 			}
 		}
@@ -128,18 +152,22 @@ public class BitmapPool extends LinkedHashMap<Integer,Stack<Bitmap>>
 	 * Returns the in memory size of {@link android.graphics.Bitmap} with the given width, height, and
 	 * {@link android.graphics.Bitmap.Config}.
 	 */
-	public static int getBitmapByteSize(int width, int height, Bitmap.Config config) {
+	public static int getBitmapByteSize(int width, int height, Bitmap.Config config)
+	{
 		return width * height * getBytesPerPixel(config);
 	}
 
-	private static int getBytesPerPixel(Bitmap.Config config) {
+	private static int getBytesPerPixel(Bitmap.Config config)
+	{
 		// A bitmap by decoding a GIF has null "config" in certain environments.
-		if (config == null) {
+		if (config == null)
+		{
 			config = Bitmap.Config.ARGB_8888;
 		}
 
 		int bytesPerPixel;
-		switch (config) {
+		switch (config)
+		{
 			case ALPHA_8:
 				bytesPerPixel = 1;
 				break;
@@ -157,5 +185,5 @@ public class BitmapPool extends LinkedHashMap<Integer,Stack<Bitmap>>
 		}
 		return bytesPerPixel;
 	}
-	
+
 }

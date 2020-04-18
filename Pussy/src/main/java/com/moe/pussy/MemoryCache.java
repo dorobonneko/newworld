@@ -5,7 +5,7 @@ import java.util.Map;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 
-public class MemoryCache extends LruCache<String,Bitmap>
+public class MemoryCache extends LruCache<String,Image>
 {
 	//private Map<String,WeakReference> cache=new HashMap<>();
 	private BitmapPool bp;
@@ -15,21 +15,21 @@ public class MemoryCache extends LruCache<String,Bitmap>
 	}
 	
 	@Override
-	protected void entryRemoved(boolean evicted, String key, Bitmap oldValue, Bitmap newValue)
+	protected void entryRemoved(boolean evicted, String key, Image oldValue, Image newValue)
 	{
 		if(evicted){
-			bp.recycle(oldValue);
+			bp.recycle(oldValue.source());
 		}else{
 			if(newValue!=null){
-				bp.recycle(oldValue);
+				bp.recycle(oldValue.source());
 			}
 		}
 	}
 
 	@Override
-	protected int sizeOf(String key, Bitmap value)
+	protected int sizeOf(String key, Image value)
 	{
-		return value.getByteCount();
+		return value.source().getByteCount();
 	}
 
 

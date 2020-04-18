@@ -8,9 +8,9 @@ import java.io.File;
 public interface Target extends SizeReady
 {
 	public abstract void placeHolder(Drawable placeHolder);
-	public Content getContent();
+	public ContentBuilder getContent();
 	//原始资源准备完毕，等待回调onSizeReady
-	public abstract void onResourceReady(File cache);
+	public abstract void onResourceReady(String cache);
 	public abstract void onSuccess(PussyDrawable pd);
 	public abstract void error(Throwable e,Drawable d);
 	/*public PussyDrawable putCache(Bitmap pd){
@@ -33,7 +33,7 @@ public interface Target extends SizeReady
 		}
 		return new PussyDrawable(pd,getRefresh());
 	}*/
-	public abstract void onAttachContent(Content c);
+	public abstract void onAttachContent(ContentBuilder c);
 	public abstract Listener getListener();
 	
 }

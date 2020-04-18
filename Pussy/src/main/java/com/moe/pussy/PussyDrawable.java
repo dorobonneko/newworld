@@ -9,16 +9,17 @@ import android.graphics.PaintFlagsDrawFilter;
 import android.graphics.Paint;
 import java.lang.ref.WeakReference;
 import android.graphics.PorterDuff;
+import android.os.SystemClock;
 
 public class PussyDrawable extends Drawable implements Animatable
 {
-	public WeakReference<Bitmap> bitmap;
+	public WeakReference<Image> bitmap;
 	//private WeakReference<Pussy.Refresh> refresh;
 	private DrawableAnimator da;
 	//private WeakReference<Target> t;
-	public PussyDrawable(Bitmap bitmap,DrawableAnimator da)
+	public PussyDrawable(Image bitmap,DrawableAnimator da)
 	{
-		this.bitmap =new WeakReference<Bitmap>(bitmap);
+		this.bitmap =new WeakReference<Image>(bitmap);
 		this.da=da;
 		if(da!=null)
 			da.setCallback(this);
@@ -62,26 +63,17 @@ public class PussyDrawable extends Drawable implements Animatable
 	@Override
 	public void draw(Canvas p1)
 	{
-		Bitmap bitmap=this.bitmap.get();
-		if (bitmap != null){
-			synchronized (bitmap)
-			{
-				if (bitmap.isRecycled()){
-					/*if(getRefresh()!=null)
-						getRefresh().refresh(t.get());*/
-				}else
-				{
-					p1.setDrawFilter(new PaintFlagsDrawFilter(0, Paint.DITHER_FLAG|Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG));
-					if (da != null)
-						da.draw(p1, bitmap);
-					else
-						p1.drawBitmap(bitmap, 0, 0, null);
-				}
-				
+		p1.setDrawFilter(new PaintFlagsDrawFilter(0, Paint.DITHER_FLAG|Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG));
+		Image image=this.bitmap.get();
+		if (image != null){
+			Bitmap bitmap=image.getBitmap();
+			if (da != null)
+					da.draw(p1, bitmap);
+				else
+					p1.drawBitmap(bitmap, 0, 0, null);
+			if(image.isGif())
+				scheduleSelf(Updater,SystemClock.uptimeMillis()+33);
 			}
-			}/*else if(getRefresh()!=null){
-				getRefresh().refresh(t.get());
-			}*/
 	}
 
 	@Override
@@ -95,15 +87,16 @@ public class PussyDrawable extends Drawable implements Animatable
 	}
 
 	@Override
+	public boolean setVisible(boolean visible, boolean restart)
+	{
+		if(!visible)
+			unscheduleSelf(Updater);
+		return super.setVisible(visible, restart);
+	}
+
+	@Override
 	public int getOpacity()
 	{
-		return 0;
-	}
-	public int getByteCount()
-	{
-		Bitmap bitmap=this.bitmap.get();
-		if (bitmap != null)
-			return bitmap.getByteCount();
 		return 0;
 	}
 	/*public void recycle()
@@ -119,7 +112,7 @@ public class PussyDrawable extends Drawable implements Animatable
 	@Override
 	public int getIntrinsicWidth()
 	{
-		Bitmap bitmap=this.bitmap.get();
+		Image bitmap=this.bitmap.get();
 		if (bitmap != null)
 			return bitmap.getWidth();
 		return super.getIntrinsicWidth();
@@ -128,11 +121,18 @@ public class PussyDrawable extends Drawable implements Animatable
 	@Override
 	public int getIntrinsicHeight()
 	{
-		Bitmap bitmap=this.bitmap.get();
+		Image bitmap=this.bitmap.get();
 		if (bitmap != null)
 			return bitmap.getHeight();
 		return super.getIntrinsicHeight();
 	}
+	private Runnable Updater =new Runnable(){
 
+		@Override
+		public void run()
+		{
+			invalidateSelf();
+		}
+	};
 
 }

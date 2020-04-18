@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.Stack;
+import com.moe.pussy.decode.BitmapDecoder;
 
 public class Pussy
 {
@@ -96,6 +97,8 @@ public class Pussy
 	}
 	private void init(Context context)
 	{
+		if(decoder==null)
+			decoder=new BitmapDecoder(context.getApplicationContext());
 		this.mContext = new WeakReference<Context>(context);
 		mDispatcher = Dispatcher.getDefault(context.getApplicationContext());
 		mDiskCache = DiskCache.get(this);
@@ -177,6 +180,9 @@ public class Pussy
 	{
 		mainHandler.post(run);
 	}
+	public static void post(Runnable run,long delay){
+		mainHandler.postDelayed(run,delay);
+	}
 	public void userAgent(String useragent)
 	{
 		this.userAgent = useragent;
@@ -190,7 +196,7 @@ public class Pussy
 		return new Request(this, url);
 	}
 
-	public Content load(int res)
+	public ContentBuilder load(int res)
 	{
 
 		return  new Request(this, res).execute();
@@ -218,7 +224,7 @@ public class Pussy
 		pause.set(true);
 	}
 	public void pause(Target t){
-		Content c=t.getContent();
+		ContentBuilder c=t.getContent();
 		if(c!=null){
 			c.loader.pause();
 		}
@@ -230,7 +236,7 @@ public class Pussy
 		}
 	}
 	public void resume(Target t){
-		Content c=t.getContent();
+		ContentBuilder c=t.getContent();
 		if(c!=null){
 			c.loader.resume();
 		}
@@ -238,7 +244,7 @@ public class Pussy
 	public void cancel(Target t, Request request)
 	{
 		if (t == null)return;
-		Content content=t.getContent();
+		ContentBuilder content=t.getContent();
 		if (content != null)
 		{
 			content.cancel();
@@ -395,8 +401,8 @@ public class Pussy
 	}
 	public static class Refresh
 	{
-		private Content l;
-		public Refresh(Content l)
+		private ContentBuilder l;
+		public Refresh(ContentBuilder l)
 		{
 			this.l = l;
 		}

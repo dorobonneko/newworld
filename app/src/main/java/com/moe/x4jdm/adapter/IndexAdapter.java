@@ -198,7 +198,7 @@ public class IndexAdapter extends RecyclerView.Adapter
 			pvh.summary.setText(desc == null ?null: Html.fromHtml(desc));
 			if (pvh.score != null)
 				pvh.score.setText(jo.getString("score"));
-			Pussy.$(pvh.icon.getContext()).load(jo.getString("src")).execute().tag(jo.getString("title")).transformer(new CropTransformer(Gravity.CENTER), new RoundTransformer(pvh.itemView.getResources().getDisplayMetrics(), 5)).anime(Anim.fade(500)).into(pvh.icon);
+			Pussy.$(pvh.icon.getContext()).load(jo.getString("src")).execute().tag(jo.getString("title")).transformer(new CropTransformer(Gravity.CENTER), new RoundTransformer(pvh.itemView.getResources().getDisplayMetrics(), 5)).delay(150).anime(Anim.fade(500)).into(pvh.icon);
 			//pvh.icon.setImageDrawable(Pussy.$(pvh.icon.getContext()).load(jo.getString("src")).execute().tag(jo.getString("title")).transformer(new CropTransformer(Gravity.CENTER),new RoundTransformer(pvh.itemView.getResources().getDisplayMetrics(),5)).anime(Anim.fade(500)).intoPlaceHolder());
 
 			//Glide.with(pvh.itemView.getContext()).load(jo.getString("src")).centerCrop().crossFade(500).into(pvh.icon);
@@ -235,7 +235,7 @@ public class IndexAdapter extends RecyclerView.Adapter
 			ppvh.msg.setText(post.getString("msg"));
 			ppvh.desc.setText(post.getString("desc"));
 			ppvh.score.setText(post.getString("score"));
-			Pussy.$(ppvh.itemView.getContext()).load(post.getString("src")).userAgent("x4jdm" + Math.random()).execute().transformer(new CropTransformer(Gravity.CENTER), new RoundTransformer(ppvh.itemView.getResources().getDisplayMetrics(), 5)).anime(Anim.fade(300)).into(ppvh.icon);
+			Pussy.$(ppvh.itemView.getContext()).load(post.getString("src")).userAgent("x4jdm" + Math.random()).execute().delay(150).transformer(new CropTransformer(Gravity.CENTER), new RoundTransformer(ppvh.itemView.getResources().getDisplayMetrics(), 5)).anime(Anim.fade(300)).into(ppvh.icon);
 			WaterFallLayout mWaterFallLayout=ppvh.tag;
 			JSONArray tag=post.getJSONArray("tag");
 			if(tag==null)
@@ -267,7 +267,7 @@ public class IndexAdapter extends RecyclerView.Adapter
 			ImagePreviewViewHolder ipvh=(IndexAdapter.ImagePreviewViewHolder) vh;
 			JSONObject object=index.getJSONObject(position);
 			ipvh.title.setText(object.getString("title"));
-			Pussy.$(ipvh.itemView.getContext()).load(object.getString("src")).userAgent("x4jdm"+Math.random()).execute().into(ipvh.icon);
+			Pussy.$(ipvh.itemView.getContext()).load(object.getString("src")).userAgent("x4jdm"+Math.random()).execute().delay(150).into(ipvh.icon);
 			
 		}else if(vh instanceof CommentViewHolder){
 			CommentViewHolder cvh=(IndexAdapter.CommentViewHolder) vh;
@@ -278,7 +278,7 @@ public class IndexAdapter extends RecyclerView.Adapter
 		}else if(vh instanceof ListComicViewHolder){
 			ListComicViewHolder lcvh=(IndexAdapter.ListComicViewHolder) vh;
 			JSONObject object=index.getJSONObject(position);
-			Pussy.$(lcvh.itemView.getContext()).load(object.getString("src")).userAgent("x4jdm"+Math.random()).execute().into(lcvh.comic);
+			Pussy.$(lcvh.itemView.getContext()).load(object.getString("src")).userAgent("x4jdm"+Math.random()).execute().delay(150).into(lcvh.comic);
 			
 		}
 	}
@@ -414,6 +414,7 @@ public class IndexAdapter extends RecyclerView.Adapter
 			super(v);
 			comic=(ImageView) v;
 			v.setLayoutParams(new ViewGroup.LayoutParams(-1,-2));
+			comic.setAdjustViewBounds(true);
 		}
 	}
 	public class CommentViewHolder extends RecyclerView.ViewHolder

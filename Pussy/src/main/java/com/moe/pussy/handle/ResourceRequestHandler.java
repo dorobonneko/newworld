@@ -14,6 +14,7 @@ import android.graphics.BitmapFactory;
 import com.moe.pussy.BitmapPool;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.lang.ref.WeakReference;
+import java.io.File;
 
 public class ResourceRequestHandler implements RequestHandler
 {
@@ -35,9 +36,8 @@ public class ResourceRequestHandler implements RequestHandler
 	@Override
 	public void onHandle(ThreadPoolExecutor pool,final Request request,final Callback call)
 	{
-		Runnable run=new Runnable(){
-			public void run(){
-		Uri uri=Uri.parse(request.getUrl());
+		call.onSuccess(new ResResponse(request.getUrl()));
+		/*Uri uri=Uri.parse(request.getUrl());
 		int id=Integer.parseInt(uri.getSchemeSpecificPart());
 		BitmapFactory.Options options=new BitmapFactory.Options();
 		options.inDensity = Bitmap.DENSITY_NONE ;
@@ -46,29 +46,21 @@ public class ResourceRequestHandler implements RequestHandler
 		options.inJustDecodeBounds=true;
 		BitmapFactory.decodeResource(res.get(),id,options);
 		options.inJustDecodeBounds=false;
-		options.inBitmap=request.getPussy().getBitmapPool().getBitmap(options.outWidth,options.outHeight,options.inPreferredConfig);
-		options.inMutable=true;
+		//options.inBitmap=request.getPussy().getBitmapPool().getBitmap(options.outWidth,options.outHeight,options.inPreferredConfig);
+		options.inMutable=false;
 		call.onSuccess(new ResResponse(BitmapFactory.decodeResource(res.get(),id,options)));
-		}};
-		pool.execute(run);
+		//pool.execute(run);*/
 	}
 	class ResResponse extends Response{
-		private Bitmap pd;
-		public ResResponse(Bitmap pd){
-			this.pd=pd;
+		private String file;
+		public ResResponse(String file){
+			this.file=file;
 		}
-
 		@Override
-		public Bitmap getBitmap()
+		public String getBitmap()
 		{
-			return pd;
+			return file;
 		}
-
-		
-
-
-
-		
 	}
 	
 }

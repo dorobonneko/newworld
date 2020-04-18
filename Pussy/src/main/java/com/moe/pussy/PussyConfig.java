@@ -6,7 +6,7 @@ import com.moe.pussy.decode.BitmapDecoder;
 
 public class PussyConfig
 {
-	static Decoder mDecoder=new BitmapDecoder();
+	static Decoder mDecoder;
 	static String userAgent="pussy_1.0";
 	static SSLSocketFactory mSSLSocketFactory;
 	static int diskCacheSize=128*1024*1024;

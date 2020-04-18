@@ -4,6 +4,8 @@ import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.Recycler;
 import android.support.v7.widget.RecyclerView.State;
+import android.support.v7.widget.RecyclerView.LayoutParams;
+import android.view.View;
 
 public class IndexGridLayoutManager extends GridLayoutManager
 {
@@ -41,6 +43,7 @@ public class IndexGridLayoutManager extends GridLayoutManager
 			});
 	}
 
+	
 	/*@Override
 	public int scrollVerticallyBy(int dy, RecyclerView.Recycler recycler, RecyclerView.State state)
 	{
@@ -76,4 +79,5 @@ public class IndexGridLayoutManager extends GridLayoutManager
 	}
 
 */
+
 }

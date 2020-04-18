@@ -2,8 +2,9 @@ package com.moe.pussy;
 import java.io.InputStream;
 import java.io.File;
 import android.graphics.Bitmap;
+import android.net.Uri;
 
 public interface Decoder
 {
-	public Bitmap decode(BitmapPool mBitmapPool,File input,int w,int h);
+	public Image decode(BitmapPool mBitmapPool,Uri input,int w,int h);
 }

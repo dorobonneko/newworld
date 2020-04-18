@@ -6,7 +6,7 @@ import com.moe.pussy.DrawableAnimator;
 import com.moe.pussy.Pussy;
 import com.moe.pussy.Target;
 import com.moe.pussy.Transformer;
-import com.moe.pussy.Content;
+import com.moe.pussy.ContentBuilder;
 import java.lang.ref.WeakReference;
 import com.moe.pussy.Listener;
 import android.graphics.Rect;
@@ -14,7 +14,7 @@ import java.io.File;
 
 public abstract class ViewTarget  implements Target,View.OnAttachStateChangeListener
 {
-	private  Content content;
+	private  ContentBuilder content;
 	private WeakReference<View> view;
 	public ViewTarget(View view)
 	{
@@ -49,7 +49,7 @@ public abstract class ViewTarget  implements Target,View.OnAttachStateChangeList
 
 
 	@Override
-	public void onAttachContent(Content c)
+	public void onAttachContent(ContentBuilder c)
 	{
 		content=c;
 	}
@@ -60,7 +60,7 @@ public abstract class ViewTarget  implements Target,View.OnAttachStateChangeList
 		return view.get();
 	}
 	@Override
-	public final void onResourceReady(File cache)
+	public final void onResourceReady(String cache)
 	{
 		if (getView().getMeasuredWidth()==0&&getView().getMeasuredHeight()==0)
 		{
@@ -101,7 +101,7 @@ public abstract class ViewTarget  implements Target,View.OnAttachStateChangeList
 	}
 
 	@Override
-	public Content getContent()
+	public ContentBuilder getContent()
 	{
 		return content;
 	}

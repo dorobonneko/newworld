@@ -12,7 +12,7 @@ public interface RequestHandler
 	public class Response{
 		public File get() {return null;}
 		public void close(){}
-		public Bitmap getBitmap(){return null;}
+		public String getBitmap(){return null;}
 	}
 	public interface Callback{
 		void onSuccess(Response response);

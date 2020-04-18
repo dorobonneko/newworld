@@ -72,8 +72,8 @@ public class Request
 		this.body=body;
 		return this;
 	}
-	public Content execute(){
-		return new Content(this);
+	public ContentBuilder execute(){
+		return new ContentBuilder(this);
 	}
 	
 }

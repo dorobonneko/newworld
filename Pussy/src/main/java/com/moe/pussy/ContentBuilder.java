@@ -14,7 +14,7 @@ import com.moe.pussy.target.ViewBackgroundTarget;
 import android.view.View;
 import com.moe.pussy.target.DrawableTarget;
 
-public class Content implements SizeReady
+public class ContentBuilder implements SizeReady
 {
 	private Request request;
 	private String key=null,tag;
@@ -27,17 +27,21 @@ public class Content implements SizeReady
 	protected Drawable error;
 	protected Loader loader;
 	private Listener listener;
-	public Content(Request r){
+	private long delay;
+	public ContentBuilder(Request r){
 		this.request=r;
 	}
-
+	public ContentBuilder delay(long delay){
+		this.delay=delay;
+		return this;
+	}
 	@Override
 	public void onSizeReady(int w, int h)
 	{
 		if(target!=null)
 		loader.onSizeReady(w,h);
 	}
-	public Content listener(Listener l){
+	public ContentBuilder listener(Listener l){
 		listener=l;
 		return this;
 	}
@@ -57,26 +61,26 @@ public class Content implements SizeReady
 			}
 	}
 	
-	public Content tag(String tag){
+	public ContentBuilder tag(String tag){
 		this.tag=tag;
 		return this;
 	}
 	String tag(){
 		return tag;
 	}
-	public Content placeHolder(Drawable res){
+	public ContentBuilder placeHolder(Drawable res){
 		placeHolder=res;
 		return this;
 	}
-	public Content error(Drawable res){
+	public ContentBuilder error(Drawable res){
 		error=res;
 		return this;
 	}
-	public Content placeHolder(int res){
+	public ContentBuilder placeHolder(int res){
 		placeHolder=request.getPussy().getContext().getResources().getDrawable(res);
 		return this;
 	}
-	public Content error(int res){
+	public ContentBuilder error(int res){
 		error=request.getPussy().getContext().getResources().getDrawable(res);
 		return this;
 	}
@@ -88,11 +92,11 @@ public class Content implements SizeReady
 	public final DrawableAnimator getAnim(){
 		return anim;
 	}
-	public Content anime(DrawableAnimator anim){
+	public ContentBuilder anime(DrawableAnimator anim){
 		this.anim=anim;
 		return this;
 	}
-	public Content transformer(Transformer... trans){
+	public ContentBuilder transformer(Transformer... trans){
 		mTransformers.addAll(Arrays.asList(trans));
 		return this;
 	}
@@ -105,7 +109,7 @@ public class Content implements SizeReady
 	DiskCache.Cache getCache(){
 		return cache;
 	}
-	public Content diskCache(DiskCache.Cache cache){
+	public ContentBuilder diskCache(DiskCache.Cache cache){
 		this.cache=cache;
 		return this;
 	}
@@ -127,6 +131,16 @@ public class Content implements SizeReady
 		t.onAttachContent(this);
 		t.placeHolder(placeHolder);
 		loader=new Loader(this);
+		if(delay>0)
+			Pussy.post(new Runnable(){
+
+					@Override
+					public void run()
+					{
+						loader.begin();
+					}
+				}, delay);
+			else
 		loader.begin();
 		}
 	public void into(ImageView view){

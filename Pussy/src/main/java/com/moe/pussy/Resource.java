@@ -4,12 +4,12 @@ import android.graphics.Bitmap;
 public class Resource
 {
 	String key;
-	Bitmap bitmap;
+	Image image;
 	int count;
 	private OnResourceListener listener;
-	protected Resource(String key,Bitmap bitmap){
+	protected Resource(String key,Image bitmap){
 		this.key=key;
-		this.bitmap=bitmap;
+		this.image=bitmap;
 	}
 	public void acquire(){
 		count++;
