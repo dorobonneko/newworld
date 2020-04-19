@@ -69,6 +69,7 @@ public class Image
 				time = System.currentTimeMillis();
 			}
 			mMovie.setTime(disc);
+			mBitmap.eraseColor(0);
 			mMovie.draw(canvas, 0, 0);
 		}
 		return mBitmap;

@@ -28,6 +28,7 @@ public class ContentBuilder implements SizeReady
 	protected Loader loader;
 	private Listener listener;
 	private long delay;
+	private boolean asBitmap;
 	public ContentBuilder(Request r){
 		this.request=r;
 	}
@@ -40,6 +41,13 @@ public class ContentBuilder implements SizeReady
 	{
 		if(target!=null)
 		loader.onSizeReady(w,h);
+	}
+	public ContentBuilder asBitmap(){
+		asBitmap=true;
+		return this;
+	}
+	protected boolean isAsBitmap(){
+		return asBitmap;
 	}
 	public ContentBuilder listener(Listener l){
 		listener=l;

@@ -7,6 +7,7 @@ import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.PorterDuff;
+import android.graphics.Matrix;
 
 public class Anim
 {
@@ -64,10 +65,10 @@ public class Anim
 			}
 
 			@Override
-			public void draw(Canvas canvas, Bitmap bitmap)
+			public void draw(Canvas canvas,Matrix m, Bitmap bitmap)
 			{
 				paint.setAlpha(va.isRunning()?va.getAnimatedValue():255);
-				canvas.drawBitmap(bitmap,0,0,paint);
+				canvas.drawBitmap(bitmap,m,paint);
 			}
 			private void invalidate(){
 				if(drawable!=null){
@@ -129,12 +130,12 @@ public class Anim
 			}
 
 			@Override
-			public void draw(Canvas canvas, Bitmap bitmap)
+			public void draw(Canvas canvas, Matrix m,Bitmap bitmap)
 			{
 				canvas.drawCircle(bitmap.getWidth()/2,bitmap.getHeight()/2,va.getAnimatedValue(),paint);
 
 				paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-				canvas.drawBitmap(bitmap,0,0,paint);
+				canvas.drawBitmap(bitmap,m,paint);
 				paint.setXfermode(null);
 			}
 			private void invalidate(){

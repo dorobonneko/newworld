@@ -120,7 +120,7 @@ public class Loader implements Runnable,HandleThread.Callback,SizeReady
 			{
 				if (isCancel())return;
 				//解码
-				Image image=getPussy().decoder.decode(getPussy().getBitmapPool(),Uri.fromFile(cache_file), 0, 0);
+				Image image=getPussy().decoder.decode(getPussy().getBitmapPool(),Uri.fromFile(cache_file),content.get().isAsBitmap(), 0, 0);
 				Resource res=getPussy().getActiveResource().create(key, image);
 				success(res, null);
 				//getTarget().onResourceReady(cache_file);
@@ -174,10 +174,13 @@ public class Loader implements Runnable,HandleThread.Callback,SizeReady
 		{
 			Image source=null;
 			File cache=getPussy().getDiskCache().getCache(requestKey);
+			if(requestKey.startsWith("2ec")){
+				toString();
+			}
 			if (cache != null)
-				source = getPussy().decoder.decode(getPussy().getBitmapPool(),Uri.fromFile(cache), w, h);
+				source = getPussy().decoder.decode(getPussy().getBitmapPool(),Uri.fromFile(cache),content.get().isAsBitmap(), w, h);
 			else if(resource!=null)
-				source = getPussy().decoder.decode(getPussy().getBitmapPool(),Uri.parse(resource),w,h);
+				source = getPussy().decoder.decode(getPussy().getBitmapPool(),Uri.parse(resource),content.get().isAsBitmap(),w,h);
 			if (source == null)
 			{
 				if (cache != null)

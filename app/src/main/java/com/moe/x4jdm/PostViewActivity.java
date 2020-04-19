@@ -51,6 +51,7 @@ import android.support.design.widget.AppBarLayout;
 import android.view.ViewTreeObserver;
 import android.text.Spanned;
 import android.text.Layout;
+import com.moe.pussy.Target;
 
 public class PostViewActivity extends AppCompatActivity implements View.OnApplyWindowInsetsListener,PlayViewPagerAdapter.OnClickListener,View.OnClickListener,Listener,ViewTreeObserver.OnPreDrawListener
 {
@@ -213,7 +214,7 @@ public class PostViewActivity extends AppCompatActivity implements View.OnApplyW
 								}
 								if(jo.getString("src")!=null){
 								Pussy.$(PostViewActivity.this).load(jo.getString("src")).execute().transformer(new CropTransformer(Gravity.CENTER), new RoundTransformer(getResources().getDisplayMetrics(),5)).anime(Anim.cicle(300)).into(icon);
-								Pussy.$(PostViewActivity.this).load(jo.getString("src")).execute().transformer(new CropTransformer(Gravity.CENTER), new BlurTransformer(getApplicationContext(), 75)).listener(PostViewActivity.this).anime(Anim.fade(150)).into(backicon);
+								Pussy.$(PostViewActivity.this).load(jo.getString("src")).execute().transformer(new CropTransformer(Gravity.CENTER), new BlurTransformer(75)).listener(PostViewActivity.this).anime(Anim.fade(150)).into(backicon);
 								}play_data.clear();
 								JSONArray data=jo.getJSONArray("video");
 								if (data != null)
@@ -297,7 +298,7 @@ public class PostViewActivity extends AppCompatActivity implements View.OnApplyW
 	}
 
 	@Override
-	public void onSuccess(Drawable d)
+	public void onSuccess(Target t,Drawable d)
 	{
 		View v= getWindow().getDecorView();
 		v.setSystemUiVisibility(v.getSystemUiVisibility()&(~v.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR));
@@ -305,12 +306,12 @@ public class PostViewActivity extends AppCompatActivity implements View.OnApplyW
 	}
 
 	@Override
-	public void onError(Drawable d)
+	public void onError(Target t,Drawable d)
 	{
 	}
 
 	@Override
-	public void onPlaceHolder(Drawable d)
+	public void onPlaceHolder(Target t,Drawable d)
 	{
 	}
 

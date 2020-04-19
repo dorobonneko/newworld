@@ -10,6 +10,8 @@ import android.graphics.Paint;
 import java.lang.ref.WeakReference;
 import android.graphics.PorterDuff;
 import android.os.SystemClock;
+import android.graphics.Matrix;
+import android.graphics.Rect;
 
 public class PussyDrawable extends Drawable implements Animatable
 {
@@ -66,11 +68,23 @@ public class PussyDrawable extends Drawable implements Animatable
 		p1.setDrawFilter(new PaintFlagsDrawFilter(0, Paint.DITHER_FLAG|Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG));
 		Image image=this.bitmap.get();
 		if (image != null){
+			/*if(image.isGif()){
+				float scale=Math.max(p1.getWidth()/(float)image.getWidth(),p1.getHeight()/(float)image.getHeight());
+				Matrix m=p1.getMatrix();
+				m.setScale(scale,scale);
+				m.postTranslate((p1.getWidth()-(image.getWidth()*scale))/2f,(p1.getHeight()-image.getHeight()*scale)/2f);
+				p1.setMatrix(m);
+			}*/
 			Bitmap bitmap=image.getBitmap();
+			Rect bounds=getBounds();
+			Matrix m=new Matrix();
+			float scale=Math.max(bounds.width()/(float)image.getWidth(),bounds.height()/(float)image.getHeight());
+			m.setScale(scale,scale);
+			m.postTranslate((bounds.width()-(image.getWidth()*scale))/2f,(bounds.height()-image.getHeight()*scale)/2f);
 			if (da != null)
-					da.draw(p1, bitmap);
+					da.draw(p1,m, bitmap);
 				else
-					p1.drawBitmap(bitmap, 0, 0, null);
+					p1.drawBitmap(bitmap, m, null);
 			if(image.isGif())
 				scheduleSelf(Updater,SystemClock.uptimeMillis()+33);
 			}

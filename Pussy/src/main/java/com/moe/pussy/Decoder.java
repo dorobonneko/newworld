@@ -6,5 +6,5 @@ import android.net.Uri;
 
 public interface Decoder
 {
-	public Image decode(BitmapPool mBitmapPool,Uri input,int w,int h);
+	public Image decode(BitmapPool mBitmapPool,Uri input,boolean bitmap,int w,int h);
 }

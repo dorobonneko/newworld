@@ -21,7 +21,7 @@ public class BitmapDecoder implements Decoder
 		this.context = context;
 	}
 	@Override
-	public Image decode(BitmapPool mBitmapPool, Uri input, int w, int h)
+	public Image decode(BitmapPool mBitmapPool, Uri input,boolean outbitmap, int w, int h)
 	{
 		switch (input.getScheme())
 		{
@@ -32,6 +32,7 @@ public class BitmapDecoder implements Decoder
 					options.inJustDecodeBounds = true;
 					BitmapFactory.decodeFile(input.getPath(), options);
 					if (options.outWidth <= 0 || options.outHeight <= 0)return null;
+					if(!outbitmap){
 					try
 					{
 						if ("image/gif".equalsIgnoreCase(options.outMimeType))
@@ -41,13 +42,17 @@ public class BitmapDecoder implements Decoder
 					{
 						return null;
 					}
+					}
+					options.inPreferredConfig=options.outConfig==null?Bitmap.Config.RGB_565:options.outConfig;
 					options.inJustDecodeBounds = false;
 					options.inSampleSize = calculateInSampleSize(options, w, h);
 					options.inBitmap = mBitmapPool.getBitmap(options.outWidth, options.outHeight, options.inPreferredConfig);
 					options.inMutable = true;
 					Bitmap bitmap=BitmapFactory.decodeFile(input.getPath(), options);
-					if(bitmap==null)
+					if(bitmap==null){
+						mBitmapPool.recycle(options.inBitmap);
 						return null;
+						}
 					if (options.outMimeType == null || options.outWidth != bitmap.getWidth() || options.outHeight != bitmap.getHeight())
 					{
 						mBitmapPool.recycle(bitmap);
@@ -209,7 +214,7 @@ public class BitmapDecoder implements Decoder
         int inSampleSize = 1;
 		if (reqHeight == 0 && reqWidth == 0)
 		{
-
+			return inSampleSize;
 		}
 		else
 		if (reqHeight == 0)

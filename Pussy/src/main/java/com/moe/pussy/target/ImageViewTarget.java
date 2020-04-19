@@ -28,7 +28,7 @@ public class ImageViewTarget extends ViewTarget
 		//pd.setAnimator(getAnim());
 		pd.start();
 			Listener l=getListener();
-			if(l!=null)l.onSuccess(pd);
+			if(l!=null)l.onSuccess(this,pd);
 			
 		}else{
 			error(null,null);
@@ -41,7 +41,7 @@ public class ImageViewTarget extends ViewTarget
 		if(getAnim()!=null)getAnim().stop();
 		((ImageView)getView()).setImageDrawable(d);
 		Listener l=getListener();
-		if(l!=null)l.onError(d);
+		if(l!=null)l.onError(this,d);
 		
 	}
 
@@ -51,7 +51,7 @@ public class ImageViewTarget extends ViewTarget
 		if(getAnim()!=null)getAnim().stop();
 		((ImageView)getView()).setImageDrawable(placeHolder);
 		Listener l=getListener();
-		if(l!=null)l.onPlaceHolder(placeHolder);
+		if(l!=null)l.onPlaceHolder(this,placeHolder);
 		
 	}
 	

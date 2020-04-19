@@ -19,10 +19,10 @@ import android.graphics.Color;
 public class BlurTransformer implements Transformer
 {
 	private int level;
-	private Context c;
-	public BlurTransformer(Context c,int level){
+	//private Context c;
+	public BlurTransformer(int level){
 		this.level=level;
-		this.c=c.getApplicationContext();
+		//this.c=c.getApplicationContext();
 	}
 	
 	@Override

@@ -12,6 +12,7 @@ import android.animation.Animator;
 import com.moe.pussy.DrawableAnimator;
 import com.moe.pussy.Listener;
 import java.io.File;
+import android.graphics.drawable.Drawable.Callback;
 
 public class DrawableTarget extends LevelListDrawable implements Target
 {
@@ -37,7 +38,7 @@ public class DrawableTarget extends LevelListDrawable implements Target
 		setLevel(1);
 		level = 1;
 		Listener l=getListener();
-		if (l != null)l.onPlaceHolder(placeHolder);
+		if (l != null)l.onPlaceHolder(this,placeHolder);
 	}
 
 	@Override
@@ -56,15 +57,16 @@ public class DrawableTarget extends LevelListDrawable implements Target
 		 }*/
 		return f;
 	}
-	@Override
+
+	
+	/*@Override
 	public void setBounds(int left, int top, int right, int bottom)
 	{
 		super.setBounds(left, top, right, bottom);
 		onSizeReady(right - left, bottom - top);
-	}
+	}*/
 
-
-
+	
 	@Override
 	public ContentBuilder getContent()
 	{
@@ -74,7 +76,7 @@ public class DrawableTarget extends LevelListDrawable implements Target
 	public void onResourceReady(String cache)
 	{
 		Rect bounds= getBounds();
-		if (bounds.width() > 0 || bounds.height() > 0)
+		//if (getCallback()!=null|| bounds.width() > 0 || bounds.height() > 0)
 			onSizeReady(bounds.width(), bounds.height());
 	}
 
@@ -92,7 +94,9 @@ public class DrawableTarget extends LevelListDrawable implements Target
 			addLevel(2, 2, pd);
 			setLevel(2);
 			Listener l=getListener();
-			if (l != null)l.onSuccess(pd);
+			if (l != null)l.onSuccess(this,pd);
+			//setBounds(0,0,pd.getIntrinsicWidth(),pd.getIntrinsicHeight());
+			invalidateSelf();
 			
 			//pd.start();
 		}
@@ -112,7 +116,7 @@ public class DrawableTarget extends LevelListDrawable implements Target
 		addLevel(3, 3, d);
 		setLevel(3);
 		Listener l=getListener();
-		if(l!=null)l.onError(d);
+		if(l!=null)l.onError(this,d);
 		
 	}
 
@@ -122,4 +126,5 @@ public class DrawableTarget extends LevelListDrawable implements Target
 		content = c;
 	}
 
+	
 }
