@@ -97,6 +97,12 @@ public abstract class Index
 			case "yh":
 				models.put(web,index=new Indexyh());
 				break;
+			case "hentai":
+				models.put(web,index=new IndexHentai());
+				break;
+			case "youma":
+				models.put(web,index=new Indexyouma());
+				break;
 			default:
 			models.put(web,index=new None());
 			break;

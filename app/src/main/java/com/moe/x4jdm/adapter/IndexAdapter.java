@@ -43,6 +43,7 @@ import java.util.Map;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.os.Looper;
+import com.moe.x4jdm.widget.ComicView;
 
 public class IndexAdapter extends RecyclerView.Adapter
 {
@@ -134,7 +135,7 @@ public class IndexAdapter extends RecyclerView.Adapter
 			case 12:
 				return new CommentViewHolder(LayoutInflater.from(p1.getContext()).inflate(R.layout.comment_item,p1,false));
 			case 13:
-				return new ListComicViewHolder(new ImageView(p1.getContext()));
+				return new ListComicViewHolder(new ComicView(p1.getContext()));
 		}
 		return new ViewHolder(new View(p1.getContext()));
 	}
@@ -279,7 +280,7 @@ public class IndexAdapter extends RecyclerView.Adapter
 			ListComicViewHolder lcvh=(IndexAdapter.ListComicViewHolder) vh;
 			JSONObject object=index.getJSONObject(position);
 			Pussy.$(lcvh.itemView.getContext()).load(object.getString("src")).userAgent("x4jdm"+Math.random()).execute().delay(150).into(lcvh.comic);
-			
+			lcvh.comic.setPage(position+1);
 		}
 	}
 
@@ -409,10 +410,10 @@ public class IndexAdapter extends RecyclerView.Adapter
 		}
 	}
 	class ListComicViewHolder extends RecyclerView.ViewHolder{
-		ImageView comic;
+		ComicView comic;
 		ListComicViewHolder(View v){
 			super(v);
-			comic=(ImageView) v;
+			comic=(ComicView) v;
 			v.setLayoutParams(new ViewGroup.LayoutParams(-1,-2));
 			comic.setAdjustViewBounds(true);
 		}

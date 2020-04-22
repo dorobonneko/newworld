@@ -243,6 +243,8 @@ public class PostViewActivity extends AppCompatActivity implements View.OnApplyW
 	@Override
 	public void onClick(final JSONObject jo)
 	{
+		String click=jo.getString("click");
+		if(click==null||click.equals("video")){
 		final ProgressDialog pd=new ProgressDialog(this);
 		pd.setMessage("正在解析");
 		pd.show();
@@ -277,6 +279,9 @@ public class PostViewActivity extends AppCompatActivity implements View.OnApplyW
 				pd.dismiss();
 			}
 		}.start();
+		}else if("list".equals(click)){
+			startActivity(new Intent(getApplicationContext(),ListActivity.class).putExtra("key",key).putExtra("url",jo.getString("href")));
+		}
 	}
 
 	@Override

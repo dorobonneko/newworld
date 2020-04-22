@@ -233,7 +233,7 @@ public class BitmapDecoder implements Decoder
             //宽度比例值
             final int widthRatio = Math.round((float) width / (float) reqWidth);
             //取比例值中的较大值作为inSampleSize
-            inSampleSize = heightRatio > widthRatio ? heightRatio : widthRatio;
+            inSampleSize = Math.min(heightRatio,widthRatio);
         }
 
         return inSampleSize;

@@ -307,7 +307,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 							Toast.makeText(getApplicationContext(), "未安装支付宝！", Toast.LENGTH_SHORT).show();
 						}
 					}else if(count==2){
-						final String[] keys=new String[]{"moeero","lh"};
+						final String[] keys=new String[]{"moeero","lh","hentai","youma"};
 						new AlertDialog.Builder(MainActivity.this).setItems(keys, new DialogInterface.OnClickListener(){
 
 								@Override
