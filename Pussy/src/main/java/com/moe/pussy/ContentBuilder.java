@@ -134,10 +134,11 @@ public class ContentBuilder implements SizeReady
 	}
 	public void into(Target t){
 		if(t==null)return;
-		request.getPussy().cancel(t,getRequest());
+		ContentBuilder oldContent=t.getContent();
 		target=t;
 		t.onAttachContent(this);
 		t.placeHolder(placeHolder);
+		request.getPussy().cancel(oldContent,getRequest());
 		loader=new Loader(this);
 		if(delay>0)
 			Pussy.post(new Runnable(){

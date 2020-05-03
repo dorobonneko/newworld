@@ -11,6 +11,13 @@ public class ViewBackgroundTarget extends ViewTarget
 	}
 
 	@Override
+	public void onCancel()
+	{
+		getView().setBackground(null);
+	}
+
+
+	@Override
 	public void onSuccess(PussyDrawable pd)
 	{
 		if(pd!=null){

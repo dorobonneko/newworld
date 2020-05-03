@@ -13,6 +13,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import com.umeng.commonsdk.UMConfigure;
 import android.content.Context;
+import com.tencent.wstt.gt.controller.GTRController;
 
 public class Application extends android.app.Application implements Thread.UncaughtExceptionHandler
 {
@@ -50,10 +51,12 @@ public class Application extends android.app.Application implements Thread.Uncau
 	public void onCreate()
 	{
 		super.onCreate();
+		
 		//UMConfigure.init(this, "5e743b09978eea0774044ead", "Umeng", UMConfigure.DEVICE_TYPE_PHONE, "");
 		//Bugly.init(this,"39c93f2bb3",false);
 		Thread.currentThread().setUncaughtExceptionHandler(this);
 		trustEveryone();
+		GTRController.init(this);
 		//Fresco.initialize(this);
 		//LeakCanary.install(this);
 	}

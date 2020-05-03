@@ -65,6 +65,9 @@ public class Request
 		return this;
 	}
 	public Request referer(String referer){
+		if(referer==null)
+			header.remove("Referer");
+			else
 		header.put("Referer",referer);
 		return this;
 	}

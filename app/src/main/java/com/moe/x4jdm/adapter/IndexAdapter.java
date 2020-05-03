@@ -199,7 +199,7 @@ public class IndexAdapter extends RecyclerView.Adapter
 			pvh.summary.setText(desc == null ?null: Html.fromHtml(desc));
 			if (pvh.score != null)
 				pvh.score.setText(jo.getString("score"));
-			Pussy.$(pvh.icon.getContext()).load(jo.getString("src")).execute().tag(jo.getString("title")).transformer(new CropTransformer(Gravity.CENTER), new RoundTransformer(pvh.itemView.getResources().getDisplayMetrics(), 5)).delay(150).anime(Anim.fade(500)).into(pvh.icon);
+			Pussy.$(pvh.icon.getContext()).load(jo.getString("src")).referer(jo.getString("referer")).execute().tag(jo.getString("title")).transformer(new CropTransformer(Gravity.CENTER), new RoundTransformer(pvh.itemView.getResources().getDisplayMetrics(), 5)).delay(150).anime(Anim.fade(500)).into(pvh.icon);
 			//pvh.icon.setImageDrawable(Pussy.$(pvh.icon.getContext()).load(jo.getString("src")).execute().tag(jo.getString("title")).transformer(new CropTransformer(Gravity.CENTER),new RoundTransformer(pvh.itemView.getResources().getDisplayMetrics(),5)).anime(Anim.fade(500)).intoPlaceHolder());
 
 			//Glide.with(pvh.itemView.getContext()).load(jo.getString("src")).centerCrop().crossFade(500).into(pvh.icon);

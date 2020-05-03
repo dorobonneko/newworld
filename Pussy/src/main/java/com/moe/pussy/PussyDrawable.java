@@ -21,6 +21,7 @@ public class PussyDrawable extends Drawable implements Animatable
 	//private WeakReference<Target> t;
 	public PussyDrawable(Image bitmap,DrawableAnimator da)
 	{
+		if(bitmap==null)throw new NullPointerException("bjtmal 为空");
 		this.bitmap =new WeakReference<Image>(bitmap);
 		this.da=da;
 		if(da!=null)
@@ -87,6 +88,8 @@ public class PussyDrawable extends Drawable implements Animatable
 					p1.drawBitmap(bitmap, m, null);
 			if(image.isGif()&&isVisible())
 				scheduleSelf(Updater,SystemClock.uptimeMillis()+33);
+			}else{
+				//throw new NullPointerException("图片为空");
 			}
 	}
 

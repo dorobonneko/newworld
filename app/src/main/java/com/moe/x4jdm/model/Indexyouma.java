@@ -169,7 +169,7 @@ public class Indexyouma extends Index
 	@Override
 	public String getHost()
 	{
-		return "https://www.youma.org/";
+		return "https://www.youmamh.com/";
 	}
 
 	@Override

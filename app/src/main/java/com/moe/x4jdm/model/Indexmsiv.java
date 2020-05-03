@@ -97,7 +97,8 @@ public class Indexmsiv extends Index
 					data.add(tab_item);
 					tab_item.put("title",post.selectFirst("h1").text());
 					String src=post.selectFirst(".jinsom-video-img").attr("style");
-					tab_item.put("src",src.substring(22,src.length()-2));
+					tab_item.put("src",src.substring(src.indexOf("(")+1,src.lastIndexOf(")")));
+					tab_item.put("referer",tab_item.get("src"));
 					tab_item.put("viewtype","poster");
 					String post_id=Uri.parse(post.selectFirst(".content .link").absUrl("href")).getQueryParameter("post_id");
 					JSONObject post_jo=new JSONObject();
@@ -111,7 +112,8 @@ public class Indexmsiv extends Index
 					play.add(play_item);
 					play_item.put("title","Play");
 					play_item.put("href",post_id);
-					tab_item.put("href",post_jo.toJSONString());
+					tab_item.put("href",post_id);
+					//tab_item.put("href",post_jo.toJSONString());
 					tab_item.put("click","video");
 					}
 			}
@@ -156,7 +158,7 @@ public class Indexmsiv extends Index
 	@Override
 	public String getHost()
 	{
-		return "https://l-2019.ru/";
+		return "https://2020l.ru/";
 	}
 
 	@Override

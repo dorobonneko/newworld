@@ -10,7 +10,7 @@ public class MemoryCache extends LruCache<String,Image>
 	//private Map<String,WeakReference> cache=new HashMap<>();
 	private BitmapPool bp;
 	public MemoryCache(BitmapPool bp){
-		super((int)Runtime.getRuntime().maxMemory()/4);
+		super((int)bp.maxSize);
 		this.bp=bp;
 	}
 	

@@ -13,6 +13,7 @@ public interface Target extends SizeReady
 	public abstract void onResourceReady(String cache);
 	public abstract void onSuccess(PussyDrawable pd);
 	public abstract void error(Throwable e,Drawable d);
+	public abstract void onCancel();
 	/*public PussyDrawable putCache(Bitmap pd){
 		if(pd==null)return null;
 		Resource res=new Resource(content.getKey(),pd);

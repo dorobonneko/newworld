@@ -30,6 +30,14 @@ public class DrawableTarget extends LevelListDrawable implements Target
 		return content.getListener();
 	}
 
+	@Override
+	public void onCancel()
+	{
+		setLevel(0);
+		level = 0;
+	}
+
+
 
 	@Override
 	public void placeHolder(Drawable placeHolder)

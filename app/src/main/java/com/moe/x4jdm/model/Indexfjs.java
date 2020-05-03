@@ -236,7 +236,7 @@ public class Indexfjs extends Index
 					}
 					post.put("desc", desc.toString());
 				}
-				post.put("src", poster.absUrl("src"));
+				post.put("src", poster.absUrl("data-img"));
 				post.put("profile", doc.selectFirst(".pSummary").text());
 				Elements posts=doc.select(".dramaNumList > li");
 				if (post != null)

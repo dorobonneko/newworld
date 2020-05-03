@@ -17,6 +17,13 @@ public class ImageViewTarget extends ViewTarget
 		super(view);
 	}
 
+	@Override
+	public void onCancel()
+	{
+		((ImageView)getView()).setImageDrawable(null);
+	}
+
+
 	
 	
 	@Override

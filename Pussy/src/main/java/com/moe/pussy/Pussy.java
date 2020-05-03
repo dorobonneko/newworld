@@ -241,10 +241,8 @@ public class Pussy
 			c.loader.resume();
 		}
 	}
-	public void cancel(Target t, Request request)
+	public void cancel(ContentBuilder content, Request request)
 	{
-		if (t == null)return;
-		ContentBuilder content=t.getContent();
 		if (content != null)
 		{
 			content.cancel();
@@ -423,7 +421,8 @@ public class Pussy
 			return l.refresh(t);
 		}
 		public void cancel(){
-			l.getRequest().getPussy().cancel(l.getTarget(),null);
+			l.getTarget().onCancel();
+			l.getRequest().getPussy().cancel(l.getTarget().getContent(),null);
 		}
 	}
 }

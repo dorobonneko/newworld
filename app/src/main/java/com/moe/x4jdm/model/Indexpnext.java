@@ -260,7 +260,7 @@ public class Indexpnext extends Index
 	@Override
 	public String getHost()
 	{
-		return "http://app.pnext.top";
+		return "http://47.95.232.156:8080/";
 	}
 	
 }

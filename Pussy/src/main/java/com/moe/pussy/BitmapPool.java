@@ -22,7 +22,7 @@ import android.graphics.Color;
 
 public class BitmapPool extends LinkedHashMap<Integer,Stack<Bitmap>>
 {
-	private  long maxSize,currentSize;
+ long maxSize,currentSize;
 	private Lock lock=new ReentrantLock();
 	public BitmapPool(long maxSize)
 	{
