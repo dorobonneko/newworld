@@ -93,9 +93,13 @@ public class IndexNieta extends Index
 							index.add(post);
 							String title=post_item.selectFirst("a").attr("title");
 							int i=title.lastIndexOf(" ");
-							if(i!=-1)
-							try{post.put("desc",title.substring(i+1));}catch(NullPointerException e){}
-							post.put("title",title.substring(0,i));
+							if(i==-1){
+								post.put("title",title);
+							}else
+							try{
+								post.put("desc",title.substring(i+1));
+								post.put("title",title.substring(0,i));
+							}catch(NullPointerException e){}
 							String src=post_item.selectFirst("img").absUrl("data-echo");
 							if(TextUtils.isEmpty(src))
 								src=post_item.selectFirst("img").absUrl("src");

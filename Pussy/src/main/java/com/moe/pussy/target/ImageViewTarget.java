@@ -20,6 +20,7 @@ public class ImageViewTarget extends ViewTarget
 	@Override
 	public void onCancel()
 	{
+		if(getView()!=null)
 		((ImageView)getView()).setImageDrawable(null);
 	}
 
@@ -31,6 +32,7 @@ public class ImageViewTarget extends ViewTarget
 	{
 		if(pd!=null){
 		pd.stop();
+		if(getView()!=null)
 		((ImageView)getView()).setImageDrawable(pd);
 		//pd.setAnimator(getAnim());
 		pd.start();
@@ -46,6 +48,7 @@ public class ImageViewTarget extends ViewTarget
 	public void error(Throwable e,Drawable d)
 	{
 		if(getAnim()!=null)getAnim().stop();
+		if(getView()!=null)
 		((ImageView)getView()).setImageDrawable(d);
 		Listener l=getListener();
 		if(l!=null)l.onError(this,d);
@@ -56,6 +59,7 @@ public class ImageViewTarget extends ViewTarget
 	public void placeHolder(Drawable placeHolder)
 	{
 		if(getAnim()!=null)getAnim().stop();
+		if(getView()!=null)
 		((ImageView)getView()).setImageDrawable(placeHolder);
 		Listener l=getListener();
 		if(l!=null)l.onPlaceHolder(this,placeHolder);

@@ -34,7 +34,7 @@ public class Indexjn extends Index
 		JSONArray index=new JSONArray();
 		try
 		{
-			JSONObject data=JSONObject.parseObject(Jsoup.connect("http://59.110.16.198//app.php/XyyVideo/video_recommend").ignoreContentType(true).method(Connection.Method.POST).requestBody("version_number=31").execute().body());
+			JSONObject data=JSONObject.parseObject(Jsoup.connect(getHost()+"/app.php/XyyVideo/video_recommend").ignoreContentType(true).method(Connection.Method.POST).requestBody("version_number=31").execute().body());
 			if(data.getIntValue("status")==1){
 				//head
 				JSONArray header=data.getJSONArray("data");
@@ -47,7 +47,7 @@ public class Indexjn extends Index
 			}
 			index.add(JSONArray.parseArray("[{\"href\":\"21,%d\",\"title\":\"热血\"},{\"href\":\"20,%d\",\"title\":\"科幻\"},{\"href\":\"31,%d\",\"title\":\"百合\"},{\"href\":\"16,%d\",\"title\":\"青春\"},{\"href\":\"15,%d\",\"title\":\"推理\"},{\"href\":\"14,%d\",\"title\":\"奇幻\"},{\"href\":\"13,%d\",\"title\":\"恐怖\"},{\"href\":\"12,%d\",\"title\":\"后宫\"},{\"href\":\"11,%d\",\"title\":\"耽美\"},{\"href\":\"3,%d\",\"title\":\"搞笑\"},{\"href\":\"17,%d\",\"title\":\"泡面番\"}]"));
 			
-			data=JSONObject.parseObject(Jsoup.connect("http://59.110.16.198//app.php/XyyVideo/video_class_list").ignoreContentType(true).method(Connection.Method.POST).requestBody("version_number=31").execute().body());
+			data=JSONObject.parseObject(Jsoup.connect(getHost()+"/app.php/XyyVideo/video_class_list").ignoreContentType(true).method(Connection.Method.POST).requestBody("version_number=31").execute().body());
 			if(data.getIntValue("status")==1){
 				JSONArray arr=data.getJSONArray("data");
 				//index.put("main",arr);
@@ -226,7 +226,7 @@ public class Indexjn extends Index
 	@Override
 	public String getHost()
 	{
-		return "http://59.110.16.198/";
+		return "http://139.155.1.49";
 	}
 
 	@Override

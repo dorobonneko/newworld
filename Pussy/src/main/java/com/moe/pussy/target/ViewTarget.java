@@ -11,14 +11,15 @@ import java.lang.ref.WeakReference;
 import com.moe.pussy.Listener;
 import android.graphics.Rect;
 import java.io.File;
+import java.lang.ref.SoftReference;
 
 public abstract class ViewTarget  implements Target,View.OnAttachStateChangeListener
 {
 	private  ContentBuilder content;
-	private WeakReference<View> view;
+	private SoftReference<View> view;
 	public ViewTarget(View view)
 	{
-		this.view =new WeakReference<View>( view);
+		this.view =new SoftReference<View>( view);
 		view.addOnAttachStateChangeListener(this);
 	}
 
@@ -62,6 +63,7 @@ public abstract class ViewTarget  implements Target,View.OnAttachStateChangeList
 	@Override
 	public final void onResourceReady(String cache)
 	{
+		if(getView()!=null){
 		if (getView().getMeasuredWidth()==0&&getView().getMeasuredHeight()==0)
 		{
 			getView().post(new Runnable(){
@@ -78,7 +80,7 @@ public abstract class ViewTarget  implements Target,View.OnAttachStateChangeList
 		else
 		{
 			onSizeReady(getView().getMeasuredWidth(),getView().getMeasuredHeight());
-		}
+		}}
 	}
 
 	/*@Override

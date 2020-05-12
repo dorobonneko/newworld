@@ -11,6 +11,7 @@ import java.util.HashMap;
 import com.moe.x4jdm.util.EscapeUnescape;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.util.regex.PatternSyntaxException;
 
 public class Index3atv extends Index
 {
@@ -37,9 +38,11 @@ public class Index3atv extends Index
 				index.add(post);
 				post.put("title",item.selectFirst(".title").text());
 				post.put("src",item.selectFirst("img").absUrl("data-original"));
-				post.put("href",post.getString("src")+"#"+item.selectFirst(".title > a").absUrl("href"));
+				//post.put("href",post.getString("src")+"#"+item.selectFirst(".title > a").absUrl("href"));
+				post.put("href",item.selectFirst(".title > a").absUrl("href"));
 				post.put("desc",item.selectFirst(".time").text());
 				post.put("viewtype","poster");
+				post.put("click","video");
 			}
 		}
 		catch (IOException e)
@@ -72,9 +75,11 @@ public class Index3atv extends Index
 				posts.add(post);
 				post.put("title",item.selectFirst(".title").text());
 				post.put("src",item.selectFirst("img").absUrl("data-original"));
-				post.put("href",post.getString("src")+"#"+item.selectFirst(".title > a").absUrl("href"));
+				//post.put("href",post.getString("src")+"#"+item.selectFirst(".title > a").absUrl("href"));
+				post.put("href",item.selectFirst(".title > a").absUrl("href"));
 				post.put("desc",item.selectFirst(".time").text());
 				post.put("viewtype","poster");
+				post.put("click","video");
 			}
 		}
 		catch (IOException e)
@@ -116,8 +121,24 @@ public class Index3atv extends Index
 	public Map<String, String> getVideoUrl(String url)
 	{
 		Map<String,String> urls=new HashMap<>();
-		url=EscapeUnescape.unescape(url);
-		urls.put(url,url);
+		try
+		{
+			Document doc=Jsoup.connect(url).get();
+			String data=doc.selectFirst("#playview > script").absUrl("src");
+			data = Jsoup.connect(data).ignoreContentType(true).execute().body();
+			Pattern pattern=Pattern.compile("mac_name='(.*?)'.*?mac_url=unescape\\('(.*?)'\\);", Pattern.MULTILINE);
+			Matcher matcher=pattern.matcher(data);
+			if (matcher.find())
+			{
+				url = matcher.group(2);
+			}
+			url = EscapeUnescape.unescape(url);
+			urls.put(url, url);
+		}
+		catch (PatternSyntaxException e)
+		{}
+		catch (IOException e)
+		{}
 		return urls;
 	}
 

@@ -13,6 +13,7 @@ public class ViewBackgroundTarget extends ViewTarget
 	@Override
 	public void onCancel()
 	{
+		if(getView()!=null)
 		getView().setBackground(null);
 	}
 
@@ -22,6 +23,7 @@ public class ViewBackgroundTarget extends ViewTarget
 	{
 		if(pd!=null){
 			pd.stop();
+			if(getView()!=null)
 			getView().setBackground(pd);
 			//pd.setAnimator(getAnim());
 			pd.start();
@@ -37,6 +39,7 @@ public class ViewBackgroundTarget extends ViewTarget
 	public void error(Throwable e,Drawable d)
 	{
 		if(getAnim()!=null)getAnim().stop();
+		if(getView()!=null)
 		getView().setBackground(d);
 		Listener l=getListener();
 		if(l!=null)l.onError(this,d);
@@ -47,6 +50,7 @@ public class ViewBackgroundTarget extends ViewTarget
 	public void placeHolder(Drawable placeHolder)
 	{
 		if(getAnim()!=null)getAnim().stop();
+		if(getView()!=null)
 		getView().setBackground(placeHolder);
 		Listener l=getListener();
 		if(l!=null)l.onPlaceHolder(this,placeHolder);
