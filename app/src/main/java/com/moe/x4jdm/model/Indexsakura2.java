@@ -56,6 +56,7 @@ public class Indexsakura2 extends Index
 				item.put("title",a.text());
 				item.put("href",makeUrl(a.absUrl("href")));
 			}
+			if(tab.size()>2)
 			tab.remove(tab.size()-2);
 			index.add(tab);
 
@@ -100,6 +101,7 @@ public class Indexsakura2 extends Index
 					item.put("desc",li.selectFirst("span").text());
 				}
 			}
+			if(!time.isEmpty())
 			time.add(0,time.remove(time.size()-1));
 			this.time=time.toJSONString();
 		}

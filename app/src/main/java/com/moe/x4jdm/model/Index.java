@@ -103,6 +103,9 @@ public abstract class Index
 			case "youma":
 				models.put(web,index=new Indexyouma());
 				break;
+			case "gufeng":
+				models.put(web,index=new Indexgufeng());
+				break;
 			default:
 			models.put(web,index=new None());
 			break;
