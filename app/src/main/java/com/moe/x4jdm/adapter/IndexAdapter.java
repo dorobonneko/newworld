@@ -385,6 +385,7 @@ public class IndexAdapter extends RecyclerView.Adapter
 					new Thread(){
 						public void run()
 						{
+							try{
 							final Map<String,String> url=Index.getModel(context).getVideoUrl(object.getString("href"));
 							if (url != null&&!url.isEmpty())
 								Pussy.post(new Runnable(){
@@ -402,6 +403,7 @@ public class IndexAdapter extends RecyclerView.Adapter
 											sheet.show();
 										}
 									});
+									}catch(Exception e){}
 							pd.dismiss();
 						}
 					}.start();

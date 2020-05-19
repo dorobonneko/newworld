@@ -1,12 +1,15 @@
 <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	
+	android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:id="@+id/swiperefreshlayout"
 	android:descendantFocusability="blocksDescendants">
-    <android.support.v7.widget.RecyclerView
+    <com.moe.x4jdm.widget.ZoomRecyclerView
 		android:clipToPadding="false"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:id="@+id/recyclerview"
-		android:overScrollMode="never"/>
+		android:overScrollMode="never"
+		app:max_scale="2"/>
 </android.support.v4.widget.SwipeRefreshLayout>

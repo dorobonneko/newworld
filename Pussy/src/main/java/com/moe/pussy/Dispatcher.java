@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import com.moe.pussy.handle.ResourceRequestHandler;
 import android.content.Context;
 import com.moe.pussy.handle.HttpRequestHandler;
+import com.moe.pussy.handle.FileRequestHandler;
 
 public class Dispatcher
 {
@@ -13,6 +14,7 @@ public class Dispatcher
 		Dispatcher d=new Dispatcher();
 		d.add(new HttpRequestHandler());
 		d.add(new ResourceRequestHandler(context));
+		d.add(new FileRequestHandler());
 		return d;
 	}
 	public void add(RequestHandler handler){

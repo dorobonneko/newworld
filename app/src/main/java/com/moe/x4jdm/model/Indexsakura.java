@@ -237,8 +237,10 @@ public class Indexsakura extends Index
 						JSONObject video=JSONObject.parseObject(Jsoup.connect("http://jie.risun2.com/wabi/api.php").requestBody(body).ignoreContentType(true).userAgent("Mozilla/5.0 (Linux; Android 7.0; MHA-AL00 Build/HUAWEIMHA-AL00; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/43.0.2357.134 Mobile Safari/537.36").method(Connection.Method.POST).execute().body());
 						String video_url=new String(Base64.decode(video.getString("url"),Base64.DEFAULT));
 						if(video.getIntValue("code")==200){
+							try{
 						video_url=video_url.substring(video_url.indexOf("http"));
 						urls.put(video_url,video_url);
+						}catch(Exception e){}
 						}
 					}
 			}

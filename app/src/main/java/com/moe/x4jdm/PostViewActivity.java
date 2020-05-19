@@ -251,18 +251,20 @@ public class PostViewActivity extends AppCompatActivity implements View.OnApplyW
 		new Thread(){
 			public void run()
 			{
+				try{
 				final Map<String,String> url=Index.getModel(key).getVideoUrl(jo.getString("href"));
-				if (url != null&&!url.isEmpty())
-					runOnUiThread(new Runnable(){
+					if (url != null&&!url.isEmpty())
+						runOnUiThread(new Runnable(){
 
-							@Override
-							public void run()
-							{
-								pa.addAll(url);
-								sheet.show();
-							}
-						});
-					else
+								@Override
+								public void run()
+								{
+									pa.addAll(url);
+									sheet.show();
+								}
+							});
+						else throw new NullPointerException();
+				}catch(Exception e){
 					runOnUiThread(new Runnable(){
 
 							@Override
@@ -273,14 +275,16 @@ public class PostViewActivity extends AppCompatActivity implements View.OnApplyW
 
 									}
 								}
-								
+
 							}
 						});
+				}
+					
 				pd.dismiss();
 			}
 		}.start();
 		}else if("list".equals(click)){
-			startActivity(new Intent(getApplicationContext(),ListActivity.class).putExtra("key",key).putExtra("url",jo.getString("href")));
+			startActivity(new Intent(getApplicationContext(),ListActivity.class).putExtra("key",key).putExtra("type","comic").putExtra("url",jo.getString("href")));
 		}
 	}
 

@@ -28,7 +28,7 @@ public class Indexadh extends Index
 		JSONArray index=new JSONArray();
 		try
 		{
-			Document doc=Jsoup.connect(getHost()+"hentai-on").get();
+			Document doc=Jsoup.connect(getHost()+"hentai/").get();
 			Elements mains=doc.select("section.hentai");
 			if (mains != null)
 			{

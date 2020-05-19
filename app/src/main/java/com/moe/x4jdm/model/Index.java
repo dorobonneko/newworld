@@ -106,6 +106,9 @@ public abstract class Index
 			case "gufeng":
 				models.put(web,index=new Indexgufeng());
 				break;
+			case "qinqin":
+				models.put(web,index=new Indexqinqin());
+				break;
 			default:
 			models.put(web,index=new None());
 			break;

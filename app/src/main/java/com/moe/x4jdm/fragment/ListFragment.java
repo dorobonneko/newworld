@@ -19,6 +19,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.ViewTreeObserver;
 import android.graphics.Rect;
 import com.moe.x4jdm.app.Application;
+import com.moe.x4jdm.widget.ZoomRecyclerView;
 
 public class ListFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener
 {
@@ -86,6 +87,7 @@ public class ListFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 		if(b!=null){
 			url=b.getString("url");
 			page=b.getInt("page",1);
+			((ZoomRecyclerView)mRecyclerView).setEnableScale("comic".equals(b.getString("type")));
 		}
 		mSwipeRefreshLayout.setRefreshing(true);
 		onRefresh();
