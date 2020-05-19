@@ -15,6 +15,7 @@ import java.net.URLDecoder;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import android.net.Uri;
+import com.moe.x4jdm.video.VideoParse;
 
 class Indexx4jdm extends Index
 {
@@ -321,7 +322,7 @@ class Indexx4jdm extends Index
 					if(data.getIntValue("code")==200){
 						String video_url=new String(Base64.decode(data.getString("url"),Base64.DEFAULT));
 						video_url=URLDecoder.decode(video_url.substring(video_url.indexOf("http")));
-						urls.put(video_url,video_url);
+						urls.put(video_url,VideoParse.parseQQ(video_url));
 					}
 				}
 			}

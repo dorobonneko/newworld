@@ -14,6 +14,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import com.moe.x4jdm.video.VideoParse;
 
 public class Indexsakura extends Index
 {
@@ -231,7 +232,7 @@ public class Indexsakura extends Index
 							}
 						}
 					}else
-					urls.put(vid,vid);
+					urls.put(vid,VideoParse.parseQQ(vid));
 					}else{
 						String body=String.format("url=%s&referer=%s&ref=1&time=%d&type=&other=%s&lg=0",vid,Base64.encodeToString(("http://tup.yhdm.tv/?vid="+vid).getBytes(),Base64.NO_WRAP),System.currentTimeMillis()/1000,Base64.encodeToString(vid.getBytes(),Base64.NO_WRAP));
 						JSONObject video=JSONObject.parseObject(Jsoup.connect("http://jie.risun2.com/wabi/api.php").requestBody(body).ignoreContentType(true).userAgent("Mozilla/5.0 (Linux; Android 7.0; MHA-AL00 Build/HUAWEIMHA-AL00; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/43.0.2357.134 Mobile Safari/537.36").method(Connection.Method.POST).execute().body());
