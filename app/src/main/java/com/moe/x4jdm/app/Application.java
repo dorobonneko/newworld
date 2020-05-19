@@ -11,7 +11,6 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.X509TrustManager;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import com.umeng.commonsdk.UMConfigure;
 import android.content.Context;
 import com.tencent.wstt.gt.controller.GTRController;
 
