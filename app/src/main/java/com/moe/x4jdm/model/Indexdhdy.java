@@ -8,6 +8,7 @@ import org.jsoup.select.Elements;
 import org.jsoup.nodes.Element;
 import com.alibaba.fastjson.JSONObject;
 import java.util.HashMap;
+import java.util.function.UnaryOperator;
 
 public class Indexdhdy extends Index
 {
@@ -95,7 +96,17 @@ public class Indexdhdy extends Index
 			Element main=doc.selectFirst("#resize_vod");
 			post.put("src",main.selectFirst("img.loading").absUrl("xsrc"));
 			post.put("title",main.selectFirst("h1").text());
-			post.put("desc",main.select("p").toString().replaceAll("p>","div>"));
+			Elements desc=main.select("p");
+			desc.replaceAll(new UnaryOperator<Element>(){
+
+					@Override
+					public Element apply(Element p1)
+					{
+						p1.tagName("span").appendElement("br");
+						return p1;
+					}
+				});
+			post.put("desc",desc.toString());
 			post.put("profile",doc.selectFirst("div.vod_content").toString());
 			JSONArray video=new JSONArray();
 			post.put("video",video);

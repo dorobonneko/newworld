@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import android.net.Uri;
 import com.moe.x4jdm.video.VideoParse;
+import java.util.function.UnaryOperator;
 
 class Indexx4jdm extends Index
 {
@@ -258,7 +259,18 @@ class Indexx4jdm extends Index
 			jo.put("director");
 			jo.put("area");*/
 			Elements vod=doc.select(".vod-n-l > p");
-			jo.put("desc",vod.toString());
+			vod.replaceAll(new UnaryOperator<Element>(){
+
+					@Override
+					public Element apply(Element p1)
+					{
+						p1.tagName("span");
+						p1.removeAttr("class");
+						p1.appendElement("br");
+						return p1;
+					}
+				});
+			jo.put("desc", vod.toString());
 			jo.put("profile",doc.selectFirst(".vod_content").text());
 			JSONArray video=new JSONArray();
 			Elements plau=doc.select(".plau-ul-list");

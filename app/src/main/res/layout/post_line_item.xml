@@ -4,7 +4,7 @@
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
 	android:orientation="horizontal"
-	android:gravity="center_vertical">
+	android:gravity="top">
 
 	<com.moe.pussy.widget.PercentImageView
 		android:id="@+id/icon"
@@ -13,7 +13,7 @@
 		app:percent="61.8%"
 		android:layout_marginStart="16dp"
 		android:layout_marginEnd="8dp"
-		android:layout_marginTop="8dp"/>
+		android:layout_marginBottom="8dp"/>
 
 	<LinearLayout
 		android:orientation="vertical"
@@ -29,11 +29,18 @@
 			android:layout_marginBottom="8dp"/>
 
 		<TextView
+			android:autoSizeMaxTextSize="12sp"
+			android:autoSizeMinTextSize="6sp"
+			android:autoSizeStepGranularity="1sp"
+			android:autoSizeTextType="uniform"
+			app:autoSizeStepGranularity="1sp"
+			
 			app:autoSizeMaxTextSize="12sp"
-			app:autoSizeMinTextSize="4sp"
+			app:autoSizeMinTextSize="6sp"
 			app:autoSizeTextType="uniform"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
+			android:textSize="12sp"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
 			android:id="@+id/summary"/>
 
 	</LinearLayout>

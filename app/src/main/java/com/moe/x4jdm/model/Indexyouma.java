@@ -8,6 +8,7 @@ import org.jsoup.select.Elements;
 import org.jsoup.nodes.Element;
 import com.alibaba.fastjson.JSONObject;
 import android.net.Uri;
+import java.util.function.UnaryOperator;
 
 public class Indexyouma extends Index
 {
@@ -183,7 +184,17 @@ public class Indexyouma extends Index
 			Document doc=Jsoup.connect(url).get();
 			post.put("src", doc.selectFirst("div.cover img").absUrl("src"));
 			post.put("title", doc.selectFirst("div.info > h1").text());
-			post.put("desc", doc.select("div.banner_detail_form > div.info > p.subtitle,div.banner_detail_form > div.info > p.tip").toString());
+			Elements desc=doc.select("div.banner_detail_form > div.info > p.subtitle,div.banner_detail_form > div.info > p.tip");
+			desc.replaceAll(new UnaryOperator<Element>(){
+
+					@Override
+					public Element apply(Element p1)
+					{
+						p1.tagName("span").appendElement("br");
+						return p1;
+					}
+				});
+			post.put("desc", desc.toString());
 			post.put("profile", doc.selectFirst("div.info > p.content").toString());
 			JSONArray book_source=new JSONArray();
 			post.put("video", book_source);

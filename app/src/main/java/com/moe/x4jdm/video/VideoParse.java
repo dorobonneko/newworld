@@ -82,7 +82,9 @@ public class VideoParse
 			}*/
 			return parseQqSign(url);
 			}else if(url.startsWith("http://quan.qq.com/video/")){
-				return parseQqSign(url.substring(25));
+				return parseQqSign(url.substring(25,62));
+			}else if(url.startsWith("https://quan.qq.com/video/")){
+				return parseQqSign(url.substring(26,63));
 			}
 			}catch(Exception e){}
 			return url;

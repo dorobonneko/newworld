@@ -315,7 +315,7 @@ public class PostViewActivity extends AppCompatActivity implements View.OnApplyW
 	}
 
 	@Override
-	public void onError(Target t,Drawable d)
+	public void onError(Target t,Drawable d,Throwable e)
 	{
 	}
 

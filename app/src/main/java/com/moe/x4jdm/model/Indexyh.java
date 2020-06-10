@@ -13,6 +13,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import com.moe.x4jdm.util.EscapeUnescape;
 import android.util.Base64;
+import java.util.function.UnaryOperator;
 
 public class Indexyh extends Index
 {
@@ -136,6 +137,15 @@ public class Indexyh extends Index
 			post.put("src",box.selectFirst("img").absUrl("data-original"));
 			Elements desc=box.select("ul.am-list > li");
 			desc.remove(desc.size()-1);
+			desc.replaceAll(new UnaryOperator<Element>(){
+
+					@Override
+					public Element apply(Element p1)
+					{
+						p1.tagName("span").appendElement("br");
+						return p1;
+					}
+				});
 			post.put("desc",desc.toString());
 			post.put("profile",doc.selectFirst("#tab2").text());
 			JSONArray video=new JSONArray();

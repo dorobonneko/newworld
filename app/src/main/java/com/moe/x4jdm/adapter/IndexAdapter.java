@@ -44,6 +44,10 @@ import android.support.design.widget.BottomSheetDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.os.Looper;
 import com.moe.x4jdm.widget.ComicView;
+import android.support.v7.app.AlertDialog;
+import android.content.DialogInterface;
+import android.net.Uri;
+import com.moe.pussy.utils.ProgressDrawable;
 
 public class IndexAdapter extends RecyclerView.Adapter
 {
@@ -268,7 +272,10 @@ public class IndexAdapter extends RecyclerView.Adapter
 			ImagePreviewViewHolder ipvh=(IndexAdapter.ImagePreviewViewHolder) vh;
 			JSONObject object=index.getJSONObject(position);
 			ipvh.title.setText(object.getString("title"));
-			Pussy.$(ipvh.itemView.getContext()).load(object.getString("src")).userAgent("x4jdm"+Math.random()).execute().delay(150).into(ipvh.icon);
+			ProgressDrawable pd=(ProgressDrawable) ipvh.icon.getTag(ipvh.icon.getId());
+			//if(pd==null)
+			ipvh.icon.setTag(ipvh.icon.getId(),pd=new ProgressDrawable(ipvh.itemView.getContext()));
+			Pussy.$(ipvh.itemView.getContext()).load(object.getString("src")).userAgent("x4jdm"+Math.random()).listener(pd).execute().error(new ColorDrawable(0xffa05555)).placeHolder(pd).delay(150).into(ipvh.icon);
 			
 		}else if(vh instanceof CommentViewHolder){
 			CommentViewHolder cvh=(IndexAdapter.CommentViewHolder) vh;
@@ -373,7 +380,7 @@ public class IndexAdapter extends RecyclerView.Adapter
 			switch (click)
 			{
 				case "list":
-					context.startActivity(new Intent(context, ListActivity.class).putExtra("url", object.getString("href")).putExtra("key", object.getString("key") == null ?Index.getKey(context): object.getString("key")));
+					context.startActivity(new Intent(context, ListActivity.class).putExtra("url", object.getString("href")).putExtra("type",object.getString("type")).putExtra("key", object.getString("key") == null ?Index.getKey(context): object.getString("key")));
 					break;
 				case "post":
 					context.startActivity(new Intent(context, PostViewActivity.class).putExtra("url", object.getString("href")).putExtra("key", object.getString("key") == null ?Index.getKey(context): object.getString("key")));
@@ -431,7 +438,7 @@ public class IndexAdapter extends RecyclerView.Adapter
 			comment = v.findViewById(R.id.comment);
 		}
 	}
-	public class ImagePreviewViewHolder extends RecyclerView.ViewHolder
+	public class ImagePreviewViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener
 	{
 		ImageView icon;
 		TextView title;
@@ -440,6 +447,32 @@ public class IndexAdapter extends RecyclerView.Adapter
 			super(v);
 			title = v.findViewById(R.id.title);
 			icon = v.findViewById(R.id.icon);
+			icon.setOnLongClickListener(this);
+		}
+
+		@Override
+		public boolean onLongClick(final View view)
+		{
+			AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+			builder.setItems(R.array.search_image, new DialogInterface.OnClickListener(){
+
+					@Override
+					public void onClick(DialogInterface p1, int p2)
+					{
+						String[] urls=view.getResources().getStringArray(R.array.search_url);
+						String url=String.format(urls[p2], index.getJSONObject(getAdapterPosition()).getString("src"));
+						Intent intent=new Intent(Intent.ACTION_VIEW);
+						intent.setData(Uri.parse(url));
+						//intent.setDataAndType(Uri.parse(url), p2 < urls.length - 1 ?"text/html": "image/*");
+						intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+						try
+						{itemView.getContext().startActivity(intent);}
+						catch (Exception e)
+						{}
+
+					}
+				}).create().show();
+			return true;
 		}
 	}
 	public class PostPosterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener

@@ -1,6 +1,8 @@
 package com.moe.x4jdm.model;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.moe.x4jdm.util.JavascriptUtil;
+import com.sun.script.javascript.RhinoScriptEngine;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -9,6 +11,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.mozilla.javascript.NativeObject;
+import javax.script.ScriptException;
 
 public class IndexHentai extends Index
 {
@@ -19,7 +23,7 @@ public class IndexHentai extends Index
 		JSONArray index=new JSONArray();
 		try
 		{
-			Document doc=Jsoup.connect(getHost() + "hentai-on").get();
+			Document doc=Jsoup.connect(getHost() + "").get();
 			for(Element section:doc.select("section.section.hentai")){
 				JSONObject title=new JSONObject();
 				index.add(title);
@@ -147,12 +151,36 @@ public class IndexHentai extends Index
 		try
 		{
 			Document doc=Jsoup.connect(url).get();
+			if(doc.selectFirst("div#apicodes-player")!=null){
+				String code=doc.selectFirst("body > script").html().trim();
+				String key=doc.select("head > script").last().html();
+				try
+				{
+					
+					RhinoScriptEngine rse=new RhinoScriptEngine();
+					rse.eval("var json;var player=new Object();player.on=function(){};player.addButton=function(){};player.setup=function(a){json=a;}; function jwplayer(){return player;};");
+					rse.eval(key);
+					rse.eval(code);
+					JSONObject json=JavascriptUtil.toJsonObject((NativeObject)rse.get("json"));
+					JSONArray ja=json.getJSONArray("sources");
+					for (int i=0;i < ja.size();i++)
+					{
+						String video=ja.getJSONObject(i).getString("file");
+						urls.put(video, video);
+					}
+				}
+				catch (ScriptException e)
+				{}
+			}
+else
+{
 			Elements a=doc.select(".download_links > a");
 			Iterator<Element> a_i=a.iterator();
 			while (a_i.hasNext())
 			{
 				Element link=a_i.next();
 				urls.put(link.child(0).text(), link.absUrl("href"));
+			}
 			}
 		}
 		catch (IOException e)

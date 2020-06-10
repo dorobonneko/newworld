@@ -225,7 +225,7 @@ public class Indexfjs extends Index
 				{
 					for (int i=0;i < desc.size();i++)
 					{
-						desc.get(i).tagName("p");
+						desc.get(i).tagName("span").appendElement("br");
 						Iterator<Element> iterator=desc.get(i).children().iterator();
 						while (iterator.hasNext())
 						{
@@ -263,7 +263,7 @@ public class Indexfjs extends Index
 				//换解析算法
 				Element content= doc.selectFirst(".content");
 				Element pic=content.selectFirst(".pic > img");
-				post.put("src", pic.absUrl("src"));
+				post.put("src", pic.absUrl("data-original"));
 				post.put("title", pic.attr("alt"));
 				Elements desc=content.select(".info > dl > :not(dt)");
 				Iterator<Element> desc_i=desc.iterator();
@@ -271,7 +271,7 @@ public class Indexfjs extends Index
 				{
 					Element e=desc_i.next();
 					if (e.tagName().equalsIgnoreCase("dd"))
-						e.tagName("p");
+						e.tagName("span").appendElement("br");
 					Iterator<Element> iterator=e.children().iterator();
 					while (iterator.hasNext())
 					{

@@ -16,6 +16,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import android.text.TextUtils;
 import java.net.URLDecoder;
+import com.moe.x4jdm.video.VideoParse;
 
 public class Indexnicotv extends Index
 {
@@ -267,8 +268,8 @@ public class Indexnicotv extends Index
 			data=Jsoup.connect(ub.toString()).ignoreContentType(true).execute().body();
 			Matcher matcher=Pattern.compile("<video\\ssrc=\\\"(.*?)\\\"[\\s\\S.]*?url:\\s\\\"(.*?)\\\"",Pattern.MULTILINE).matcher(data);
 			if(matcher.find()){
-				urls.put("1",matcher.group(1));
-				urls.put("2",matcher.group(2));
+				urls.put("1",VideoParse.parseQQ(matcher.group(1)));
+				urls.put("2",VideoParse.parseQQ(matcher.group(2)));
 			}
 		}
 		catch (IOException e)

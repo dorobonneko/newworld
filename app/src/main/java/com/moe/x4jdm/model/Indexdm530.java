@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import org.jsoup.Connection;
 import com.moe.x4jdm.video.VideoParse;
+import java.util.function.UnaryOperator;
 
 public class Indexdm530 extends Index
 {
@@ -199,6 +200,15 @@ private String getPage(String url){
 			post.put("profile", doc.selectFirst("p.txtDesc").text());
 			Elements p=doc.select("div#p-info > p");
 			p.remove(0);
+			p.replaceAll(new UnaryOperator<Element>(){
+
+					@Override
+					public Element apply(Element p1)
+					{
+						p1.tagName("span").appendElement("br");
+						return p1;
+					}
+				});
 			post.put("desc", p.toString());
 			try{post.put("src", doc.selectFirst("div.am-g > .am-intro-left > img").absUrl("src"));}catch(NullPointerException e){}
 			JSONArray video=new JSONArray();

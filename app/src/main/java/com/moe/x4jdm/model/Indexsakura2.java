@@ -17,6 +17,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import java.util.function.UnaryOperator;
 
 public class Indexsakura2 extends Index
 {
@@ -201,6 +202,15 @@ public class Indexsakura2 extends Index
 			post.put("profile", doc.selectFirst("p.txtDesc").text());
 			Elements p=doc.select("div#p-info > p");
 			p.remove(0);
+			p.replaceAll(new UnaryOperator<Element>(){
+
+					@Override
+					public Element apply(Element p1)
+					{
+						p1.tagName("span").appendElement("br");
+						return p1;
+					}
+				});
 			post.put("desc", p.toString());
 			try{post.put("src", doc.selectFirst("div.am-g > .am-intro-left > img").absUrl("src"));}catch(NullPointerException e){}
 			JSONArray video=new JSONArray();

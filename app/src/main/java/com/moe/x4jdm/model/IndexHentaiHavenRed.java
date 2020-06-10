@@ -14,6 +14,11 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.jsoup.HttpStatusException;
 import org.jsoup.Connection;
+import com.sun.script.javascript.RhinoScriptEngine;
+import org.mozilla.javascript.Context;
+import org.mozilla.javascript.NativeObject;
+import org.mozilla.javascript.NativeArray;
+import com.moe.x4jdm.util.JavascriptUtil;
 
 public class IndexHentaiHavenRed extends Index
 {
@@ -199,6 +204,24 @@ public class IndexHentaiHavenRed extends Index
 		try
 		{
 			Document doc=Jsoup.connect(getHost()+"wp-admin/admin-ajax.php").method(Connection.Method.POST).requestBody(String.format("action=doo_player_ajax&post=%s&nume=1&type=movie",url)).post();
+			Element iframe=doc.selectFirst("iframe.metaframe");
+			if(iframe!=null){
+				doc=Jsoup.connect(iframe.absUrl("src")).get();
+				String key=doc.select("head > script").last().html();
+				String code=doc.selectFirst("body > script").html().trim();
+				RhinoScriptEngine rse=new RhinoScriptEngine();
+				rse.eval("var json;var player=new Object();player.on=function(){};player.addButton=function(){};player.setup=function(a){json=a;}; function jwplayer(){return player;};");
+				rse.eval(key);
+				rse.eval(code);
+				JSONObject json=JavascriptUtil.toJsonObject((NativeObject)rse.get("json"));
+				JSONArray ja=json.getJSONArray("sources");
+				for (int i=0;i < ja.size();i++) {
+					String video=ja.getJSONObject(i).getString("file");
+					urls.put(video,video);
+				}
+				
+			}
+				else{
 			doc= Jsoup.connect("https://stream.ksplayer.com/download/" + Uri.parse(doc.selectFirst("iframe").absUrl("src")).getLastPathSegment() + "/").get();
 				Elements a=doc.select(".download_links > a");
 				Iterator<Element> a_i=a.iterator();
@@ -207,6 +230,7 @@ public class IndexHentaiHavenRed extends Index
 					Element link=a_i.next();
 					urls.put(link.child(0).text(), link.absUrl("href"));
 				}
+			}
 		}
 		catch (Exception e)
 		{}

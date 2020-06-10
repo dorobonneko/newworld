@@ -16,6 +16,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import com.moe.x4jdm.util.EscapeUnescape;
 import com.moe.x4jdm.video.VideoParse;
+import java.util.function.UnaryOperator;
 
 public class Indexxbdm extends Index
 {
@@ -184,6 +185,15 @@ public class Indexxbdm extends Index
 			post.put("title",doc.selectFirst("div.myui-content__thumb > a").attr("title"));
 			post.put("src",doc.selectFirst("div.myui-content__thumb > a > img").absUrl("data-original"));
 			Elements p=doc.select("div.myui-content__detail > p.data:not(.hidden-xs)");
+			p.replaceAll(new UnaryOperator<Element>(){
+
+					@Override
+					public Element apply(Element p1)
+					{
+						p1.tagName("span").appendElement("br");
+						return p1;
+					}
+				});
 			post.put("desc",p.toString());
 			post.put("profile",doc.selectFirst("span.sketch + span.data").text());
 				JSONArray video=new JSONArray();

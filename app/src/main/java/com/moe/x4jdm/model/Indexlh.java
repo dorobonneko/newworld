@@ -39,8 +39,9 @@ public class Indexlh extends Index
 					post.put("title",e.selectFirst(".name").text());
 					post.put("desc",e.selectFirst(".date").text());
 					String url=e.selectFirst("a").attr("href");
-					if(url.startsWith("/html/")){
+					if(url.startsWith("/html/manhua/")){
 						post.put("click","list");
+						post.put("type","comic");
 						url=url.replace(".html","_%d.html");
 						}else{
 							post.put("click","video");
@@ -82,7 +83,9 @@ public class Indexlh extends Index
 			
 			Element page=doc.selectFirst(".pagination");
 			if(page!=null){
-				list.put("page",page.selectFirst(".active").text());
+				try{list.put("page",page.selectFirst("a.current").text());}catch(NullPointerException e){
+					list.put("page",1);
+				}
 				if(!manhua){
 				String href=page.select("a").last().attr("href");
 				if(TextUtils.isEmpty(href))
@@ -95,8 +98,9 @@ public class Indexlh extends Index
 						post.put("title",e.selectFirst(".name").text());
 						post.put("desc",e.selectFirst(".date").text());
 						href=e.selectFirst("a").attr("href");
-						if(href.startsWith("/html/")){
+						if(href.startsWith("/html/manhua/")){
 							post.put("click","list");
+							post.put("type","comic");
 							href=href.replace(".html","_%d.html");
 							}else{
 								post.put("click","video");
@@ -106,7 +110,7 @@ public class Indexlh extends Index
 						post.put("src",e.selectFirst("img").absUrl("src"));
 					}
 					}else{
-						String count=page.selectFirst("li").text();
+						String count=page.selectFirst("a.pageinfo").text();
 						list.put("count",count.substring(1,count.length()-2));
 						for(Element e:doc.select("#userInfo > div > img")){
 							JSONObject post=new JSONObject();

@@ -12,6 +12,7 @@ import android.net.Uri;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.util.LinkedHashMap;
+import java.util.function.UnaryOperator;
 
 public class Indexhb extends Index
 {
@@ -172,6 +173,15 @@ public class Indexhb extends Index
 			post.put("title",doc.selectFirst("div.info_z h1").text());
 			post.put("src",doc.selectFirst("div.info_z img").absUrl("src"));
 			Elements p=doc.select("div.info_z p");
+			p.replaceAll(new UnaryOperator<Element>(){
+
+					@Override
+					public Element apply(Element p1)
+					{
+						p1.tagName("span").appendElement("br");
+						return p1;
+					}
+				});
 			post.put("desc",p.toString());
 			post.put("profile",doc.selectFirst("div.playpdes").text());
 			Elements play=doc.select("div.playerlist > ul");

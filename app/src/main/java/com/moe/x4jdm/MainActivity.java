@@ -268,7 +268,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 					}
 				}).show();
 		}else if("favorite".equals(cursor)){
-			final String[] keys=new String[]{"adh","hh","xyg","msiv","hhr","ppc","ahv","llias","jyk","hb","3atv"};
+			final String[] keys=new String[]{"adh","hh","xyg","msiv","hhr","ppc","ahv","llias","jyk","hb","3atv","sg","neiyix"};
 			new AlertDialog.Builder(this).setItems(keys, new DialogInterface.OnClickListener(){
 
 					@Override

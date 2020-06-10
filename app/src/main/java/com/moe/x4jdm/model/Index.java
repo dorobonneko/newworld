@@ -109,6 +109,12 @@ public abstract class Index
 			case "qinqin":
 				models.put(web,index=new Indexqinqin());
 				break;
+			case "sg":
+				models.put(web,index=new indexsg());
+				break;
+			case "neiyix":
+				models.put(web,index=new Indexneiyix());
+				break;
 			default:
 			models.put(web,index=new None());
 			break;

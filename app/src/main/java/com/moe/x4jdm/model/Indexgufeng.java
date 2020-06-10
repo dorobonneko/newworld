@@ -10,6 +10,8 @@ import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import org.jsoup.HttpStatusException;
 import android.net.Uri;
+import org.jsoup.select.Elements;
+import java.util.function.UnaryOperator;
 
 public class Indexgufeng extends Index
 {
@@ -152,7 +154,17 @@ public class Indexgufeng extends Index
 			Document doc=Jsoup.connect(url).get();
 			post.put("title",doc.selectFirst("h1.title").text());
 			post.put("src",doc.selectFirst("div#Cover > mip-img").absUrl("src"));
-			post.put("desc",doc.select("dl.pic_zi").toString());
+			Elements desc=doc.select("dl.pic_zi");
+			/*desc.replaceAll(new UnaryOperator<Element>(){
+
+					@Override
+					public Element apply(Element p1)
+					{
+						p1.tagName("span").appendElement("br");
+						return p1;
+					}
+				});*/
+			post.put("desc",desc.toString());
 			post.put("profile",doc.selectFirst("p.txtDesc").text());
 			JSONArray video=new JSONArray();
 			post.put("video",video);

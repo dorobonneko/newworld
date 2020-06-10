@@ -14,6 +14,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.util.function.UnaryOperator;
 
 public class Indexahv extends Index
 {
@@ -44,12 +45,13 @@ public class Indexahv extends Index
 			JSONArray tab=new JSONArray();
 			index.add(tab);
 			Iterator<Element> tabs_i=tabs.iterator();
-			while(tabs_i.hasNext()){
+			while (tabs_i.hasNext())
+			{
 				JSONObject item=new JSONObject();
 				tab.add(item);
 				Element a=tabs_i.next();
-				item.put("title",a.text());
-				item.put("href",makeUrl(a.absUrl("href")));
+				item.put("title", a.text());
+				item.put("href", makeUrl(a.absUrl("href")));
 			}
 			Elements mains=doc.select(".thumbs_video");
 			if (mains != null)
@@ -59,22 +61,43 @@ public class Indexahv extends Index
 				{
 					Element main_item=mains_i.next();
 					JSONObject main=new JSONObject();
-					try{main.put("title", main_item.selectFirst(".thumbs-header-title").text());}catch(NullPointerException e){}
-					try{main.put("href", makeUrl(main_item.selectFirst(".thumbs-footer > a").absUrl("href")));}catch(NullPointerException e){}
+					try
+					{main.put("title", main_item.selectFirst(".thumbs-header-title").text());}
+					catch (NullPointerException e)
+					{}
+					try
+					{main.put("href", makeUrl(main_item.selectFirst(".thumbs-footer > a").absUrl("href")));}
+					catch (NullPointerException e)
+					{}
 					//JSONArray item_json=new JSONArray();
 					index.add(main);
 					for (Element e:main_item.select(".thumbs-list-item"))
 					{
 						JSONObject post=new JSONObject();
-						try{post.put("title", e.selectFirst(".thumbs-list-item-title").text());}catch(Exception ee){}
-						try{post.put("href", e.selectFirst("a").absUrl("href"));}catch(Exception ee){}
-						try{post.put("src", e.selectFirst("img").absUrl("src"));}catch(Exception ee){}
-						try{post.put("desc",e.selectFirst(".thumbs-list-item-time").text());}catch(Exception ee){}
-						try{post.put("score",e.selectFirst(".thumbs-list-item-info-elem_view").text());}catch(Exception ee){}
+						try
+						{post.put("title", e.selectFirst(".thumbs-list-item-title").text());}
+						catch (Exception ee)
+						{}
+						try
+						{post.put("href", e.selectFirst("a").absUrl("href"));}
+						catch (Exception ee)
+						{}
+						try
+						{post.put("src", e.selectFirst("img").absUrl("data-original"));}
+						catch (Exception ee)
+						{}
+						try
+						{post.put("desc", e.selectFirst(".thumbs-list-item-time").text());}
+						catch (Exception ee)
+						{}
+						try
+						{post.put("score", e.selectFirst(".thumbs-list-item-info-elem_view").text());}
+						catch (Exception ee)
+						{}
 						index.add(post);
 					}
 					//main.put("item", item_json);
-					
+
 				}
 
 			}
@@ -109,12 +132,15 @@ public class Indexahv extends Index
 			//list.put("title", doc.selectFirst("h3.section-title").text());
 
 			Element page=doc.selectFirst("ul.pager-list");
-			if(page==null){
-				list.put("page",1);
-				list.put("count",1);
-			}else{
-				list.put("page",page.selectFirst(".pager-list-item_current").text());
-				list.put("count",list.getIntValue("page")+(page.selectFirst(".pager-list-item_next")==null?0:1));
+			if (page == null)
+			{
+				list.put("page", 1);
+				list.put("count", 1);
+			}
+			else
+			{
+				list.put("page", page.selectFirst(".pager-list-item_current").text());
+				list.put("count", list.getIntValue("page") + (page.selectFirst(".pager-list-item_next") == null ?0: 1));
 			}
 
 			JSONArray item_json=new JSONArray();
@@ -122,16 +148,34 @@ public class Indexahv extends Index
 			for (Element e:doc.select(".thumbs-list-item"))
 			{
 				JSONObject post=new JSONObject();
-				try{post.put("title", e.selectFirst(".thumbs-list-item-title").text());}catch(Exception ee){}
-				try{post.put("href", e.selectFirst("a").absUrl("href"));}catch(Exception ee){}
-				try{post.put("src", e.selectFirst("img").absUrl("src"));}catch(Exception ee){}
-				try{post.put("desc",e.selectFirst(".thumbs-list-item-time").text());}catch(Exception ee){}
-				try{post.put("score",e.selectFirst(".thumbs-list-item-info-elem_view").text());}catch(Exception ee){}
+				try
+				{post.put("title", e.selectFirst(".thumbs-list-item-title").text());}
+				catch (Exception ee)
+				{}
+				try
+				{post.put("href", e.selectFirst("a").absUrl("href"));}
+				catch (Exception ee)
+				{}
+				try
+				{post.put("src", e.selectFirst("img").absUrl("data-original"));}
+				catch (Exception ee)
+				{}
+				try
+				{post.put("desc", e.selectFirst(".thumbs-list-item-time").text());}
+				catch (Exception ee)
+				{}
+				try
+				{post.put("score", e.selectFirst(".thumbs-list-item-info-elem_view").text());}
+				catch (Exception ee)
+				{}
 				item_json.add(post);
 			}
 			list.put("item", item_json);
-		}catch(HttpStatusException e){
-			if(e.getStatusCode()==404){
+		}
+		catch (HttpStatusException e)
+		{
+			if (e.getStatusCode() == 404)
+			{
 				list.put("page", Integer.parseInt(Uri.parse(url).getLastPathSegment()));
 				list.put("count", list.getIntValue("page"));
 			}
@@ -152,19 +196,33 @@ public class Indexahv extends Index
 			Document doc=Jsoup.connect(url).get();
 			post.put("title", doc.selectFirst("div.video-block-header-title").text());
 			//post.put("profile", doc.selectFirst("div.info > em > .item").toString());
-			post.put("desc", doc.selectFirst("div.video-block-main-stats").toString());
-			Matcher m=Pattern.compile("rnd:\\s'([0-9]*?)',\\svideo_url:\\s'function/0/(.*?)',[\\s\\S.]*?preview_url:\\s'(.*?)',",Pattern.MULTILINE).matcher(doc.select("script").toString());
-			if(m.find()){
-			try{post.put("src",m.group(3));}catch(NullPointerException e){}
-			JSONArray items=new JSONArray();
-			JSONArray video=new JSONArray();
-			video.add(items);
-			post.put("video", video);
-			JSONObject item=new JSONObject();
+			Elements desc=doc.selectFirst("div.video-block-main-stats").children();
+			desc.replaceAll(new UnaryOperator<Element>(){
+
+					@Override
+					public Element apply(Element p1)
+					{
+						p1.tagName("span").appendElement("br");
+						return p1;
+					}
+				});
+			post.put("desc", desc.toString().replaceAll("div", "span"));
+			Matcher m=Pattern.compile("rnd:\\s'([0-9]*?)',\\svideo_url:\\s'function/0/(.*?)',[\\s\\S.]*?preview_url:\\s'(.*?)',", Pattern.MULTILINE).matcher(doc.select("script").toString());
+			if (m.find())
+			{
+				try
+				{post.put("src", m.group(3));}
+				catch (NullPointerException e)
+				{}
+				JSONArray items=new JSONArray();
+				JSONArray video=new JSONArray();
+				video.add(items);
+				post.put("video", video);
+				JSONObject item=new JSONObject();
 				items.add(item);
 
-				item.put("title","Play");
-				item.put("href",getHost()+"embed/"+doc.selectFirst("input[name='video_id']").attr("value"));
+				item.put("title", "Play");
+				item.put("href", getHost() + "embed/" + doc.selectFirst("input[name='video_id']").attr("value"));
 				//item.put("href",m.group(2)+"?rnd="+m.group(1));
 			}
 		}
@@ -182,13 +240,13 @@ public class Indexahv extends Index
 	@Override
 	public String search(String key)
 	{
-		return getHost()+"search/"+key+"/?mode=async&function=get_block&block_id=list_videos_videos_list_search_result&sort_by=ctr&from=%d&q="+key;
+		return getHost() + "search/" + key + "/?mode=async&function=get_block&block_id=list_videos_videos_list_search_result&sort_by=ctr&from=%d&q=" + key;
 	}
 
 	@Override
 	public String makeUrl(String url)
 	{
-		return url+"?mode=async&function=get_block&block_id=list_videos_common_videos_list&sort_by=ctr&from=%d";
+		return url + "?mode=async&function=get_block&block_id=list_videos_common_videos_list&sort_by=ctr&from=%d";
 	}
 
 	@Override
