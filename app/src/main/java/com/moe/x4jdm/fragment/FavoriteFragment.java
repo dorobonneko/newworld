@@ -13,7 +13,6 @@ import com.moe.x4jdm.R;
 import com.moe.x4jdm.adapter.PostAdapter;
 import com.moe.x4jdm.model.Index;
 import com.moe.x4jdm.util.Space;
-import com.moe.x4jdm.widget.GridLayoutManager;
 import com.moe.x4jdm.model.Database;
 import com.moe.x4jdm.adapter.IndexAdapter;
 import com.moe.x4jdm.widget.IndexGridLayoutManager;

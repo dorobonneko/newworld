@@ -53,7 +53,7 @@ public class Application extends android.app.Application implements Thread.Uncau
 		
 		//UMConfigure.init(this, "5e743b09978eea0774044ead", "Umeng", UMConfigure.DEVICE_TYPE_PHONE, "");
 		//Bugly.init(this,"39c93f2bb3",false);
-		Thread.currentThread().setUncaughtExceptionHandler(this);
+		Thread.setDefaultUncaughtExceptionHandler(this);
 		trustEveryone();
 		GTRController.init(this);
 		//Fresco.initialize(this);

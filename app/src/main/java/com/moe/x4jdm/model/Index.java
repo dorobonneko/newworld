@@ -115,6 +115,9 @@ public abstract class Index
 			case "neiyix":
 				models.put(web,index=new Indexneiyix());
 				break;
+			case "ex":
+				models.put(web,index=new Indexex());
+				break;
 			default:
 			models.put(web,index=new None());
 			break;

@@ -69,6 +69,7 @@ public class WaterFullLayoutManager extends RecyclerView.LayoutManager
 			Rect rect=rects.get(i);
 			View child=recycler.getViewForPosition(i);
 			measureChildWithMargins(child,0,0);
+			
 			int width=getDecoratedMeasuredWidth(child);
 			int height=getDecoratedMeasuredHeight(child);
 			Rect rec=new Rect();
@@ -133,8 +134,8 @@ public class WaterFullLayoutManager extends RecyclerView.LayoutManager
 		verticalScrollOffset += travel;
 
 		// 调用该方法通知view在y方向上移动指定距离
-		offsetChildrenVertical(-travel);
 		onLayoutChildren(recycler,state);
+		offsetChildrenVertical(-travel);
 		return travel;
 	}
 

@@ -15,14 +15,9 @@ public class Space extends RecyclerView.ItemDecoration
 	@Override
 	public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state)
 	{
-		GridLayoutManager glm=(GridLayoutManager) parent.getLayoutManager();
-		if(glm.getSpanSizeLookup().getSpanSize(parent.getChildLayoutPosition(view))==3){
-			/*int v=size/4;
-			outRect.set(0,0,0,v);*/
-		}else{
+		
 		int v=size/2;
 		outRect.set(v,v,v,v);
-		}
 			
 	}
 

@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.alibaba.fastjson.JSONArray;
 import com.moe.x4jdm.util.Space;
-import com.moe.x4jdm.widget.GridLayoutManager;
 import java.util.ArrayList;
 import java.util.List;
 import com.moe.x4jdm.widget.IndexGridLayoutManager;
