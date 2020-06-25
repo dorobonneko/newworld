@@ -41,6 +41,8 @@
 		<activity
 			android:name=".ListActivity"/>
 		<activity
+			android:name=".PhotoActivity"/>
+		<activity
 			android:name=".PostViewActivity"/>
         <meta-data
             android:name="android.max_aspect"

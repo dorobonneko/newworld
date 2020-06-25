@@ -30,8 +30,6 @@ import com.moe.x4jdm.widget.IndexGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.graphics.Rect;
 import android.view.ViewTreeObserver;
-import com.moe.x4jdm.widget.SpanLayoutManager;
-import com.moe.x4jdm.widget.SizeLookup;
 
 public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener,View.OnClickListener,PostAdapter.OnItemClickListener
 {
@@ -68,8 +66,8 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 		recyclerview.setHasFixedSize(true);
 		recyclerview.addItemDecoration(new Space((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,8,getResources().getDisplayMetrics())));
 		mIndexAdapter=new IndexAdapter(data=new JSONArray());
-		//recyclerview.setLayoutManager(new IndexGridLayoutManager(view.getContext(),mIndexAdapter));
-		recyclerview.setLayoutManager(new SpanLayoutManager(new SizeLookup(mIndexAdapter)));
+		recyclerview.setLayoutManager(new IndexGridLayoutManager(view.getContext(),mIndexAdapter));
+		//recyclerview.setLayoutManager(new SpanLayoutManager(new SizeLookup(mIndexAdapter)));
 		recyclerview.setAdapter(mIndexAdapter);
 		final Toolbar bar=getActivity().findViewById(R.id.toolbar);
 		bar.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener(){

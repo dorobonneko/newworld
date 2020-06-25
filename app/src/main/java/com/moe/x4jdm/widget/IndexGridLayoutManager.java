@@ -12,7 +12,7 @@ public class IndexGridLayoutManager extends GridLayoutManager
 	//private int over=200,overoffset;
 	public IndexGridLayoutManager(Context context, final RecyclerView.Adapter adaptet)
 	{
-		super(context, 3);
+		super(context, 6);
 		setSpanSizeLookup(new SpanSizeLookup(){
 
 				@Override
@@ -33,10 +33,12 @@ public class IndexGridLayoutManager extends GridLayoutManager
 						case 12://commemnt
 						case 13://listcomic
 						case 100:
+							return 6;
+						case 14:
 							return 3;
 						case 4:
 						case 6:
-							return 1;
+							return 2;
 					}
 					return 1;
 				}

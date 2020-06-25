@@ -48,6 +48,8 @@ import android.support.v7.app.AlertDialog;
 import android.content.DialogInterface;
 import android.net.Uri;
 import com.moe.pussy.utils.ProgressDrawable;
+import com.moe.x4jdm.PhotoActivity;
+import org.apache.commons.codec.net.Utils;
 
 public class IndexAdapter extends RecyclerView.Adapter
 {
@@ -140,6 +142,8 @@ public class IndexAdapter extends RecyclerView.Adapter
 				return new CommentViewHolder(LayoutInflater.from(p1.getContext()).inflate(R.layout.comment_item,p1,false));
 			case 13:
 				return new ListComicViewHolder(new ComicView(p1.getContext()));
+			case 14:
+				return new PreviewViewHolder(LayoutInflater.from(p1.getContext()).inflate(R.layout.post_preview,p1,false));
 		}
 		return new ViewHolder(new View(p1.getContext()));
 	}
@@ -288,6 +292,14 @@ public class IndexAdapter extends RecyclerView.Adapter
 			JSONObject object=index.getJSONObject(position);
 			Pussy.$(lcvh.itemView.getContext()).load(object.getString("src")).userAgent("x4jdm"+Math.random()).execute().delay(150).into(lcvh.comic);
 			lcvh.comic.setPage(position+1);
+		}else if(vh instanceof PreviewViewHolder){
+			PreviewViewHolder pvh=(IndexAdapter.PreviewViewHolder) vh;
+			JSONObject object=index.getJSONObject(position);
+			ProgressDrawable pd=(ProgressDrawable) pvh.icon.getTag(pvh.icon.getId());
+			//if(pd==null)
+			pvh.icon.setTag(pvh.icon.getId(),pd=new ProgressDrawable(pvh.itemView.getContext()));
+			Pussy.$(pvh.itemView.getContext()).load(object.getString("src")).listener(pd).execute().transformer(new CropTransformer(Gravity.CENTER)).error(new ColorDrawable(0xffa05555)).placeHolder(pd).delay(150).into(pvh.icon);
+			
 		}
 	}
 
@@ -331,6 +343,8 @@ public class IndexAdapter extends RecyclerView.Adapter
 						return 12;
 					case "listcomic":
 						return 13;
+					case "preview":
+						return 14;
 				}
 			}
 			String click=jo.getString("click");
@@ -417,6 +431,26 @@ public class IndexAdapter extends RecyclerView.Adapter
 					break;
 			}
 		}
+	}
+	class PreviewViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+		ImageView icon;
+		PreviewViewHolder(View v){
+			super(v);
+			icon=(ImageView) v;
+			v.setOnClickListener(this);
+		}
+
+		@Override
+		public void onClick(View p1)
+		{
+			JSONObject data=index.getJSONObject(getAdapterPosition());
+			String url=data.getString("source");
+			if(url==null)
+				url=data.getString("src");
+			p1.getContext().startActivity(new Intent(p1.getContext(),PhotoActivity.class).setData(Uri.parse(url)));
+		}
+
+		
 	}
 	class ListComicViewHolder extends RecyclerView.ViewHolder{
 		ComicView comic;

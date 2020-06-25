@@ -50,7 +50,7 @@ public class ListFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 		mRecyclerView.setHasFixedSize(true);
 		pa=new IndexAdapter(post_data=new JSONArray());
 		mRecyclerView.setLayoutManager(new IndexGridLayoutManager(getContext(),pa));
-		
+		//mRecyclerView.setLayoutManager(new SpanLayoutManager(new SizeLookup(pa)));
 		//((SimpleItemAnimator)mRecyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
 		mRecyclerView.addItemDecoration(new Space((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,8,getResources().getDisplayMetrics())));
 		mRecyclerView.setAdapter(pa);
@@ -161,7 +161,7 @@ public class ListFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 		public void onScrolled(RecyclerView recyclerView, int dx, int dy)
 		{
 			GridLayoutManager glm=(GridLayoutManager) recyclerView.getLayoutManager();
-			if(canloadmore&&!mSwipeRefreshLayout.isRefreshing()&&!loadMore&&dy>=0&&glm.findLastVisibleItemPosition()>glm.getItemCount()-glm.getSpanCount()){
+			if(canloadmore&&!mSwipeRefreshLayout.isRefreshing()&&!loadMore&&dy>=0&&glm.findLastVisibleItemPosition()>glm.getItemCount()-3){
 				loadMore();
 				pa.setFoot(R.drawable.loading,"正在加载",true);
 			}
