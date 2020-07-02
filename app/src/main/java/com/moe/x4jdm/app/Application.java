@@ -13,6 +13,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import android.content.Context;
 import com.tencent.wstt.gt.controller.GTRController;
+import com.moe.x4jdm.js.Runtime;
 
 public class Application extends android.app.Application implements Thread.UncaughtExceptionHandler
 {
@@ -56,6 +57,7 @@ public class Application extends android.app.Application implements Thread.Uncau
 		Thread.setDefaultUncaughtExceptionHandler(this);
 		trustEveryone();
 		GTRController.init(this);
+		Runtime.runtime=new Runtime(getApplicationContext());
 		//Fresco.initialize(this);
 		//LeakCanary.install(this);
 	}

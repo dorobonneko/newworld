@@ -18,6 +18,7 @@ import android.graphics.drawable.Drawable;
 import android.widget.Toast;
 import android.Manifest;
 import android.content.pm.PackageManager;
+import java.nio.file.FileAlreadyExistsException;
 
 public class PhotoActivity extends AppCompatActivity implements View.OnClickListener
 {
@@ -34,9 +35,26 @@ public class PhotoActivity extends AppCompatActivity implements View.OnClickList
 		((ViewGroup)findViewById(R.id.content)).addView(mPhotoView=new PhotoView(this),0);
 		//mPhotoView.setBackgroundColor(0xff000000);
 		mPhotoView.enable();
-		mPhotoView.setOnClickListener(this);
-		ProgressDrawable pd=new ProgressDrawable();
-		Pussy.$(this).load(getIntent().getDataString()).listener(pd).execute().placeHolder(pd).into(mPhotoView);
+		ProgressDrawable pd=new ProgressDrawable(this);
+		pd.setColor(0xffffffff);
+		Pussy.$(this).load(getIntent().getDataString()).listener(pd).execute().placeHolder(pd).listener(new Listener(){
+
+				@Override
+				public void onPlaceHolder(Target t, Drawable d)
+				{
+				}
+
+				@Override
+				public void onSuccess(Target t, Drawable d)
+				{
+					mPhotoView.setOnClickListener(PhotoActivity.this);
+				}
+
+				@Override
+				public void onError(Target t, Drawable d, Throwable e)
+				{
+				}
+			}).into(mPhotoView);
 		}
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
@@ -66,6 +84,9 @@ public class PhotoActivity extends AppCompatActivity implements View.OnClickList
 						@Override
 						public void onError(Target t, Drawable d, Throwable e)
 						{
+							if(e instanceof FileAlreadyExistsException)
+								Toast.makeText(getApplicationContext(),"已有同名文件",Toast.LENGTH_SHORT).show();
+								else
 							Toast.makeText(getApplicationContext(),"保存失败"+(e==null?"":e.getMessage()),Toast.LENGTH_SHORT).show();
 						}
 					}).download(new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), URLUtil.guessFileName(getIntent().getDataString(), null, "image/*")));

@@ -183,7 +183,7 @@ public class PostViewActivity extends AppCompatActivity implements View.OnApplyW
 			{
 				try
 				{
-					final JSONObject jo=JSONObject.parseObject(Index.getModel(key).getPost(url));
+					final JSONObject jo=JSONObject.parseObject(Index.getModel(getApplicationContext(),key).getPost(url));
 					runOnUiThread(new Runnable(){
 
 							@Override
@@ -252,7 +252,7 @@ public class PostViewActivity extends AppCompatActivity implements View.OnApplyW
 			public void run()
 			{
 				try{
-				final Map<String,String> url=Index.getModel(key).getVideoUrl(jo.getString("href"));
+				final Map<String,String> url=Index.getModel(getApplicationContext(),key).getVideoUrl(jo.getString("href"));
 					if (url != null&&!url.isEmpty())
 						runOnUiThread(new Runnable(){
 

@@ -200,7 +200,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 		switch(p2){
 			case "web":
 				String web=p1.getString(p2,"x4j");
-				Index index=Index.getModel(web);
+				Index index=Index.getModel(getApplicationContext(),web);
 				Menu menu=mNavigationView.getMenu();
 				menu.findItem(R.id.order).setVisible(index.getGold()!=null);
 				menu.findItem(R.id.time).setVisible(index.hasTime());
@@ -307,7 +307,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 							Toast.makeText(getApplicationContext(), "未安装支付宝！", Toast.LENGTH_SHORT).show();
 						}
 					}else if(count==2){
-						final String[] keys=new String[]{"moeero","lh","hentai","youma","gufeng","qinqin","ex"};
+						final String[] keys=new String[]{"moeero","lh","hentai","youma","gufeng","qinqin","ex","huashi"};
 						new AlertDialog.Builder(MainActivity.this).setItems(keys, new DialogInterface.OnClickListener(){
 
 								@Override

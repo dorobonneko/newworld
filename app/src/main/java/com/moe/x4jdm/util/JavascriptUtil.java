@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Set;
 import org.mozilla.javascript.NativeArray;
 import org.mozilla.javascript.NativeObject;
+import org.mozilla.javascript.NativeString;
+import org.mozilla.javascript.ConsString;
 
 public class JavascriptUtil
 {
@@ -18,9 +20,13 @@ public class JavascriptUtil
         {
             try
             {
+				if (entry.getValue() instanceof ConsString)
+				{
+					object.put(entry.getKey().toString(),entry.getValue().toString());
+				}else
                 if (entry.getValue() instanceof String)
                 {
-                    object.put(entry.getKey().toString(), JSONObject.parse(entry.getValue().toString()));
+                    object.put(entry.getKey().toString(), entry.getValue().toString());
                 }
                 else if (entry.getValue() instanceof NativeArray)
                 {
@@ -29,7 +35,9 @@ public class JavascriptUtil
                 else if (entry.getValue() instanceof NativeObject)
                 {
                     object.put(entry.getKey().toString(), toJsonObject((NativeObject) entry.getValue()));
-                }
+                }else{
+					object.put(entry.getKey().toString(), entry.getValue().toString());
+				}
             }
             catch (JSONException e)
             {

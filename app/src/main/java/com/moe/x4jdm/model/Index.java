@@ -7,9 +7,9 @@ public abstract class Index
 {
 	private static Map<String,Index> models=new HashMap<>();
 	public synchronized static Index getModel(Context context){
-		return getModel(getKey(context));
+		return getModel(context,getKey(context));
 	}
-	public synchronized static Index getModel(String web){
+	public synchronized static Index getModel(Context context,String web){
 		Index index=models.get(web);
 		if(index!=null)return index;
 		switch(web){
@@ -117,6 +117,9 @@ public abstract class Index
 				break;
 			case "ex":
 				models.put(web,index=new Indexex());
+				break;
+			case "huashi":
+				models.put(web,index=new IndexJs(context,"huashi.js"));
 				break;
 			default:
 			models.put(web,index=new None());

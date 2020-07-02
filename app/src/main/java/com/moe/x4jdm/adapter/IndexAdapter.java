@@ -429,6 +429,13 @@ public class IndexAdapter extends RecyclerView.Adapter
 						}
 					}.start();
 					break;
+				case "photo":
+					String url=object.getString("source");
+					if(url==null)
+						url=object.getString("src");
+					context.startActivity(new Intent(context,PhotoActivity.class).setData(Uri.parse(url)));
+					
+					break;
 			}
 		}
 	}
@@ -472,7 +479,7 @@ public class IndexAdapter extends RecyclerView.Adapter
 			comment = v.findViewById(R.id.comment);
 		}
 	}
-	public class ImagePreviewViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener
+	public class ImagePreviewViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener,View.OnClickListener
 	{
 		ImageView icon;
 		TextView title;
@@ -482,7 +489,19 @@ public class IndexAdapter extends RecyclerView.Adapter
 			title = v.findViewById(R.id.title);
 			icon = v.findViewById(R.id.icon);
 			icon.setOnLongClickListener(this);
+			icon.setOnClickListener(this);
 		}
+
+		@Override
+		public void onClick(View p1)
+		{
+			JSONObject data=index.getJSONObject(getAdapterPosition());
+			String url=data.getString("source");
+			if(url==null)
+				url=data.getString("src");
+			p1.getContext().startActivity(new Intent(p1.getContext(),PhotoActivity.class).setData(Uri.parse(url)));
+		}
+
 
 		@Override
 		public boolean onLongClick(final View view)

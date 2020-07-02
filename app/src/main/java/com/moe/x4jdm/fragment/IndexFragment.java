@@ -161,9 +161,9 @@ public class IndexFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 		(mThread=new Thread(){
 			public void run()
 			{
-				Index.getModel(key).clearCache();
+				Index.getModel(getContext(),key).clearCache();
 				if(interrupted())return;
-				final String data=Index.getModel(key).getIndex(page);
+				final String data=Index.getModel(getContext(),key).getIndex(page);
 				if(interrupted())return;
 				mSwipeRefreshLayout.post(new Runnable(){
 
