@@ -252,7 +252,7 @@ public class PostViewActivity extends AppCompatActivity implements View.OnApplyW
 			public void run()
 			{
 				try{
-				final Map<String,String> url=Index.getModel(getApplicationContext(),key).getVideoUrl(jo.getString("href"));
+				final Map<String,String> url=Index.getModel(PostViewActivity.this,key).getVideoUrl(jo.getString("href"));
 					if (url != null&&!url.isEmpty())
 						runOnUiThread(new Runnable(){
 

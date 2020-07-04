@@ -121,6 +121,9 @@ public abstract class Index
 			case "huashi":
 				models.put(web,index=new IndexJs(context,"huashi.js"));
 				break;
+			case "24cos":
+				models.put(web,index=new IndexJs(context,"24cos.js"));
+				break;
 			default:
 			models.put(web,index=new None());
 			break;
@@ -147,7 +150,7 @@ public abstract class Index
 	public String makeUrl(String url){
 		return url;
 	}
-	public abstract String getHost();
+	public String getHost(){return null;}
 	public String getGold(){
 		return null;
 	}

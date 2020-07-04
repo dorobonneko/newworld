@@ -12,6 +12,7 @@ import android.net.Uri;
 import org.mozilla.javascript.NativeObject;
 import com.moe.x4jdm.util.JavascriptUtil;
 import org.mozilla.javascript.NativeArray;
+import org.jsoup.Jsoup;
 
 public class Engine implements ScriptEngine
 {
@@ -23,6 +24,7 @@ public class Engine implements ScriptEngine
 		try
 		{
 			importClass(Uri.class);
+			importClass(Jsoup.class);
 			scriptEngine.eval(new InputStreamReader(context.getAssets().open("globa.js")));
 		}catch(Exception e){}
 	}

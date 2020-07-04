@@ -166,9 +166,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case "order":
                 f=new ListFragment();
 				Bundle b=new Bundle();
-				b.putString("url",Index.getModel(getApplicationContext()).getGold());
+				b.putString("url",Index.getModel(MainActivity.this).getGold());
 				b.putInt("page",1);
-				b.putString("key",Index.getKey(getApplicationContext()));
+				b.putString("key",Index.getKey(MainActivity.this));
 				f.setArguments(b);
                 break;
 			
@@ -200,7 +200,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 		switch(p2){
 			case "web":
 				String web=p1.getString(p2,"x4j");
-				Index index=Index.getModel(getApplicationContext(),web);
+				Index index=Index.getModel(this,web);
 				Menu menu=mNavigationView.getMenu();
 				menu.findItem(R.id.order).setVisible(index.getGold()!=null);
 				menu.findItem(R.id.time).setVisible(index.hasTime());
@@ -307,7 +307,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 							Toast.makeText(getApplicationContext(), "未安装支付宝！", Toast.LENGTH_SHORT).show();
 						}
 					}else if(count==2){
-						final String[] keys=new String[]{"moeero","lh","hentai","youma","gufeng","qinqin","ex","huashi"};
+						final String[] keys=new String[]{"moeero","lh","hentai","youma","gufeng","qinqin","ex","huashi","24cos"};
 						new AlertDialog.Builder(MainActivity.this).setItems(keys, new DialogInterface.OnClickListener(){
 
 								@Override

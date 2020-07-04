@@ -8,3 +8,9 @@ for(var fn in runtime) {
     })();
   }
 }
+function array(list){
+	var arr=new Array();
+	for(var i=0;i<list.size();i++)
+	arr.push(list.get(i));
+	return arr;
+}

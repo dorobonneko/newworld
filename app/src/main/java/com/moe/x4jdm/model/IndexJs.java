@@ -18,6 +18,14 @@ import org.mozilla.javascript.NativeObject;
 import android.content.Context;
 import com.moe.x4jdm.js.Engine;
 import javax.script.ScriptEngine;
+import org.mozilla.javascript.NativeBoolean;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+import org.jsoup.Jsoup;
+import android.support.v7.app.AlertDialog;
+import android.os.Looper;
+import android.os.Handler;
+import android.widget.Toast;
 
 public class IndexJs extends Index
 {
@@ -33,6 +41,19 @@ public class IndexJs extends Index
 		this.context=context;
 		this.uri=uri;
 	}
+	private void showError(final String error){
+		if(Looper.getMainLooper()!=Looper.myLooper())
+			new Handler(Looper.getMainLooper()).post(new Runnable(){
+
+					@Override
+					public void run()
+					{
+						new AlertDialog.Builder(context).setMessage(error).show();
+					}
+				});
+				else
+		new AlertDialog.Builder(context).setMessage(error).show();
+	}
 	private void checkInit(){
 		if(engine==null){
 			engine=new Engine(context);
@@ -44,27 +65,11 @@ public class IndexJs extends Index
 					engine.eval(new InputStreamReader(context.getContentResolver().openInputStream(uri)));
 				}
 			}
-			catch (IOException e)
-			{}
-			catch (ScriptException e)
-			{}
+			
+			catch (Exception e)
+			{showError(e.getMessage());}
 		}
 	}
-	@Override
-	public String getHost()
-	{
-		checkInit();
-		try
-		{
-			return engine.invokeFunction("getHost").toString();
-		}
-		catch (NoSuchMethodException e)
-		{}
-		catch (ScriptException e)
-		{}
-		return null;
-	}
-
 	@Override
 	public String getIndex(int page)
 	{
@@ -73,10 +78,8 @@ public class IndexJs extends Index
 		{
 			return JavascriptUtil.toJsonArray((NativeArray)engine.invokeFunction("getIndex")).toJSONString();
 		}
-		catch (NoSuchMethodException e)
-		{}
 		catch (Exception e)
-		{}
+		{showError(e.getMessage());}
 		return null;
 	}
 
@@ -94,10 +97,8 @@ public class IndexJs extends Index
 		{
 			return JavascriptUtil.toJsonObject((NativeObject)engine.invokeFunction("getList",url)).toJSONString();
 		}
-		catch (NoSuchMethodException e)
-		{}
 		catch (Exception e)
-		{}
+		{showError(e.getMessage());}
 		return null;
 	}
 
@@ -110,7 +111,7 @@ public class IndexJs extends Index
 			return engine.invokeFunction("getPost", url).toString();
 		}
 		catch (Exception e)
-		{}
+		{showError(e.getMessage());}
 		
 		return null;
 	}
@@ -123,9 +124,64 @@ public class IndexJs extends Index
 		{
 			return engine.invokeFunction("getGold").toString();
 		}
+		catch(NoSuchMethodException e){}
 		catch (Exception e)
-		{}
+		{showError(e.getMessage());}
 
+		return null;
+	}
+
+	@Override
+	public String getFilter()
+	{
+		checkInit();
+		try
+		{
+			return engine.invokeFunction("getFilter").toString();
+		}catch(NoSuchMethodException e){}
+		catch (Exception e)
+		{showError(e.getMessage());}
+
+		return null;
+	}
+
+	@Override
+	public String getTime()
+	{
+		checkInit();
+		try
+		{
+			return engine.invokeFunction("getTime").toString();
+		}
+		catch (Exception e)
+		{showError(e.getMessage());}
+
+		return null;
+	}
+
+	@Override
+	public boolean hasTime()
+	{
+		checkInit();
+	try
+	{
+	return engine.invokeFunction("hasTime");
+	}
+	catch (Exception e)
+	{}
+	return false;
+	}
+
+	@Override
+	public String search(String key)
+	{
+		checkInit();
+		try
+		{
+			return engine.invokeFunction("search",new Object[]{key}).toString();
+		}catch(NoSuchMethodException e){}
+		catch (Exception e)
+		{ showError(e.getMessage());}
 		return null;
 	}
 
